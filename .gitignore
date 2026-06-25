@@ -19,3 +19,7 @@ Downloads/
 # Local only (not for GitHub)
 _local_only/
 output/
+
+# Large raw/preserved data (use DVC or store locally)
+data/raw/
+data/preserved/
