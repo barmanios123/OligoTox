@@ -24,3 +24,5 @@ output/
 data/raw/
 data/preserved/
 data/preserved/legacy_snapshot/
+data/raw/external_repos/
+data/raw/github_repos/
