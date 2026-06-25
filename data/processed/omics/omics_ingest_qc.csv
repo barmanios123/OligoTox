@@ -1,0 +1,3 @@
+candidate_id,study_id,file_path,status,qc_profile,n_rows,n_unique_genes,missing_gene_fraction,missing_effect_fraction,has_pval_adj,significant_gene_count,passes_basic_qc
+cand_001,study_demo_001,data/raw/omics_uploads/example1.csv,ok,relaxed,15,15,0.0,0.0,True,15,True
+cand_002,study_demo_002,data/raw/omics_uploads/example2.csv,ok,relaxed,10,10,0.0,0.0,True,10,True

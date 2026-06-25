@@ -1,0 +1,66 @@
+# OligoTox v0.3 Integration Configuration
+sequence_embeddings:
+  enabled: false
+  model: "nucleotide_transformer"
+  small_model: true
+  device: "cpu"
+  n_pca_components: 32
+  hf_repos:
+    nucleotide_transformer: "InstaDeepAI/nucleotide-transformer-500m-human-ref"
+    rna_ernie:  "multimolecule/rnaernie"
+    rina_lmo:   "lbcb-sci/RiNALMo"
+    birna_bert: "multimolecule/rnamsm"
+  install_cmd: "pip install transformers torch"
+
+aso_optimizer:
+  enabled: true
+  use_api: false
+  api_url: "https://asoptimizer.s-core.ai/api/predict"
+  api_timeout: 30
+
+structure_signals:
+  enabled: true
+  use_viennarna: true
+  install_cmd: "conda install -c bioconda viennarna"
+  dsrna_stem_threshold: 6
+
+offtarget_burden:
+  enabled: true
+  use_real_transcriptome: false
+  utr_fasta_path: "data/raw/transcriptome/ensembl_human_cdna_111.fa.gz"
+  seed_positions: [1, 8]
+  burden_weights:
+    "8mer":    1.0
+    "7mer_m8": 0.8
+    "7mer_A1": 0.6
+    "6mer":    0.3
+  high_burden_threshold: 10.0
+
+datasail_splits:
+  enabled: true
+  strategy: "scaffold"
+  test_size: 0.2
+  val_size: 0.1
+  seed_len: 7
+  install_cmd: "pip install datasail"
+
+training:
+  endpoints:
+    - hepatocellular_injury
+    - renal_tubular_injury
+    - thrombocytopenia
+    - coagulation_effect
+    - complement_activation
+    - innate_immune_activation
+    - cytokine_release
+    - cns_neurotoxicity
+    - reproductive_developmental
+    - offtarget_gene_silencing
+    - injection_site_reaction
+    - lnp_immune_effect
+    - proinflammatory_vasculitis
+  base_model: "random_forest"
+  calibration: "isotonic"
+  n_estimators: 100
+  class_weight: "balanced"
+  random_state: 42

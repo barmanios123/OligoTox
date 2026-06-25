@@ -1,0 +1,4 @@
+oligo_id,candidate_id,source,notes,modality,delivery_vehicle,route,species,dose_mg_kg,repeat_dose,cns_toxicity
+OTX-CNS-SCASO-001,OTX-CNS-SCASO-001,scASO_cns_data,scASO CNS tox row — fill NfL/GFAP/histopath evidence,,,,,,,
+OTX-CNS-NHP_DEEPBRAIN_ASO-001,OTX-CNS-NHP_DEEPBRAIN_ASO-001,nhp_deepbrain_aso_cns_data,nhp_deepbrain_aso CNS tox row — fill NfL/GFAP/histopath evidence,,,,,,,
+OTX-CNS-NUSINERSEN-001,OTX-CNS-NUSINERSEN-001,nusinersen_cns_data,nusinersen CNS tox row — fill NfL/GFAP/histopath evidence,,,,,,,

@@ -1,0 +1,36 @@
+>eteplirsen_exondys51 | modality=PMO | chemistry=PMO
+CTCCAACATCAAGGAAGATGGCATTTCTAG
+>golodirsen_vyondys53 | modality=PMO | chemistry=PMO
+GTTGCCTCCGGTTCTGAAGGTGTTC
+>viltolarsen_viltepso | modality=PMO | chemistry=PMO
+CAATGCCATCCTGGAGTTCCTG
+>casimersen_amondys45 | modality=PMO | chemistry=PMO
+AGAAGATACCATCAACTATGT
+>inotersen_tegsedi | modality=ASO_gapmer | chemistry=2MOE_PS
+GCCTGGAGTCCATGATTTCG
+>mipomersen_kynamro | modality=ASO_gapmer | chemistry=2MOE_PS
+GCCTCAGTCTGCTTCGCACC
+>nusinersen_spinraza | modality=SSO | chemistry=2MOE_PS
+TCACTTTCATAATGCTGG
+>inclisiran_leqvio | modality=siRNA | chemistry=GalNAc_siRNA
+UUAAUGACUAUACAUUCGA
+>givosiran_givlaari | modality=siRNA | chemistry=GalNAc_siRNA
+GAUAAGAUCUGUAGAAAUA
+>lumasiran_oxlumo | modality=siRNA | chemistry=GalNAc_siRNA
+CAUUAGAGAUAAAUUGCCU
+>patisiran_onpattro | modality=siRNA | chemistry=LNP_siRNA
+UUAAUGACUAUACAUUCGA
+>LNA_gapmer_HiTox_A | modality=ASO_gapmer | chemistry=LNA_PS
+GCCTCAGTCTGCTTCGCA
+>LNA_gapmer_HiTox_B | modality=ASO_gapmer | chemistry=LNA_PS
+GCCGCAGTCTGCTTCGCA
+>LNA_gapmer_MidTox_C | modality=ASO_gapmer | chemistry=LNA_PS
+ACCTCAGTCTGCTTCGCA
+>LNA_gapmer_LoTox_D | modality=ASO_gapmer | chemistry=LNA_PS
+ACCTCAGTCTCCTTCGCA
+>LNA_gapmer_LoTox_E | modality=ASO_gapmer | chemistry=LNA_PS
+ACCTCAGCCTCCTTCG
+>vupanorsen_terminated | modality=ASO_gapmer | chemistry=GalNAc_ASO
+GCCTGCAGTCTGCTTCGCA
+>BNT162b2_comirnaty | modality=mRNA_LNP | chemistry=mRNA_modU
+mRNA_4284nt_modU_SARS2_spike

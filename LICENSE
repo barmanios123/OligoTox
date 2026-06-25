@@ -1,0 +1,30 @@
+PROPRIETARY SOFTWARE LICENSE
+
+Copyright (c) 2026 Beshoy Armanios. All rights reserved.
+
+This software, including all source code, trained model weights, curated
+datasets, configuration files, and associated documentation (collectively,
+the "Software"), is the proprietary and confidential property of Beshoy
+Armanios.
+
+PERMISSIONS
+No license, express or implied, is granted to any person or entity to:
+  - use, copy, modify, merge, publish, distribute, sublicense, or sell
+    copies of the Software;
+  - run the Software for any commercial purpose;
+  - incorporate the Software or any portion thereof into other products
+    or services;
+without the prior written permission of the author.
+
+RESTRICTIONS
+1. You may not sublicense or transfer any rights granted under this license.
+2. You may not reverse-engineer, decompile, or disassemble the Software.
+3. Any authorized use must retain this copyright notice in all copies.
+
+DISCLAIMER
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES,
+OR OTHER LIABILITY ARISING FROM OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For licensing inquiries, contact: beshoyarmanios@gmail.com

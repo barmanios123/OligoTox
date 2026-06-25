@@ -1,0 +1,11 @@
+tier,assay,modalities,stages,trigger_endpoints,cost_tier,rationale
+Tier 1,Clinical chemistry + CBC,ALL,ALL,ALL,$,Baseline liver kidney and hematology surveillance for all oligo programs
+Tier 1,Complement split products,ALL,ALL,complement_activation|innate_immune_activation|cytokine_release,$$,Use when innate or complement liability is elevated
+Tier 1,Renal histopathology / urinalysis,ASO|siRNA|PMO|TMO,ALL,renal_tubular_injury|renal_accumulation,$$,Priority for renal accumulation and tubular injury surveillance
+Tier 1,Injection site tolerability panel,ASO|siRNA|PMO|Aptamer,CN|pre-IND|GLP,injection_site_reaction,$,Useful for SC and local reactogenicity assessment
+Tier 2,Cytokine panel (IL-6 TNF-alpha IFN-alpha),ALL,ALL,cytokine_release|innate_immune_activation,$$,Triggered by elevated innate immune activation signals
+Tier 2,Transcriptome off-target screen,ASO|siRNA|PMO|TMO,pre-IND|GLP,offtarget_gene_silencing,$$$,Triggered by elevated sequence-mediated off-target liability
+Tier 2,Kupffer cell activation panel,LNP|mRNA|saRNA|circRNA,pre-IND|GLP,kupffer_cell_activation|complement_activation,$$$,Useful when delivery or liver macrophage activation risk is elevated
+Tier 2,PK/PD bridge biomarkers,ALL,pre-IND|GLP,ALL,$$$,Supports translational interpretation before IND-enabling studies
+Tier 3,Mechanistic follow-up pathology,ALL,ALL,hepatocellular_injury|hepatic_vacuolation|renal_tubular_injury|cns_toxicity,$$$$,Escalate once Tier 1 and Tier 2 findings confirm organ-specific signals
+Tier 3,Special coagulation workup,ASO|Aptamer|TMO,pre-IND|GLP,thrombocytopenia|coagulation_effect,$$$$,Useful for chemistry classes with platelet or coagulation liability

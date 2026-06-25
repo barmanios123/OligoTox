@@ -1,0 +1,3 @@
+candidate_id,study_id,comparison_label,file_path,tissue,species,system,platform,timepoint_hr,dose_level,dose_value,dose_unit,replicate_count,qc_profile
+cand_001,study_demo_001,treated_vs_control,data/raw/omics_uploads/example1.csv,liver,human,primary_hepatocyte,rna_seq,24,high,10,uM,3,relaxed
+cand_002,study_demo_002,treated_vs_control,data/raw/omics_uploads/example2.csv,kidney,human,proximal_tubule,rna_seq,24,mid,3,uM,3,relaxed

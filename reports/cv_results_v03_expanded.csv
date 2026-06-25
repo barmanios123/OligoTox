@@ -1,0 +1,5 @@
+endpoint,n_pos,n_total,auroc_rf,auroc_rf_std,auroc_lr
+hepatocellular_injury,203,607,0.999,0.001,0.999
+hypersensitivity,13,24,0.717,0.125,0.667
+injection_site_reaction,12,24,0.7,0.306,0.633
+offtarget_gene_silencing,68,544,0.993,0.006,0.99

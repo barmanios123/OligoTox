@@ -1,0 +1,7 @@
+modality,rows_total,rows_with_sequence,pct_rows_with_sequence,hepatocellular_injury__labeled,hepatocellular_injury__labeled_with_sequence,hepatic_vacuolation__labeled,hepatic_vacuolation__labeled_with_sequence,renal_tubular_injury__labeled,renal_tubular_injury__labeled_with_sequence,renal_accumulation__labeled,renal_accumulation__labeled_with_sequence,thrombocytopenia__labeled,thrombocytopenia__labeled_with_sequence,coagulation_effect__labeled,coagulation_effect__labeled_with_sequence,complement_activation__labeled,complement_activation__labeled_with_sequence,innate_immune_activation__labeled,innate_immune_activation__labeled_with_sequence,cytokine_release__labeled,cytokine_release__labeled_with_sequence,kupffer_cell_activation__labeled,kupffer_cell_activation__labeled_with_sequence,cns_toxicity__labeled,cns_toxicity__labeled_with_sequence,offtarget_gene_silencing__labeled,offtarget_gene_silencing__labeled_with_sequence,injection_site_reaction__labeled,injection_site_reaction__labeled_with_sequence
+SSO,1,1,100.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+PMO,2,2,100.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mRNA_LNP,2,2,100.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+siRNA,9,9,100.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ASO_gapmer,10,10,100.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+UNKNOWN,776,776,100.0,772,772,4,4,772,772,772,772,772,772,772,772,772,772,772,772,772,772,4,4,4,4,772,772,772,772

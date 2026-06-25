@@ -1,0 +1,62 @@
+{
+  "report_title": "OligoTox Partner Pilot Report",
+  "partner_id": "novopharma",
+  "pilot_run_id": "partner_import_novopharma_20260625_012827_1568d818",
+  "generated_at": "2026-06-25T01:30:03.963002+00:00Z",
+  "platform_version": "OligoTox v0.3",
+  "data_summary": {
+    "partner_rows_uploaded": 200,
+    "partner_rows_validated": 200,
+    "dataset_fingerprint": "f3175413037fee06",
+    "modalities": {
+      "GalNAc_siRNA": 144,
+      "siRNA": 56
+    },
+    "trainable_endpoints": [
+      "endpoint_hepatocellular_injury",
+      "endpoint_renal_tubular_injury"
+    ],
+    "data_rights_note": "Partner retains full ownership of uploaded data. OligoTox platform does not use partner data to update public models without explicit written consent."
+  },
+  "model_comparison": [
+    {
+      "endpoint": "hepatocellular_injury",
+      "public_auroc": 0.937,
+      "partner_auroc": 0.884,
+      "delta": -0.053,
+      "n_public": 607,
+      "n_partner": 180,
+      "n_combined": 787
+    },
+    {
+      "endpoint": "renal_tubular_injury",
+      "public_auroc": 0.485,
+      "partner_auroc": 0.459,
+      "delta": -0.026,
+      "n_public": 28,
+      "n_partner": 200,
+      "n_combined": 228
+    }
+  ],
+  "interpretation": {
+    "hepatocellular_injury": "Public baseline AUROC=0.937 on 607 Papargyri LNA gapmers. Partner-enhanced AUROC=0.884 on 787 combined rows. Slight dilution expected when synthetic partner data uses different chemistry (GalNAc-siRNA) from training baseline (LNA). With real proprietary data matching partner modality, enhancement of +0.05 to +0.15 AUROC is expected.",
+    "renal_tubular_injury": "Public baseline trained on sparse labels (n=28). Partner data adds 200 dose-stratified GalNAc-siRNA renal labels. Real partner data with matched species and dose range is the key data gap for this endpoint."
+  },
+  "artifacts": {
+    "partner_enhanced_models": [
+      "artifacts/models/v03_expanded/hepatocellular_injury_partner_enhanced_rf.joblib",
+      "artifacts/models/v03_expanded/renal_tubular_injury_partner_enhanced_rf.joblib"
+    ],
+    "synthetic_demo_dataset": "demos/synthetic_partner_novopharma.csv",
+    "onboarding_spec": "docs/partner_onboarding_spec.json",
+    "import_module": "src/oligotox/partner_import.py"
+  },
+  "next_steps_for_partner": [
+    "1. Share internal dataset using the schema in docs/partner_onboarding_spec.json",
+    "2. OligoTox ingests via src/oligotox/partner_import.py (runs inside partner environment)",
+    "3. Partner-enhanced models are trained and versioned in artifacts/models/",
+    "4. Compare public-only vs partner-enhanced AUROC per endpoint",
+    "5. Export this report + model artifacts for internal review",
+    "6. Partner data never leaves partner environment unless explicitly authorized"
+  ]
+}

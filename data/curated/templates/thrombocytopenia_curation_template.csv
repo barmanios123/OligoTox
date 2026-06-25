@@ -1,0 +1,7 @@
+oligo_id,candidate_id,source,notes,modality,delivery_vehicle,route,species,dose_mg_kg,repeat_dose,platelet_count_baseline,platelet_count_treated,pf4_ps_elisa_od,platelet_c3d_c4d_positive,thrombocytopenia
+OTX-REF-002,OTX-REF-002,inotersen_NDA_2018,Inotersen reference: PLT nadir 72% of baseline; ALT 4.2x ULN; KIM-1 2.8x baseline,ASO_gapmer,naked,subcutaneous,cynomolgus,50.0,repeat,220.0,220.0,0.0,0.0,1.0
+OTX-PLT-INOTERSEN-001,OTX-PLT-INOTERSEN-001,inotersen_NDA_label,inotersen NDA platelet signal row — fill counts and PF4/C3d,,,,,,,,,,,
+OTX-PLT-EPLONTERSEN-001,OTX-PLT-EPLONTERSEN-001,eplontersen_NDA_label,eplontersen NDA platelet signal row — fill counts and PF4/C3d,,,,,,,,,,,
+OTX-PLT-MIPOMERSEN-001,OTX-PLT-MIPOMERSEN-001,mipomersen_NDA_label,mipomersen NDA platelet signal row — fill counts and PF4/C3d,,,,,,,,,,,
+OTX-PLT-VUTRISIRAN-001,OTX-PLT-VUTRISIRAN-001,vutrisiran_NDA_label,vutrisiran NDA platelet signal row — fill counts and PF4/C3d,,,,,,,,,,,
+OTX-PLT-GIVOSIRAN-001,OTX-PLT-GIVOSIRAN-001,givosiran_NDA_label,givosiran NDA platelet signal row — fill counts and PF4/C3d,,,,,,,,,,,

@@ -1,0 +1,64 @@
+SUBJECT: OligoTox Challenge Phase 2 — Registration Inquiry: [Your Institution]
+TO: ncatsoligotox@mail.nih.gov
+
+Dear NIH NCATS OligoTox Challenge Team,
+
+I am writing to inquire about participation in Phase 2 of the OligoTox Challenge
+(NOT-TR-26-006), with a submission window of May 1 – December 31, 2026.
+
+BACKGROUND:
+Our team is developing OligoTox, a mechanism-aware toxicity prediction platform
+for RNA and oligonucleotide therapeutics. The platform integrates sequence features,
+chemistry descriptors (PS fraction, LNA pattern, sugar modification), delivery
+modality (GalNAc, LNP, naked), and multi-omics readouts to generate endpoint-specific
+safety risk scores across 13 organ-level toxicity endpoints.
+
+OligoTox is specifically designed to address the gap you identified in the challenge:
+the lack of open, high-quality, structured datasets for training and benchmarking
+in silico oligo toxicity predictors.
+
+OUR DATA GENERATION PROPOSAL:
+We propose to generate and contribute:
+
+1. Extended LNA gapmer hepatotoxicity dataset
+   - 200+ additional gapmers beyond Papargyri 2020 Table S1
+   - Readouts: caspase-3/7 activation, LDH, ATP viability (human HepG2 + HepaRG)
+   - Chemistry variants: LNA content (10-60%), flank asymmetry, PS fraction
+
+2. PS/LNA gapmer innate immune activation panel
+   - 50+ gapmers tested in human PBMCs
+   - Readouts: TLR7/8/9 reporter, IFN-alpha, IL-6, TNF-alpha
+   - Links TLR activation to sequence motifs (UU/GU, CpG) and PS density
+
+3. GalNAc siRNA complement activation panel
+   - 20+ GalNAc siRNA variants with formulation metadata
+   - Readouts: C3a, C5a, SC5b-9, platelet-bound C3d/C4d in human serum
+   - Bridges our current Domain 3 rules engine to quantitative in vitro data
+
+PLATFORM ALIGNMENT:
+Our existing platform infrastructure (rules engine, feature engineering layer,
+ML scaffold, assay planner) is already built and ready to incorporate your
+datasets as training and validation data once released.
+
+We believe OligoTox is well-positioned to serve as a prediction platform that
+directly demonstrates the utility of the OligoTox Challenge datasets for Phase 2.
+
+QUESTIONS:
+1. Are non-US participants eligible to submit as team members (we have collaborators 
+   at [International Institution])?
+2. Can existing unpublished in-house data from proprietary programs be included 
+   if de-identified, or must all data be newly generated?
+3. Is there a preferred data format / template for dataset submission?
+
+Thank you for organizing this important initiative. We look forward to your guidance.
+
+Best regards,
+[Your Name, PhD/MD]
+[Title]
+[Institution]
+[Email]
+[Phone]
+
+---
+Challenge Notice: https://grants.nih.gov/grants/guide/notice-files/NOT-TR-26-006.html
+Challenge Portal: https://ncats.nih.gov/funding/challenges

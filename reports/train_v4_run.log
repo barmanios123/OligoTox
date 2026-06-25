@@ -1,0 +1,120 @@
+Loading: data/processed/training_dataset_with_chem.csv
+  Shape: (796, 207)
+  Added 153 k-mer features
+  Feature matrix: (796, 180)
+  26 endpoint columns found
+
+--- endpoint_hepatocellular_injury: pos=182, neg=614 ---
+  AUROC=0.679  AP=0.373  Brier=0.164
+
+--- endpoint_renal_tubular_injury: pos=6, neg=790 ---
+  AUROC=0.996  AP=0.674  Brier=0.005
+
+--- endpoint_renal_accumulation: pos=7, neg=789 ---
+  AUROC=0.999  AP=0.934  Brier=0.004
+
+--- endpoint_thrombocytopenia: pos=3, neg=793 ---
+  Skipping: too few positives (3)
+
+--- endpoint_coagulation_effect: pos=5, neg=791 ---
+  AUROC=0.992  AP=0.580  Brier=0.005
+
+--- endpoint_complement_activation: pos=5, neg=791 ---
+  AUROC=0.995  AP=0.589  Brier=0.005
+
+--- endpoint_innate_immune_activation: pos=7, neg=789 ---
+  AUROC=0.996  AP=0.657  Brier=0.006
+
+--- endpoint_cytokine_release: pos=7, neg=789 ---
+  AUROC=0.996  AP=0.657  Brier=0.006
+
+--- endpoint_hypersensitivity: pos=13, neg=783 ---
+  AUROC=0.989  AP=0.423  Brier=0.009
+
+--- endpoint_cns_neurotoxicity: pos=2, neg=794 ---
+  Skipping: too few positives (2)
+
+--- endpoint_offtarget_gene_silencing: pos=337, neg=459 ---
+  AUROC=0.744  AP=0.667  Brier=0.190
+
+--- endpoint_reproductive_dev_tox: pos=1, neg=795 ---
+  Skipping: too few positives (1)
+
+--- endpoint_injection_site_reaction: pos=12, neg=784 ---
+  AUROC=0.991  AP=0.480  Brier=0.008
+
+--- endpoint_hepatocellular_injury_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_hepatic_vacuolation: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_renal_tubular_injury_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_renal_accumulation_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_thrombocytopenia_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_coagulation_effect_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_complement_activation_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_innate_immune_activation_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_cytokine_release_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_kupffer_cell_activation: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_cns_toxicity: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_offtarget_gene_silencing_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+--- endpoint_injection_site_reaction_pmo: pos=0, neg=796 ---
+  Skipping: too few positives (0)
+
+Saved: reports/eval_v4_summary.csv
+Saved: reports/eval_v4_feature_importance.csv
+
+=== EVALUATION SUMMARY ===
+                             endpoint  n_pos  auroc    ap  brier                  model
+          endpoint_renal_accumulation      7  0.999 0.934  0.004               Pipeline
+        endpoint_renal_tubular_injury      6  0.996 0.674  0.005               Pipeline
+    endpoint_innate_immune_activation      7  0.996 0.657  0.006               Pipeline
+            endpoint_cytokine_release      7  0.996 0.657  0.006               Pipeline
+       endpoint_complement_activation      5  0.995 0.589  0.005               Pipeline
+          endpoint_coagulation_effect      5  0.992 0.580  0.005               Pipeline
+     endpoint_injection_site_reaction     12  0.991 0.480  0.008 CalibratedClassifierCV
+            endpoint_hypersensitivity     13  0.989 0.423  0.009 CalibratedClassifierCV
+    endpoint_offtarget_gene_silencing    337  0.744 0.667  0.190 CalibratedClassifierCV
+       endpoint_hepatocellular_injury    182  0.679 0.373  0.164 CalibratedClassifierCV
+            endpoint_thrombocytopenia      3    NaN   NaN    NaN                skipped
+           endpoint_cns_neurotoxicity      2    NaN   NaN    NaN                skipped
+        endpoint_reproductive_dev_tox      1    NaN   NaN    NaN                skipped
+   endpoint_hepatocellular_injury_pmo      0    NaN   NaN    NaN                skipped
+         endpoint_hepatic_vacuolation      0    NaN   NaN    NaN                skipped
+    endpoint_renal_tubular_injury_pmo      0    NaN   NaN    NaN                skipped
+      endpoint_renal_accumulation_pmo      0    NaN   NaN    NaN                skipped
+        endpoint_thrombocytopenia_pmo      0    NaN   NaN    NaN                skipped
+      endpoint_coagulation_effect_pmo      0    NaN   NaN    NaN                skipped
+   endpoint_complement_activation_pmo      0    NaN   NaN    NaN                skipped
+endpoint_innate_immune_activation_pmo      0    NaN   NaN    NaN                skipped
+        endpoint_cytokine_release_pmo      0    NaN   NaN    NaN                skipped
+     endpoint_kupffer_cell_activation      0    NaN   NaN    NaN                skipped
+                endpoint_cns_toxicity      0    NaN   NaN    NaN                skipped
+endpoint_offtarget_gene_silencing_pmo      0    NaN   NaN    NaN                skipped
+ endpoint_injection_site_reaction_pmo      0    NaN   NaN    NaN                skipped
+
+Mean AUROC across 10 endpoints: 0.938
+Median AUROC: 0.994
+Best:  endpoint_renal_accumulation = 0.999
+Worst: endpoint_hepatocellular_injury = 0.679

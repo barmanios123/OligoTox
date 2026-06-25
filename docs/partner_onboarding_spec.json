@@ -1,0 +1,184 @@
+{
+  "version": "1.0",
+  "title": "OligoTox Partner Dataset Onboarding Specification",
+  "description": "Required schema for uploading proprietary oligonucleotide toxicology datasets into the OligoTox platform for private model training.",
+  "required_columns": {
+    "candidate_id": {
+      "type": "string",
+      "description": "Unique identifier for each oligonucleotide candidate (e.g. internal compound ID, INN, or sequence hash)"
+    },
+    "sequence": {
+      "type": "string",
+      "description": "Nucleotide sequence 5-to-3, DNA alphabet (A/T/G/C). RNA (U->T). PMO/LNA backbone modifications noted separately."
+    },
+    "modality": {
+      "type": "string",
+      "enum": [
+        "ASO_PS",
+        "LNA_gapmer",
+        "siRNA",
+        "GalNAc_siRNA",
+        "PMO",
+        "splice_switching_ASO",
+        "mRNA_LNP",
+        "saRNA",
+        "other"
+      ],
+      "description": "Chemistry class of the molecule"
+    }
+  },
+  "optional_columns": {
+    "ps_fraction": {
+      "type": "float",
+      "range": [
+        0,
+        1
+      ],
+      "description": "Fraction of backbone positions that are phosphorothioate"
+    },
+    "lna_fraction": {
+      "type": "float",
+      "range": [
+        0,
+        1
+      ],
+      "description": "Fraction of sugar positions with LNA modification"
+    },
+    "galnac_conjugate": {
+      "type": "boolean",
+      "description": "Whether molecule carries GalNAc liver-targeting ligand"
+    },
+    "target_gene": {
+      "type": "string",
+      "description": "HGNC gene symbol of primary target (e.g. PCSK9, TTR, APOC3)"
+    },
+    "target_tissue": {
+      "type": "string",
+      "description": "Primary tissue of intended pharmacology (liver, CNS, muscle, lung)"
+    },
+    "species": {
+      "type": "string",
+      "description": "Species of toxicology study (human, mouse, rat, NHP, cynomolgus)"
+    },
+    "dose_mg_kg": {
+      "type": "float",
+      "description": "Dose in mg/kg at which observation was made"
+    },
+    "study_duration_days": {
+      "type": "integer",
+      "description": "Duration of study in days"
+    },
+    "alt_fold_uln": {
+      "type": "float",
+      "description": "ALT fold-change above upper limit of normal (hepatotoxicity biomarker)"
+    },
+    "platelet_pct_baseline": {
+      "type": "float",
+      "description": "Platelet count as percent of baseline (thrombocytopenia biomarker)"
+    },
+    "c3a_fold": {
+      "type": "float",
+      "description": "C3a fold-change (complement activation biomarker)"
+    },
+    "sc5b9_fold": {
+      "type": "float",
+      "description": "SC5b-9 fold-change (complement activation biomarker)"
+    },
+    "ifna_fold": {
+      "type": "float",
+      "description": "IFN-alpha fold-change (innate immune biomarker)"
+    },
+    "tnfa_fold": {
+      "type": "float",
+      "description": "TNF-alpha fold-change (cytokine release biomarker)"
+    }
+  },
+  "endpoint_columns": {
+    "description": "Binary labels (0=no toxicity observed, 1=toxicity observed, null=not assessed). At least one endpoint must be labeled for model training.",
+    "endpoints": {
+      "endpoint_hepatocellular_injury": {
+        "primary_assay": "ALT/AST >3x ULN",
+        "species": "rat/NHP preferred"
+      },
+      "endpoint_renal_tubular_injury": {
+        "primary_assay": "urinary KIM-1, creatinine",
+        "species": "rat"
+      },
+      "endpoint_thrombocytopenia": {
+        "primary_assay": "platelet count <75% baseline",
+        "species": "any"
+      },
+      "endpoint_complement_activation": {
+        "primary_assay": "C3a, SC5b-9 ELISA",
+        "species": "monkey preferred"
+      },
+      "endpoint_innate_immune_activation": {
+        "primary_assay": "IFN-alpha ELISA or gene signature",
+        "species": "any"
+      },
+      "endpoint_cytokine_release": {
+        "primary_assay": "IL-6, TNF-alpha multiplex",
+        "species": "any"
+      },
+      "endpoint_injection_site_reaction": {
+        "primary_assay": "histopathology grading",
+        "species": "rat/NHP"
+      },
+      "endpoint_offtarget_gene_silencing": {
+        "primary_assay": "transcriptome off-target score",
+        "species": "any"
+      },
+      "endpoint_cns_delayed_toxicity": {
+        "primary_assay": "neurological exam, NfL",
+        "species": "NHP preferred"
+      },
+      "endpoint_lnp_immune_effects": {
+        "primary_assay": "cytokine panel post-LNP dose",
+        "species": "any"
+      },
+      "endpoint_reproductive_developmental_risk": {
+        "primary_assay": "ICH S5 reproductive tox",
+        "species": "rat"
+      },
+      "endpoint_genotoxicity": {
+        "primary_assay": "Ames, micronucleus",
+        "species": "in vitro"
+      },
+      "endpoint_ontarget_excessive_knockdown": {
+        "primary_assay": ">90% target gene suppression with phenotype",
+        "species": "any"
+      },
+      "endpoint_transcriptome_perturbation": {
+        "primary_assay": "DEG count >500 at therapeutic dose",
+        "species": "any"
+      },
+      "endpoint_lncrna_network_disruption": {
+        "primary_assay": "lncRNA co-expression network disruption score",
+        "species": "any"
+      }
+    }
+  },
+  "evidence_provenance": {
+    "required_fields": [
+      "source_paper_doi_or_nda",
+      "study_type"
+    ],
+    "study_type_enum": [
+      "published_literature",
+      "FDA_NDA_review",
+      "internal_proprietary",
+      "ClinicalTrials_result",
+      "in_vitro_screen"
+    ],
+    "data_rights": "Partner retains full ownership of uploaded data. OligoTox platform does not use partner data to update public models without explicit written consent."
+  },
+  "file_format": {
+    "accepted": [
+      "CSV (UTF-8)",
+      "Excel (.xlsx)",
+      "JSON Lines"
+    ],
+    "max_rows_per_upload": 50000,
+    "max_file_size_mb": 200
+  }
+}

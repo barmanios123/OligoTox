@@ -1,0 +1,14 @@
+endpoint,rows_total,rows_labeled,rows_with_sequence,rows_labeled_with_sequence,rows_positive,rows_positive_with_sequence,rows_negative,rows_negative_with_sequence,pct_labeled_with_sequence
+hepatic_vacuolation,800,4,800,4,0,0,4,4,100.0
+kupffer_cell_activation,800,4,800,4,0,0,4,4,100.0
+cns_toxicity,800,4,800,4,0,0,4,4,100.0
+hepatocellular_injury,800,772,800,772,172,172,600,600,100.0
+renal_tubular_injury,800,772,800,772,0,0,772,772,100.0
+renal_accumulation,800,772,800,772,0,0,772,772,100.0
+thrombocytopenia,800,772,800,772,0,0,772,772,100.0
+coagulation_effect,800,772,800,772,0,0,772,772,100.0
+complement_activation,800,772,800,772,0,0,772,772,100.0
+innate_immune_activation,800,772,800,772,0,0,772,772,100.0
+cytokine_release,800,772,800,772,0,0,772,772,100.0
+offtarget_gene_silencing,800,772,800,772,333,333,439,439,100.0
+injection_site_reaction,800,772,800,772,0,0,772,772,100.0

@@ -1,0 +1,11 @@
+chembl_id,drug_name,max_phase,molecule_type,oral,mw_freebase,mechanism_of_action,target_chembl_id,helm_notation,sequence
+CHEMBL1201428,Mipomersen,,,,,,,,
+CHEMBL2105710,Nusinersen,2.0,Small molecule,False,473.64,Prostanoid EP2 receptor agonist,CHEMBL1881,,CCCCC[C@H](O)c1ccc(N2C(=O)CC[C@@H]2COCc2ccc(C(=O)OC(C)C)s2)cc1
+CHEMBL3545100,Inotersen,2.0,Unknown,False,,Calcium sensing receptor positive allosteric modulator,CHEMBL1878,,
+CHEMBL4298808,Inclisiran,,,,,,,,
+CHEMBL4523659,Givosiran,,,,,,,,
+CHEMBL4526018,Lumasiran,,Unknown,False,349.40,,,,C=CC(=O)Nc1ccc(CNc2cc(Nc3cnn(C)c3)ncn2)cc1
+CHEMBL4593498,Vutrisiran,,Unknown,False,270.35,,,,CC(=O)c1ccc(S(=O)(=O)NCC(C)(C)N)cc1
+CHEMBL1201902,Patisiran,,Small molecule,False,224.30,,,,CC(=O)N(C)CC#CCN1CCC(O)CC1.O=C(O)C(=O)O
+CHEMBL4802765,Eplontersen,,Unknown,False,443.59,,,,CN1C[C@H]1CCCOc1ccc(/C(=C(/CCCO)c2ccccc2)c2ccc(O)cc2)cc1
+CHEMBL4802099,Nedosiran,,,,,,,,

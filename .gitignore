@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Test/cache
+.pytest_cache/
+
+# macOS
+.DS_Store
+
+# Generated outputs
+artifacts/
+Downloads/
+
+# Local only (not for GitHub)
+_local_only/
+output/
