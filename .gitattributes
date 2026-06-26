@@ -1,0 +1,12 @@
+# Keep GitHub language stats focused on core application code
+
+# Curated/source HTML captures should not count toward repo language composition
+data/raw/**/*.html linguist-generated=true
+data/raw/**/*.html linguist-detectable=false
+
+# Optional: if output/report folders later accumulate generated web artifacts
+artifacts/** linguist-generated=true
+artifacts/** linguist-vendored=true
+
+output/** linguist-generated=true
+output/** linguist-vendored=true
