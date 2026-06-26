@@ -26,3 +26,9 @@ data/preserved/
 data/preserved/legacy_snapshot/
 data/raw/external_repos/
 data/raw/github_repos/
+# Temporary and log files
+streamlit.log
+training_output.log
+backups/
+_backups/
+docs/README_old_backup.md
