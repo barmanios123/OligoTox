@@ -32,3 +32,4 @@ training_output.log
 backups/
 _backups/
 docs/README_old_backup.md
+__pycache__/
