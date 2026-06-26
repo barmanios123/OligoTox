@@ -33,3 +33,5 @@ backups/
 _backups/
 docs/README_old_backup.md
 __pycache__/
+artifacts/logs/
+*.log

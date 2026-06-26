@@ -5,7 +5,7 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from oligotox.omics.deg_to_readout import deg_table_to_readout
-from api import run_oligotox
+from oligotox.inference.api import run_oligotox
 
 
 def test_deg_to_omics_readout_and_decision_layer():

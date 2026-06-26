@@ -5,7 +5,7 @@ import json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from oligotox.omics.real_data_ingest import ingest_deg_file_to_readout, readout_to_payload
-from api import run_oligotox
+from oligotox.inference.api import run_oligotox
 
 
 def test_real_style_deg_ingestion():

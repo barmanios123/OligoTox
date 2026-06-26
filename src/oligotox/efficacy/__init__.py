@@ -1,2 +1,6 @@
-from .registry import EfficacyModelRegistry, predict_efficacy
-__all__ = ['EfficacyModelRegistry', 'predict_efficacy']
+"""Efficacy prediction models."""
+from .oligoformer import OligoFormer
+from .ensirna import ENsiRNA
+from .sidpt import siDPT
+
+__all__ = ["OligoFormer", "ENsiRNA", "siDPT"]
