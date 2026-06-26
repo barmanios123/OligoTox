@@ -102,3 +102,21 @@ The app is running and the latest Streamlit enhancement commit has been pushed t
 ## Development note
 
 Keep root-level clutter minimal. Longer status notes, architecture writeups, and provenance documents should live under `docs/` where possible.
+
+---
+
+## 📄 License
+
+**Proprietary and Confidential**
+
+This software is proprietary and confidential. It is provided for **evaluation purposes only** to authorized clients and collaborators.
+
+- ❌ No commercial use without license
+- ❌ No modification or derivative works
+- ❌ No distribution or sublicensing
+- ✅ Evaluation and collaboration discussions only
+
+For commercial licensing inquiries, please contact the repository owner.
+
+See [LICENSE](LICENSE) file for complete terms.
+
