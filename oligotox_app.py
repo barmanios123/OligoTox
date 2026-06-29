@@ -21,7 +21,8 @@ from oligotox.config.paths import (  # noqa: E402
     MODEL_ARTIFACTS_DIR,
     METRICS_ARTIFACTS_DIR,
 )
-from oligotox.inference.api import run_oligotox  # noqa: E402
+from oligotox.inference.api import run_oligotox
+from oligotox.ui_state import log_run, get_runs, get_last_run  # noqa: E402
 
 # Optional PK/PD bridge
 try:
@@ -541,6 +542,17 @@ with tabs[0]:
 
                 st.success("✅ Prediction complete!")
 
+                log_run(
+                    st,
+                    sequence=seq_clean,
+                    modality=modality,
+                    chemistry=chemistry,
+                    conjugate=conjugate if conjugate != "None" else "",
+                    inputs=inp,
+                    result=result,
+                    regulatory_md=regulatory_report_md,
+                )
+
                 st.markdown("### Toxicity Risk Profile")
                 st.markdown(f"**Sequence:** `{seq_clean}` ({len(seq_clean)} nt)")
                 st.markdown(
@@ -833,32 +845,48 @@ with tabs[7]:
     st.subheader("Candidate Comparator")
     st.caption("Compare multiple oligonucleotide candidates on intermediate safety proxies.")
 
-    sample_candidates = [
-        {
-            "name": "Candidate A",
-            "sequence": "AUGCUAGCUAGCUAGCUAGC",
-            "modality": "ASO",
-            "chemistry": "PS",
-            "conjugate": "None",
-        },
-        {
-            "name": "Candidate B",
-            "sequence": "AUGUUAGUUAGCUAGUUAGU",
-            "modality": "siRNA",
-            "chemistry": "2'-OMe",
-            "conjugate": "GalNAc",
-        },
-        {
-            "name": "Candidate C",
-            "sequence": "GCUAUGCUUGGCUAUGCUUA",
-            "modality": "ASO",
-            "chemistry": "LNA",
-            "conjugate": "None",
-        },
-    ]
-    df_cmp = compare_candidates_df(sample_candidates)
-    st.dataframe(df_cmp, use_container_width=True)
-    st.caption("Replace sample candidates with live session candidates or uploaded batch input in the next iteration.")
+    runs = get_runs(st)
+    if runs:
+        candidates = [
+            {
+                "name": r.get("run_id", "run"),
+                "sequence": r.get("sequence", ""),
+                "modality": r.get("modality", ""),
+                "chemistry": r.get("chemistry", ""),
+                "conjugate": r.get("conjugate", ""),
+            }
+            for r in runs
+        ]
+        df_cmp = compare_candidates_df(candidates)
+        st.dataframe(df_cmp, use_container_width=True)
+        st.caption("Comparator uses logged session runs.")
+    else:
+        sample_candidates = [
+            {
+                "name": "Candidate A",
+                "sequence": "AUGCUAGCUAGCUAGCUAGC",
+                "modality": "ASO",
+                "chemistry": "PS",
+                "conjugate": "None",
+            },
+            {
+                "name": "Candidate B",
+                "sequence": "AUGUUAGUUAGCUAGUUAGU",
+                "modality": "siRNA",
+                "chemistry": "2'-OMe",
+                "conjugate": "GalNAc",
+            },
+            {
+                "name": "Candidate C",
+                "sequence": "GCUAUGCUUGGCUAUGCUUA",
+                "modality": "ASO",
+                "chemistry": "LNA",
+                "conjugate": "None",
+            },
+        ]
+        df_cmp = compare_candidates_df(sample_candidates)
+        st.dataframe(df_cmp, use_container_width=True)
+        st.caption("No logged runs yet; showing sample candidates.")
 
 # ============================================================================
 # TAB 8: ASSAYS
@@ -867,8 +895,20 @@ with tabs[8]:
     st.subheader("Assay Recommendation Center")
     st.caption("Mechanism-linked follow-up assay suggestions.")
 
-    st.markdown(
-        """
+    last = get_last_run(st)
+    recs = []
+    if last and isinstance(last.get("result"), dict):
+        omics = last["result"].get("omics", {})
+        if isinstance(omics, dict):
+            recs = omics.get("recommended_assays", []) or []
+
+    if recs:
+        for rec in recs:
+            st.markdown(f"- {rec}")
+        st.caption("Showing assay recommendations from the latest Sequence Analysis run.")
+    else:
+        st.markdown(
+            """
 - PBMC cytokine release / innate immune activation
 - Platelet activation / PF4 follow-up
 - Hepatocyte injury and transcriptomics follow-up
@@ -877,18 +917,31 @@ with tabs[8]:
 - RNase H1 / hybridization off-target confirmation
 - Complement activation biomarker panel
 - Coagulation and thrombocytopenia follow-up
-    """
-    )
+        """
+        )
+        st.caption("No run-linked assay recommendations yet; showing default panel.")
 
 # ============================================================================
 # TAB 9: REGULATORY REPORT
 # ============================================================================
 with tabs[9]:
-    st.subheader("OSWG / FDA Report Framing")
-    st.caption("Run-level output should map predictions into a structured preclinical safety narrative.")
+    last = get_last_run(st)
+    if last and last.get("regulatory_md"):
+        st.subheader("OSWG / FDA Run-Level Report")
+        st.caption("Generated from the latest Sequence Analysis run.")
+        st.markdown(last["regulatory_md"])
+        st.download_button(
+            label="📥 Download Latest Regulatory Summary (MD)",
+            data=last["regulatory_md"],
+            file_name="latest_oligotox_regulatory_summary.md",
+            mime="text/markdown",
+        )
+    else:
+        st.subheader("OSWG / FDA Report Framing")
+        st.caption("Run-level output should map predictions into a structured preclinical safety narrative.")
 
-    st.markdown(
-        """
+        st.markdown(
+            """
 ### Recommended Report Sections
 1. Candidate context and modality.
 2. D1 / D2 / D3 mechanistic interpretation.
