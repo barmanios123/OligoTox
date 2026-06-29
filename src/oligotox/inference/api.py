@@ -118,13 +118,31 @@ def run_oligotox(inp: Any, omics_payload: dict | None = None) -> Dict[str, Any]:
 
     # Feed mechanistic proxy signals back into endpoint probabilities
     # so PS/platelet, renal accumulation, and gapmer signals are not lost
-    from oligotox.app_utils import compute_intermediate_safety_metrics
     seq = _safe_get(inp, "sequence", "") or ""
     chemistry = str(_safe_get(inp, "chemistry", "") or "")
     conjugate = str(_safe_get(inp, "conjugate", "") or "")
     modality = str(_safe_get(inp, "modality", "") or "")
     try:
-        mech = compute_intermediate_safety_metrics(seq, chemistry, conjugate, modality)
+        # Inline proxy computation so api.py has no dependency on app layer
+        seq_u = seq.upper()
+        n = max(len(seq_u), 1)
+        gc = (seq_u.count("G") + seq_u.count("C")) / n
+        u_frac = seq_u.count("U") / n
+        cpg = seq_u.count("CG")
+        is_ps = "PS" in chemistry.upper()
+        is_galnac = "GALNAC" in conjugate.upper()
+        is_lna = "LNA" in chemistry.upper()
+        mech = {
+            "gc_fraction": round(gc, 4),
+            "u_fraction": round(u_frac, 4),
+            "cpg_count": cpg,
+            "hybridization_risk_proxy": round(min(1.0, gc * 0.35), 4),
+            "tlr78_risk_proxy": round(min(1.0, u_frac * 1.43), 4),
+            "platelet_ps_risk_proxy": round(0.6857 if is_ps else 0.1, 4),
+            "hepatic_gapmer_risk_proxy": round(0.45 if is_lna else 0.21, 4),
+            "renal_accumulation_proxy": round(0.65 if is_galnac else 0.35, 4),
+            "length_nt": len(seq_u),
+        }
         proxy_boosts = {
             "thrombocytopenia":        mech.get("platelet_ps_risk_proxy", 0.0),
             "renal_accumulation":      mech.get("renal_accumulation_proxy", 0.0),
@@ -148,10 +166,19 @@ def run_oligotox(inp: Any, omics_payload: dict | None = None) -> Dict[str, Any]:
 
     # Always populate assay recommendations from mechanistic layer
     # when omics is absent, so assay tab is never empty
-    from oligotox.app_utils import build_assay_recommendations, detect_modality_class
     try:
-        modality_class = detect_modality_class(modality, chemistry, conjugate, seq)
-        fallback_assays = build_assay_recommendations(base, mech, modality_class)
+        # Inline assay fallback so no dependency on app layer
+        fallback_assays = []
+        if mech.get("platelet_ps_risk_proxy", 0) > 0.4:
+            fallback_assays.append("Platelet activation and PF4-associated thrombocytopenia follow-up")
+        if mech.get("renal_accumulation_proxy", 0) > 0.4:
+            fallback_assays.append("Renal proximal tubule accumulation / injury follow-up")
+        if mech.get("hybridization_risk_proxy", 0) > 0.15 or mech.get("hepatic_gapmer_risk_proxy", 0) > 0.3:
+            fallback_assays.append("RNase H1 / hybridization off-target assessment")
+        if mech.get("tlr78_risk_proxy", 0) > 0.25:
+            fallback_assays.append("TLR7/8 innate immune activation assay (PBMC cytokine panel)")
+        if mech.get("gc_fraction", 0) > 0.5 or mech.get("hepatic_gapmer_risk_proxy", 0) > 0.2:
+            fallback_assays.append("ALT / AST and hepatocyte stress biomarker follow-up")
     except Exception:
         fallback_assays = []
     omics_assays = recommend_assays(omics_readout, adjusted_probs) or []
