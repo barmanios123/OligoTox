@@ -1,81 +1,49 @@
-#!/usr/bin/env python3
-"""
-load_kc_examples.py
-───────────────────
-Merges the new 33 Kupffer cell activation positive cases into the existing
-training dataset (training_dataset_v2.csv or training_dataset.csv) and
-writes training_dataset_v3.csv ready for retraining.
-
-This is a DROP-IN complement to augment_hepatic_labels.py.
-Run AFTER augment_hepatic_labels.py (which created training_dataset_v2).
-
-Usage:
-    python load_kc_examples.py \
-        --kc_csv   data/processed/kupffer_activation_30plus_examples.csv \
-        --training data/processed/training_dataset_v2.csv \
-        --out      data/processed/training_dataset_v3.csv
-
-Then retrain:
-    python train_hepatic_endpoints.py \
-        --dataset data/processed/training_dataset_v3.csv \
-        --outdir  models/
-"""
-
-import argparse
-import pandas as pd
 from pathlib import Path
+import pandas as pd
 
+KC_DEFAULT = Path("data/processed/kupffer_activation_30plus_examples.csv")
+TRAIN_DEFAULT = Path("data/processed/training_dataset.csv")
+OUT_DEFAULT = Path("data/processed/training_dataset_v3.csv")
 
-def merge_kc_examples(kc_path: Path, training_path: Path, out_path: Path):
+def normalize_seq(s):
+    return str(s).strip().upper().replace(" ", "").replace("U", "T")
+
+def merge_kc_examples(kc_path=KC_DEFAULT, training_path=TRAIN_DEFAULT, out_path=OUT_DEFAULT):
     print(f"Loading KC examples from {kc_path}")
     kc = pd.read_csv(kc_path)
-    kc["sequence"] = kc["sequence"].str.upper().str.replace(" ", "").str.strip()
-    print(f"  {len(kc)} KC rows  |  kupffer_activation=1: {kc.label_kupffer_activation.sum()}")
+    train = pd.read_csv(training_path)
 
-    print(f"Loading training dataset from {training_path}")
-    df = pd.read_csv(training_path)
-    df["sequence"] = df["sequence"].str.upper().str.strip()
-    for col in ["label_hepatic_vacuolation", "label_kupffer_activation"]:
-        if col not in df.columns:
-            df[col] = 0
-    print(f"  {len(df)} training rows")
+    kc["sequence_norm"] = kc["sequence"].map(normalize_seq)
+    train["sequence_norm"] = train["sequence"].map(normalize_seq)
 
-    kc_seqs = set(kc["sequence"].values)
-    train_seqs = set(df["sequence"].values)
+    kc = kc.rename(columns={
+        "label_hepatic_vacuolation": "endpoint_hepatic_vacuolation",
+        "label_kupffer_activation": "endpoint_kupffer_cell_activation",
+    })
 
-    # Overwrite labels for matching sequences
-    overlap = kc_seqs & train_seqs
-    print(f"  Sequence overlap (label update): {len(overlap)}")
-    for _, row in kc.iterrows():
-        mask = df["sequence"] == row["sequence"]
-        if mask.any():
-            df.loc[mask, "label_kupffer_activation"] = row["label_kupffer_activation"]
-            df.loc[mask, "label_hepatic_vacuolation"] = row["label_hepatic_vacuolation"]
+    needed = ["sequence_norm", "endpoint_hepatic_vacuolation", "endpoint_kupffer_cell_activation"]
+    missing = [c for c in needed if c not in kc.columns]
+    if missing:
+        raise ValueError(f"KC CSV missing columns: {missing}")
 
-    # Append novel KC sequences
-    novel = kc[~kc["sequence"].isin(train_seqs)].copy()
-    print(f"  Novel sequences appended: {len(novel)}")
-    merged = pd.concat([df, novel], ignore_index=True)
+    kc_small = kc[needed].drop_duplicates(subset=["sequence_norm"]).copy()
+    merged = train.merge(kc_small, on="sequence_norm", how="left", suffixes=("", "_kc"))
 
-    vac_pos = int(merged["label_hepatic_vacuolation"].sum())
-    kup_pos = int(merged["label_kupffer_activation"].sum())
-    print(f"\nMerged dataset: {len(merged)} total")
-    print(f"  hepatic_vacuolation=1 : {vac_pos}")
-    print(f"  kupffer_activation=1  : {kup_pos}")
+    for col in ["endpoint_hepatic_vacuolation", "endpoint_kupffer_cell_activation"]:
+        kc_col = f"{col}_kc"
+        merged[col] = pd.to_numeric(merged[col], errors="coerce").fillna(0)
+        merged[kc_col] = pd.to_numeric(merged[kc_col], errors="coerce").fillna(0)
+        merged[col] = merged[[col, kc_col]].max(axis=1)
+        merged.drop(columns=[kc_col], inplace=True)
 
+    merged.drop(columns=["sequence_norm"], inplace=True)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     merged.to_csv(out_path, index=False)
-    print(f"\nSaved → {out_path}")
-    print("\nNext step: python train_hepatic_endpoints.py --dataset", out_path)
 
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--kc_csv",   default="data/processed/kupffer_activation_30plus_examples.csv")
-    parser.add_argument("--training", default="data/processed/training_dataset_v2.csv")
-    parser.add_argument("--out",      default="data/processed/training_dataset_v3.csv")
-    args = parser.parse_args()
-    merge_kc_examples(Path(args.kc_csv), Path(args.training), Path(args.out))
-
+    print(f"Saved merged dataset to {out_path}")
+    for col in ["endpoint_hepatic_vacuolation", "endpoint_kupffer_cell_activation"]:
+        s = pd.to_numeric(merged[col], errors="coerce").fillna(0)
+        print(f"{col}: positives = {int((s > 0).sum())}")
 
 if __name__ == "__main__":
-    main()
+    merge_kc_examples()
