@@ -68,7 +68,7 @@ for i, endpoint in enumerate(endpoints, 1):
         n_estimators=100,
         max_depth=10,
         random_state=42,
-        n_jobs=-1do e
+        n_jobs=-1,
     )
     
     model.fit(X, y)
