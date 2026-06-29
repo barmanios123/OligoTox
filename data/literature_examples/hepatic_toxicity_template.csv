@@ -1,0 +1,4 @@
+sequence,modality,chemistry,conjugate,dose_mg_kg,hepatic_vacuolation,kupffer_cell_activation,alt_elevation_fold,histopathology_findings,source_citation,notes
+GCTAGCTACGATCGATCGAT,ASO,PS,GalNAc,3.0,1,0,4.5,"Microvesicular steatosis","Smith et al 2024 Toxicol Sci 143:234",Example positive case
+ATCGATCGATCGATCGATCG,siRNA,2OME,None,5.0,0,1,1.2,"Kupffer cell hypertrophy","Jones et al 2025 Drug Safety 48:112",Example Kupffer activation
+TGCTGACCTGACTGACTGAC,ASO,MOE,None,2.0,0,0,1.0,"No findings","Lee et al 2023 Mol Ther 31:456",Negative control
