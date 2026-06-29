@@ -116,10 +116,51 @@ def run_oligotox(inp: Any, omics_payload: dict | None = None) -> Dict[str, Any]:
     dominant_endpoint = max(adjusted_probs, key=adjusted_probs.get) if adjusted_probs else None
     base["dominant_endpoint"] = dominant_endpoint
 
+    # Feed mechanistic proxy signals back into endpoint probabilities
+    # so PS/platelet, renal accumulation, and gapmer signals are not lost
+    from oligotox.app_utils import compute_intermediate_safety_metrics
+    seq = _safe_get(inp, "sequence", "") or ""
+    chemistry = str(_safe_get(inp, "chemistry", "") or "")
+    conjugate = str(_safe_get(inp, "conjugate", "") or "")
+    modality = str(_safe_get(inp, "modality", "") or "")
+    try:
+        mech = compute_intermediate_safety_metrics(seq, chemistry, conjugate, modality)
+        proxy_boosts = {
+            "thrombocytopenia":        mech.get("platelet_ps_risk_proxy", 0.0),
+            "renal_accumulation":      mech.get("renal_accumulation_proxy", 0.0),
+            "hepatic_vacuolation":     mech.get("hepatic_gapmer_risk_proxy", 0.0),
+            "innate_immune_activation": mech.get("tlr78_risk_proxy", 0.0),
+            "complement_activation":   mech.get("hybridization_risk_proxy", 0.0),
+        }
+        for ep, proxy_val in proxy_boosts.items():
+            if ep in base["per_endpoint"]:
+                current = base["per_endpoint"][ep]["prob"]
+                blended = max(current, proxy_val * 0.6)
+                base["per_endpoint"][ep]["prob"] = round(blended, 4)
+                thr = base["per_endpoint"][ep].get("threshold")
+                base["per_endpoint"][ep]["predicted_positive"] = bool(blended >= thr) if thr is not None else False
+        adjusted_probs = {k: v["prob"] for k, v in base["per_endpoint"].items()}
+        dominant_endpoint = max(adjusted_probs, key=adjusted_probs.get) if adjusted_probs else dominant_endpoint
+        base["dominant_endpoint"] = dominant_endpoint
+        base["mechanistic_proxies"] = mech
+    except Exception:
+        mech = {}
+
+    # Always populate assay recommendations from mechanistic layer
+    # when omics is absent, so assay tab is never empty
+    from oligotox.app_utils import build_assay_recommendations, detect_modality_class
+    try:
+        modality_class = detect_modality_class(modality, chemistry, conjugate, seq)
+        fallback_assays = build_assay_recommendations(base, mech, modality_class)
+    except Exception:
+        fallback_assays = []
+    omics_assays = recommend_assays(omics_readout, adjusted_probs) or []
+    merged_assays = omics_assays if omics_assays else fallback_assays
+
     base["omics"] = {
         "adjustment_summary": omics_adjustment,
         "explanation": build_omics_explanation(omics_readout),
-        "recommended_assays": recommend_assays(omics_readout, adjusted_probs),
+        "recommended_assays": merged_assays,
     }
 
     return base
