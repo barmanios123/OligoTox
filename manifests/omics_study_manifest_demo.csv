@@ -1,2 +1,0 @@
-candidate_id,study_id,comparison_label,file_path,deg_file_path,qc_profile,tissue,species,system,platform,timepoint_hr,dose_level,dose_value,dose_unit,replicate_count
-demo_001,study_liver_01,treated_vs_control,omics/examples/example_real_deg.csv,omics/examples/example_real_deg.csv,standard,liver,human,primary_hepatocyte,rna_seq,24,high,10.0,uM,3
