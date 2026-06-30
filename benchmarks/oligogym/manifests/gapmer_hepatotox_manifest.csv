@@ -1,0 +1,5 @@
+dataset_name,task_type,modality,endpoint,label_type,raw_path,processed_path,split_group_column,status,notes
+gapmer_hepatotox,classification,ASO,hepatotoxicity,binary,benchmarks/oligogym/raw/gapmer_hepatotox.csv,benchmarks/oligogym/processed/gapmer_hepatotox_normalized.csv,sequence_family,planned,"LNA gapmer hepatotoxicity benchmark normalization target"
+sirna_immunostimulation,classification,siRNA,immunostimulation,binary,benchmarks/oligogym/raw/sirna_immunostimulation.csv,benchmarks/oligogym/processed/sirna_immunostimulation_normalized.csv,sequence_family,planned,"PBMC/TLR-style immunostimulation benchmark"
+openaso,regression,ASO,efficacy,continuous,benchmarks/oligogym/raw/openaso.csv,benchmarks/oligogym/processed/openaso_normalized.csv,target_gene,planned,"Public ASO efficacy benchmark"
+pfred,regression,ASO_siRNA,efficacy,continuous,benchmarks/oligogym/raw/pfred.csv,benchmarks/oligogym/processed/pfred_normalized.csv,target_gene,planned,"PFRED reference benchmark"
