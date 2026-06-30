@@ -1,0 +1,18 @@
+# GEO accessions for OligoTox training data
+# Format: ACCESSION  DESCRIPTION  PRIMARY_ENDPOINT
+#
+# ASO / siRNA off-target transcriptomics
+GSE27638   ASO_hepatic_fibrosis_EGFR   hepatocellular_injury
+GSE47334   siRNA_off_target_seed_match_transcriptomics   offtarget_gene_silencing
+GSE68580   siRNA_innate_immune_RISC_loading_HEK293   innate_immune_activation
+#
+# Complement / immune activation
+GSE152641  innate_immune_two_gene_marker_panel   innate_immune_activation
+#
+# LNP / delivery system transcriptomics
+GSE171110  LNP_lipid_nanoparticle_immune_response_mouse_liver   complement_activation
+#
+# SEARCH THESE MANUALLY at https://www.ncbi.nlm.nih.gov/gds
+# Query: "antisense oligonucleotide toxicity transcriptomics"
+# Query: "siRNA off-target hepatotoxicity gene expression"
+# Query: "LNP innate immune activation liver RNA-seq"

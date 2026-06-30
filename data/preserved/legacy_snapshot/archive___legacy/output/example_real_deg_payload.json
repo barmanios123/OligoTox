@@ -1,0 +1,168 @@
+{
+  "metadata": {
+    "candidate_id": "demo_candidate_001",
+    "study_id": "aso_demo_study",
+    "comparison_label": "treated_vs_control",
+    "tissue": "liver",
+    "species": "human",
+    "system": "primary_hepatocyte",
+    "platform": "rna_seq",
+    "timepoint_hr": 24.0,
+    "dose_level": "high",
+    "dose_value": 10.0,
+    "dose_unit": "uM",
+    "replicate_count": 3
+  },
+  "qc": {
+    "qc_profile": "relaxed",
+    "n_rows": 15,
+    "n_unique_genes": 15,
+    "missing_gene_fraction": 0.0,
+    "missing_effect_fraction": 0.0,
+    "has_pval_adj": true,
+    "significant_gene_count": 15,
+    "passes_basic_qc": true
+  },
+  "omics_payload": {
+    "candidate_id": "demo_candidate_001",
+    "modality": "transcriptomics",
+    "tissue": "liver",
+    "species": "human",
+    "system": "primary_hepatocyte",
+    "platform": "rna_seq",
+    "timepoint_hr": 24.0,
+    "dose_level": "high",
+    "dose_value": 10.0,
+    "dose_unit": "uM",
+    "replicate_count": 3,
+    "coverage_score": 0.18404907975460122,
+    "quality_score": 1.0,
+    "concordance_score": 0.65,
+    "translational_relevance": 0.5920245398773006,
+    "pw_interferon": 0.3649427621791522,
+    "pw_nfkb": 0.22142073431402473,
+    "pw_tlr_innate": 0.0,
+    "pw_complement": 0.0,
+    "pw_coagulation": 0.0,
+    "pw_platelet": 0.0,
+    "pw_apoptosis": 0.0,
+    "pw_p53_damage": 0.0,
+    "pw_mitochondrial_stress": 0.0,
+    "pw_oxidative_stress": 0.0,
+    "pw_er_stress": 0.17665096815587691,
+    "pw_lysosome": 0.0,
+    "pw_autophagy": 0.0,
+    "pw_kupffer_activation": 0.0,
+    "pw_inflammasome": 0.0,
+    "pw_cytokine_signaling": 0.2574637538943937,
+    "pw_chemokine_signaling": 0.3152303515794376,
+    "pw_jnk_p38_stress": 0.0,
+    "pw_hepatocyte_injury": 0.0,
+    "pw_cholestasis_bile_acid": 0.0,
+    "pw_renal_tubular_stress": 0.0,
+    "pw_glomerular_injury": 0.0,
+    "pw_endosomal_trafficking": 0.0,
+    "pw_rnaseh1_long_transcript_risk": 0.18761758984205623,
+    "pw_hybridization_offtarget": 0.2173228282130754,
+    "pw_cell_cycle_arrest": 0.0,
+    "pw_dna_damage": 0.0,
+    "pw_necrosis_damage": 0.0,
+    "pw_fibrosis_remodeling": 0.0,
+    "pw_kynurenine_inflammation": 0.0,
+    "sentinel_ISG15": 0.45937500000000003,
+    "sentinel_IFI44": 0.309948500216801,
+    "sentinel_OAS1": 0.3571585313719505,
+    "sentinel_MX1": 0.33263896667150894,
+    "sentinel_CXCL10": 0.3655928126355006,
+    "sentinel_IL6": 0.20625,
+    "sentinel_TNFA": 0.19314431241869964,
+    "sentinel_CCL2": 0.26486789052337456,
+    "sentinel_C3": 0.0,
+    "sentinel_C5": 0.0,
+    "sentinel_PF4": 0.0,
+    "sentinel_SERPINE1": 0.0,
+    "sentinel_BAX": 0.0,
+    "sentinel_DDIT3": 0.2173228282130754,
+    "sentinel_ATF4": 0.17871459389905067,
+    "sentinel_LAMP1": 0.0,
+    "sentinel_CTSB": 0.0,
+    "sentinel_ALT_PROXY": 0.0,
+    "sentinel_AST_PROXY": 0.0,
+    "sentinel_KIM1_PROXY": 0.0,
+    "sentinel_NGAL_PROXY": 0.0,
+    "sentinel_RNASEH1_DEP_LONGTX": 0.0,
+    "sentinel_OFFTARGET_HYB_SCORE": 0.0,
+    "sentinel_KYN_RATIO": 0.0
+  },
+  "omics_summary": {
+    "top_pathways": [
+      [
+        "interferon",
+        0.3649427621791522
+      ],
+      [
+        "chemokine_signaling",
+        0.3152303515794376
+      ],
+      [
+        "cytokine_signaling",
+        0.2574637538943937
+      ],
+      [
+        "nfkb",
+        0.22142073431402473
+      ],
+      [
+        "hybridization_offtarget",
+        0.2173228282130754
+      ],
+      [
+        "rnaseh1_long_transcript_risk",
+        0.18761758984205623
+      ],
+      [
+        "er_stress",
+        0.17665096815587691
+      ],
+      [
+        "tlr_innate",
+        0.0
+      ]
+    ],
+    "top_sentinels": [
+      [
+        "ISG15",
+        0.45937500000000003
+      ],
+      [
+        "CXCL10",
+        0.3655928126355006
+      ],
+      [
+        "OAS1",
+        0.3571585313719505
+      ],
+      [
+        "MX1",
+        0.33263896667150894
+      ],
+      [
+        "IFI44",
+        0.309948500216801
+      ],
+      [
+        "CCL2",
+        0.26486789052337456
+      ],
+      [
+        "DDIT3",
+        0.2173228282130754
+      ],
+      [
+        "IL6",
+        0.20625
+      ]
+    ],
+    "confidence_overall": 0.6065184049079755
+  }
+}

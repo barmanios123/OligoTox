@@ -1,0 +1,37 @@
+Binary file src/oligotox/training/__pycache__/train.cpython-313.pyc matches
+Binary file tests/__pycache__/test_batch_omics_manifest_ingest.cpython-313-pytest-8.4.2.pyc matches
+Binary file tests/__pycache__/test_omics_integration.cpython-313-pytest-8.4.2.pyc matches
+Binary file tests/__pycache__/test_real_deg_ingest.cpython-313-pytest-8.4.2.pyc matches
+Binary file tests/__pycache__/test_training_uses_omics_features.cpython-313-pytest-8.4.2.pyc matches
+build_info.json
+candidate_level_omics_features.csv
+clinical_features.csv
+complement_features.csv
+composite_config.json
+cytokines_features.csv
+data/catalog/molecule_catalog_v2.json
+data/processed/curated_oligo_tox_master_v2.csv
+data/processed/endpoint_summary_v2.csv
+data/raw/tier1_labelable/casimersen_nda_label.pdf
+data/raw/tier1_labelable/eteplirsen_nda_label.pdf
+data/raw/tier1_labelable/golodirsen_nda_label.pdf
+data/raw/tier1_labelable/viltolarsen_nda_label.pdf
+dataset_metadata.json
+docs/curation_priority_v2.csv
+docs/labeling_scheme_v2.csv
+endpoint_thresholds.json
+epigenomics_features.csv
+example_real_deg.csv
+feature_matrix.csv
+genomics_features.csv
+label_matrix.csv
+lipidomics_features.csv
+metabolomics_features.csv
+microbiome_features.csv
+omics_ingest_qc.csv
+omics_study_manifest_demo.csv
+omics_training_table.csv
+proteomics_features.csv
+training_dataset.csv
+training_summary.json
+transcriptomics_features.csv

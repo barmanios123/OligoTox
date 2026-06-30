@@ -1,39 +1,92 @@
 # Python
-.venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PIPFILE.lock
 
-# Jupyter
-.ipynb_checkpoints/
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
 
-# Test/cache
-.pytest_cache/
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+.jupyter/
 
-# macOS
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
 
-# Generated outputs
-artifacts/
-Downloads/
+# Model files (too large for GitHub)
+models/*.pkl
+models/**/*.pkl
+!models/.gitkeep
+!models/README.md
 
-# Local only (not for GitHub)
-_local_only/
-output/
+# Data files (keep structure, not raw data)
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/README.md
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*.csv
+data/processed/*.parquet
+!data/processed/.gitkeep
+!data/processed/README.md
 
-# Large raw/preserved data (use DVC or store locally)
-data/raw/
-data/preserved/
-data/preserved/legacy_snapshot/
-data/raw/external_repos/
-data/raw/github_repos/
-# Temporary and log files
-streamlit.log
-training_output.log
-backups/
-_backups/
-docs/README_old_backup.md
-__pycache__/
-artifacts/logs/
+# Logs and temp files
 *.log
-reports/
-notebooks/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Environment variables
+.env
+.env.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Backups
+*_backup
+*.bak
+_backups/
+_local_only/

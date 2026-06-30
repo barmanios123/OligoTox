@@ -1,0 +1,60 @@
+[
+  {
+    "accession": "GSE47334",
+    "description": "siRNA_offtarget_seed_match_HeLa_transcriptomics",
+    "primary_endpoint": "offtarget_gene_silencing",
+    "priority": 1,
+    "gds_ids": [
+      "200047334",
+      "100009058",
+      "301147546",
+      "301147545",
+      "301147544"
+    ],
+    "downloaded": true
+  },
+  {
+    "accession": "GSE68580",
+    "description": "siRNA_RISC_innate_immune_HEK293",
+    "primary_endpoint": "innate_immune_activation",
+    "priority": 1,
+    "gds_ids": [
+      "200068580",
+      "100001261",
+      "301675832",
+      "301675831",
+      "301675830"
+    ],
+    "downloaded": true
+  },
+  {
+    "accession": "GSE27638",
+    "description": "ASO_EGFR_hepatic_fibrosis_liver_transcriptomics",
+    "primary_endpoint": "hepatocellular_injury",
+    "priority": 1,
+    "gds_ids": [
+      "200027638",
+      "100006101",
+      "300684870",
+      "300684869",
+      "300684868"
+    ],
+    "downloaded": true
+  },
+  {
+    "accession": "GSE152641",
+    "description": "innate_immune_two_gene_marker_COVID",
+    "primary_endpoint": "innate_immune_activation",
+    "priority": 2,
+    "gds_ids": [],
+    "downloaded": true
+  },
+  {
+    "accession": "GSE171110",
+    "description": "LNP_lipid_nanoparticle_liver_immune_mouse",
+    "primary_endpoint": "complement_activation",
+    "priority": 2,
+    "gds_ids": [],
+    "downloaded": true
+  }
+]

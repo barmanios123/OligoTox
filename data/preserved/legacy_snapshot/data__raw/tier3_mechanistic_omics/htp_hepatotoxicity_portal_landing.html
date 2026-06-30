@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>HepatoToxicity Portal</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <script src="resources/vendor/jquery/jquery-3.5.0.min.js"></script>
+
+  <!-- Favicons -->
+  <link href="resources/img/favicon.png" rel="icon">
+  <link href="resources/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+<!--   <link href="./css/css.css" rel="stylesheet"> -->
+  <link href="resources/css/css.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+<!--   <link href="./css/css2.css" rel="stylesheet">  font-family: 'Farro', sans-serif; -->
+  <link href="resources/css/css2.css" rel="stylesheet">  <!-- font-family: 'Farro', sans-serif; -->
+
+  <link href="resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="resources/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="resources/vendor/jquery/jquery.dataTables.min.css" rel="stylesheet">
+  <link href="resources/css/style_new.css" rel="stylesheet">
+
+  <script src="resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="resources/vendor/jquery/jquery.dataTables.min.js"></script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-200753003-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-200753003-1');
+</script>
+
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top header-transparent">
+    <div class="container d-flex align-items-center">
+
+      <h1 class="logo me-auto">
+          <a href=".">
+            <span id="spa"><span class="gre clogo">H</span><span class="nor">EPATO</span><span class="gre clogo">T</span><span class="nor">OXICITY</span></span><br>
+            <span id="space"><span class="pin clogo">P</span> O R T A L</span>
+          </a>
+      </h1>
+ 
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link menu-item menu-search" href="./search">Search</a></li>
+          <li><a class="nav-link menu-item menu-statistics" href="./statistics">Statistics</a></li>
+          <li><a class="nav-link menu-item menu-download" href="./download">Downloads</a></li>
+          <li><a class="nav-link menu-item menu-help" href="./help">Help</a></li>
+          <li><a class="nav-link menu-item menu-aboutus" href="./aboutus">About us</a></li>
+        </ul>
+        <i id="iconList" class="bi mobile-nav-toggle bi-list"></i>
+        <i id="iconX" class="bi mobile-nav-toggle bi-x"></i>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
+<!-- popup -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta charset="UTF-8" />
+		
+		<title>Notice</title>
+		
+		<style type="text/css">
+			#pop {
+				width: 570px;
+			    background: #fff;
+			    position: fixed;
+			    top: 150px;
+			    left: calc(50% - 20%);
+			    z-index: 1000;
+			    font-size: 14px;
+			    color: #213d64;
+			    line-height: 18px;
+			    font-family: 나눔고딕, NanumGothic, ng;
+			    letter-spacing: 0;
+			    box-shadow: rgb(0 0 0 / 19%) 0px 10px 20px, rgb(0 0 0 / 23%) 0px 6px 6px;
+			    border: 1px solid rgb(65, 71, 143);
+			}
+			
+			#main_popup p { margin-bottom:0; }
+		</style>
+		
+		<script type="text/javascript">
+		function setCookie(name, value, expiredays) {
+			var todayDate = new Date();
+			todayDate.setDate(todayDate.getDate() + expiredays);
+			document.cookie = name + "=" + escape(value) + "; path=/; expires=" + todayDate.toGMTString() + ";"
+		}
+		
+		function closeWin() {
+			/* if (document.getElementById("today_close").checked) { */
+			if ( $("#todaycloseyn").prop("checked") ) {
+				setCookie("notToday", "Y", 1);
+			}
+		}	
+		
+		jQuery(document).ready(function($) {
+			/* console.log(document.cookie); */
+			/* setCookie("notToday", "N", 1); */
+			$("#close").click( function() {
+				$("#main_popup").hide();
+			})
+			
+			$("#popupText").click(function(){
+				if($('#todaycloseyn').is(':checked')){
+					$("#todaycloseyn").prop('checked', false) ;		
+					setCookie("notToday", "N", 1);
+				} else{
+					$("#todaycloseyn").prop('checked',true);
+					setCookie("notToday", "Y", 1);
+				}
+			});
+			
+			if(getCookie("notToday") != "Y") {
+				$("#main_popup").show();
+			}
+		});
+		
+		function getCookie(name) {
+			var obj = name + "=";
+			var x = 0;
+			while ( x <= document.cookie.length ) {
+				var y = ( x + obj.length );
+				
+				if ( document.cookie.substring( x, y ) == obj ) {
+					if ( (endOfCookie=document.cookie.indexOf( ";", y )) == -1 )
+						endOfCookie = document.cookie.length;
+					
+					return unescape( document.cookie.substring( y, endOfCookie ) );
+				}
+				
+				x = document.cookie.indexOf( " ", x ) + 1;
+				if ( x == 0 ) break;
+			}
+			
+			return "";
+		}
+	</script>
+</head>
+	
+<body>
+
+	<div id="main_popup" style="width:1800px; margin:0 auto; display:none;" draggable="true">
+		<div id="pop" draggable="true">
+			<div style="margin:20px;">
+				<div style="font-size:18px;">
+					<p style="font-weight: bold;">Notice</p>
+				</div>
+				 <div style="margin-top:30px; font-size:14px; line-height:20px;">
+                                         <p>
+                                                This database service is unavailable from approximately <strong>18:00 P.M. KST, on Friday June 19, 2026 until approximately 24:00 P.M. KST, on Sunday June 21, 2026</strong>, due to planned maintenance.<br/><br/>
+                                                Please come back after that time.<br/>
+                                                We apologize for any inconvenience.
+                                        </p>
+                                </div>
+                                <div style="background-color:#eee; margin-top:20px; padding:20px;">
+                                        <h3 style="margin:0; text-align:left; color:#4e79b3; font-size:1.17em; font-weight:bold;">Planned Outage</h3>
+                                        <p style="text-align:left; padding-top:10px;">18:00 P.M. KST, on Friday June 19 - 24:00 P.M. KST, on Sunday June 21</p>
+                                </div>	
+				
+			</div>
+			<div style="margin:20px;">
+				<div style="text-align:left; position:absolute;">
+					<p><input type="checkbox" id="todaycloseyn" name="todaycloseyn" onclick="javscript:closeWin();" />&nbsp;&nbsp; <span id="popupText">It doesn't pop up today.</span> </p>
+				</div>
+				<div style="text-align:right;">
+					<button class="btn btn-sm" style="padding: 5px 15px; border: none; background: #41478f; color: #fff; border-radius: 10px;" id="close">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script>	
+		// Make the DIV element draggable:
+		dragElement(document.getElementById("pop"));
+	
+		function dragElement(elmnt) {
+		  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+		  if (document.getElementById(elmnt.id)) {
+		    // if present, the header is where you move the DIV from:
+		    document.getElementById(elmnt.id).onmousedown = dragMouseDown;
+		  } else {
+		    // otherwise, move the DIV from anywhere inside the DIV:
+		    elmnt.onmousedown = dragMouseDown;
+		  }
+	
+		  function dragMouseDown(e) {
+		    e = e || window.event;
+		    e.preventDefault();
+		    // get the mouse cursor position at startup:
+		    pos3 = e.clientX;
+		    pos4 = e.clientY;
+		    document.onmouseup = closeDragElement;
+		    // call a function whenever the cursor moves:
+		    document.onmousemove = elementDrag;
+		  }
+	
+		  function elementDrag(e) {
+		    e = e || window.event;
+		    e.preventDefault();
+		    // calculate the new cursor position:
+		    pos1 = pos3 - e.clientX;
+		    pos2 = pos4 - e.clientY;
+		    pos3 = e.clientX;
+		    pos4 = e.clientY;
+		    // set the element's new position:
+		    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+		    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+		  }
+	
+		  function closeDragElement() {
+		    // stop moving when mouse button is released:
+		    document.onmouseup = null;
+		    document.onmousemove = null;
+		  }
+		}
+	</script>
+</body>
+</html>
+
+
+
+<!-- popup -->
+
+<div id="menuImg"></div><!-- End Hero -->
+
+<main id="main">
+  <!-- ======= explain Section ======= -->
+<div class="bg-light" style="padding: 70px 0px 50px 0px;">
+  <!-- <div class="section-title">
+    <h2>About Database</h2>
+  </div> -->
+  <div class="container">
+    <p class="main-db-info">
+      <span>HepatoToxicity Portal</span> is an integrated resource of knowledgebase and prediction tools for liver toxicity of small molecules. Chemical toxicity data, aggregated from 9 public resources, were manually curated for liver toxicity based on their documents and experimental methods (clinical, in vivo, and in vitro). Additionally, we have also developed and implemented state-of-the-art prediction tools that predicted liver toxicity for user-supplied chemicals, taking advantage of chemical structural features as well as gene expression profiles of chemical perturbation.
+    </p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="col-lg-12 mx-auto text-center ">
+    <img src="resources/img/common/overview_v4.png" alt="" class="w-100 my-5">
+  </div>
+  <hr>
+  <div class="mt-5">
+    <div id="references" class="col-12 pt-3 pt-lg-0 content aos-init aos-animate" data-aos="fade-left" data-aos-delay="100">
+      <h4 class="mb-4">References</h4>
+      <ul>
+        <li class="mb-3">
+          <i class="bi bi-check-all"></i>
+          <h5 style="color:#124265;">HTP: HepatoToxicity Portal</h5>
+          <p class="pt-2">
+            Authors..., In preparation
+          </p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" >
+    <div class="footer-newsletter">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">            
+            <div>
+              <a href="#"><img src="resources/img/common/mfds_logo.png"></a>
+              <!-- <a href="#"><img src="./img/common/kobic_ci.png" class="ml-4"></a> -->
+            </div>
+            <div class="footer-info mt-3 text-center">
+              We highly recommend that you use the current version of Chrome and Safari browser for HTP<br/>
+              <span class="copyright">&copy; 2023. KOBIC all rights reserved.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  <!-- Template Main JS File -->
+  <script src="resources/js/main.js"></script>
+
+</body>
+</html>
