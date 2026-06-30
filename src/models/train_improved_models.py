@@ -19,7 +19,7 @@ warnings.filterwarnings('ignore')
 
 # Configuration
 DATA_PATH = Path('data/processed')
-MODEL_PATH = Path('models/improved')
+MODEL_PATH = Path('artifacts/models/latest_train_baseline')
 MODEL_PATH.mkdir(exist_ok=True, parents=True)
 
 # Endpoints to train

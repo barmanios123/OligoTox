@@ -95,7 +95,7 @@ python scripts/load_literature_examples.py data/literature_examples/my_cases.csv
 
 3. **Retrain models:**
 ```bash
-python train_models.py
+# training entrypoint moved or removed from minimal runtime repo
 ```
 
 4. **Validate:**

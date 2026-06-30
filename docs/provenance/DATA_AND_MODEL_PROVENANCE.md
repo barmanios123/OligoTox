@@ -61,7 +61,7 @@
 **Storage Location**: `src/oligotox/models/trained/`
 
 **Training Date**: June 26, 2026
-**Training Script**: `train_models.py` (root) + `src/oligotox/training/train.py`
+**Training Script**: `artifacts/models/latest_train_baseline/` pretrained bundle (root) + `src/oligotox/training/train.py`
 **Algorithm**: RandomForestClassifier (scikit-learn)
 **Hyperparameters**:
 - `n_estimators=100`

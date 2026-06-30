@@ -59,7 +59,7 @@ http://localhost:8502
 ### Run training
 
 ```bash
-python train_models.py
+# training entrypoint moved or removed from minimal runtime repo
 ```
 
 If you prefer the package entrypoint and it is wired in your environment:

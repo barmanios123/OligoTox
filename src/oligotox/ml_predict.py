@@ -1,6 +1,6 @@
 """oligotox.ml_predict
 ~~~~~~~~~~~~~~~~~~~~
-Loads v4 RF models from artifacts/models_v4/ and artifacts/models_neurotox/
+Loads v4 RF models from artifacts/models/latest_train_baseline/ and artifacts/models/latest_train_baseline/
 and generates per-endpoint toxicity probability scores for a given nucleotide sequence.
 
 Usage:
