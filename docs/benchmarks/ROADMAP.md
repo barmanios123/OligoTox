@@ -20,3 +20,7 @@ Phase 1.5
 Phase 1.75
 - Run a simple reproducible baseline on normalized, leakage-aware benchmark splits.
 - Save metrics, predictions, and error analysis artifacts before adding advanced models.
+
+Phase 1.9
+- Add post-run error analysis for false positives, false negatives, and hardest benchmark cases.
+- Inspect sequence-length, GC, and motif-linked failure patterns before upgrading models.
