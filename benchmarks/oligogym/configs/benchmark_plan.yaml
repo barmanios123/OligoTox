@@ -1,0 +1,35 @@
+benchmark_name: oligogym_phase1
+version: 0.1
+datasets:
+  - name: gapmer_hepatotox
+    status: planned
+  - name: sirna_immunostimulation
+    status: planned
+  - name: openaso
+    status: planned
+  - name: pfred
+    status: planned
+split_strategy:
+  name: leakage_resistant
+  notes: "Replace with DataSAIL or equivalent grouped split logic."
+models:
+  - name: oligotox_baseline
+    type: existing_platform_model
+    status: active
+  - name: rnafm_features_baseline
+    type: embedding_augmented_baseline
+    status: planned
+  - name: rinalmo_features_baseline
+    type: embedding_augmented_baseline
+    status: planned
+  - name: oligoformer_adapter
+    type: external_model
+    status: planned
+  - name: ensirna_adapter
+    type: external_model
+    status: planned
+metrics:
+  classification: [roc_auc, pr_auc, f1, balanced_accuracy]
+  regression: [pearson_r, spearman_r, mae, rmse]
+outputs:
+  results_dir: benchmarks/oligogym/results
