@@ -24,3 +24,7 @@ Phase 1.75
 Phase 1.9
 - Add post-run error analysis for false positives, false negatives, and hardest benchmark cases.
 - Inspect sequence-length, GC, and motif-linked failure patterns before upgrading models.
+
+Phase 2.0
+- Run the full external benchmark pipeline end to end on at least one real dataset.
+- Save normalized data, splits, baseline metrics, predictions, and error analysis as the first public validation artifact set.
