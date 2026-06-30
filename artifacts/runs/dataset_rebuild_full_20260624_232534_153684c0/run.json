@@ -1,0 +1,101 @@
+{
+  "run_id": "dataset_rebuild_full_20260624_232534_153684c0",
+  "job_name": "dataset_rebuild_full",
+  "status": "failed",
+  "trigger": "ui",
+  "started_at": "2026-06-25T03:25:34.916626+00:00",
+  "finished_at": "2026-06-25T03:25:37.017158+00:00",
+  "parameters": {},
+  "logs_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/master.log",
+  "artifacts": [
+    {
+      "name": "training_dataset.csv",
+      "path": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset.csv",
+      "kind": "training_dataset",
+      "checksum_sha256": "d9496c0b969107a361b37c4f57a30e460a27317e0d36a5457ef1a6f8611d2edd",
+      "size_bytes": 303115
+    },
+    {
+      "name": "training_dataset_with_chem.csv",
+      "path": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset_with_chem.csv",
+      "kind": "with_chem_dataset",
+      "checksum_sha256": "6951eef1305a6b415f2bace980cd3d67440029f16f75c3bda7ee8a4b99881faa",
+      "size_bytes": 470979
+    },
+    {
+      "name": "training_dataset_rebuilt_audit.csv",
+      "path": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset_rebuilt_audit.csv",
+      "kind": "audit_file",
+      "checksum_sha256": "075df2a3f72a5fc5da1b6ee2e2fb0c24bc3896079e2973ea3a735269db96ec78",
+      "size_bytes": 85200
+    },
+    {
+      "name": "mapping_validate.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/mapping_validate.log",
+      "kind": "step_log",
+      "checksum_sha256": "119e1cdddcd1016730c7fd7914fbcfb9e38c9913b6f8f4a6b982f0f468448669",
+      "size_bytes": 142
+    },
+    {
+      "name": "dataset_rebuild.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/dataset_rebuild.log",
+      "kind": "step_log",
+      "checksum_sha256": "8fca048f8a09839d358e680e94e46a8507261263440924a0afa53ffeb50c95e7",
+      "size_bytes": 243
+    },
+    {
+      "name": "add_chem_features.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/add_chem_features.log",
+      "kind": "step_log",
+      "checksum_sha256": "8c915d8ab3e8fc0d1fac67e472b764695a712dfc8141a4a20e1218072d6f979d",
+      "size_bytes": 110
+    },
+    {
+      "name": "build_dataset.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/build_dataset.log",
+      "kind": "step_log",
+      "checksum_sha256": "408a6cba8437c15053164962c536b8fbd5497e68fff1286ec3696b3fdd1a245c",
+      "size_bytes": 23
+    },
+    {
+      "name": "rebuild_recheck.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/rebuild_recheck.log",
+      "kind": "step_log",
+      "checksum_sha256": "0f822dee60766c317f69d27e60615e2cc7849e489b14c93a6f13245bc80ad4fa",
+      "size_bytes": 25
+    },
+    {
+      "name": "audit_sequence_coverage.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/audit_sequence_coverage.log",
+      "kind": "step_log",
+      "checksum_sha256": "77116afd15bf59d7e94f340f9aa488b7d4973c3a0ee6139ca2ba90b543401686",
+      "size_bytes": 280
+    },
+    {
+      "name": "master.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/master.log",
+      "kind": "master_log",
+      "checksum_sha256": "b20580c244e1fe9fa25d6bf8f74b9f86f708525d2544d8c20aeea1e431ef6288",
+      "size_bytes": 1011
+    },
+    {
+      "name": "outputs.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/outputs.json",
+      "kind": "outputs_manifest",
+      "checksum_sha256": "166cf91ea6c19de829a19428bcbcd77503cfb4adbc289944d60126de1cdc5f01",
+      "size_bytes": 2129
+    },
+    {
+      "name": "metrics.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_232534_153684c0/metrics.json",
+      "kind": "run_metrics",
+      "checksum_sha256": "2b0be365839915d204fbce29ba729ccee98c72ae10de365cf6d5bc014567013e",
+      "size_bytes": 44
+    }
+  ],
+  "metrics": {
+    "n_steps": 6,
+    "n_steps_succeeded": 5
+  },
+  "error": "Step failed: audit_sequence_coverage"
+}

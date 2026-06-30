@@ -1,0 +1,38 @@
+{
+  "run_id": "dataset_rebuild_full_20260624_194608_bbf6e84a",
+  "job_name": "dataset_rebuild_full",
+  "status": "succeeded",
+  "trigger": "assistant_acceptance",
+  "started_at": "2026-06-24T23:46:08.990859+00:00",
+  "finished_at": "2026-06-24T23:46:15.823114+00:00",
+  "parameters": {},
+  "logs_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_194608_bbf6e84a/master.log",
+  "artifacts": [
+    {
+      "name": "training_dataset.csv",
+      "path": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset.csv",
+      "kind": "training_dataset",
+      "checksum_sha256": "06692c6489a36a621ff732053091d76b77645bae1f77cf1f0797923762f081cc",
+      "size_bytes": 284276
+    },
+    {
+      "name": "training_dataset_with_chem.csv",
+      "path": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset_with_chem.csv",
+      "kind": "with_chem_dataset",
+      "checksum_sha256": "4f02a5920892fa4b9d7872723a0e4d7fcebad5063287c214705ecca26a6cfc0f",
+      "size_bytes": 408561
+    },
+    {
+      "name": "training_dataset_rebuilt_audit.csv",
+      "path": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset_rebuilt_audit.csv",
+      "kind": "audit_file",
+      "checksum_sha256": "52499eaa4b513e8cede5cf8d63cfd5b634c7958dc5f36f067346c49c38ce9be2",
+      "size_bytes": 82914
+    }
+  ],
+  "metrics": {
+    "n_steps": 7,
+    "n_steps_succeeded": 7
+  },
+  "error": null
+}

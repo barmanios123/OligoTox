@@ -1,0 +1,6 @@
+{
+  "model_dir": "artifacts/models/latest_train_baseline",
+  "summary_report": "artifacts/models/latest_train_baseline/train_eval_report.csv",
+  "manifest": "artifacts/models/latest_train_baseline/model_manifest.json",
+  "n_models_saved": 11
+}

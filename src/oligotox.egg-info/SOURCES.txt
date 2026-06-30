@@ -19,11 +19,19 @@ src/oligotox.egg-info/dependency_links.txt
 src/oligotox.egg-info/top_level.txt
 src/oligotox/assays/__init__.py
 src/oligotox/assays/planner.py
+src/oligotox/benchmarks/__init__.py
+src/oligotox/benchmarks/oligogym.py
 src/oligotox/config/__init__.py
 src/oligotox/config/paths.py
 src/oligotox/config/risk_config.py
 src/oligotox/config/settings.py
+src/oligotox/efficacy/__init__.py
+src/oligotox/efficacy/ensirna.py
+src/oligotox/efficacy/oligoformer.py
+src/oligotox/efficacy/registry.py
+src/oligotox/efficacy/sidpt.py
 src/oligotox/evaluation/__init__.py
+src/oligotox/evaluation/benchmark_registry.py
 src/oligotox/evaluation/metrics.py
 src/oligotox/features/__init__.py
 src/oligotox/features/aso_optimizer_v03.py
@@ -37,6 +45,7 @@ src/oligotox/features/structure_features.py
 src/oligotox/features/v03_bridge.py
 src/oligotox/inference/__init__.py
 src/oligotox/inference/api.py
+src/oligotox/integration/external_registry.py
 src/oligotox/integrations/__init__.py
 src/oligotox/integrations/candidate_mechanism.py
 src/oligotox/integrations/chembl_benchmark.py
@@ -61,6 +70,7 @@ src/oligotox/models/model.py
 src/oligotox/models/persistence.py
 src/oligotox/models/registry.py
 src/oligotox/models/trainer.py
+src/oligotox/models/efficacy/external_models.py
 src/oligotox/omics/__init__.py
 src/oligotox/omics/assay_recommender.py
 src/oligotox/omics/batch_ingest.py
@@ -94,6 +104,10 @@ src/oligotox/pipelines/train_all.py
 src/oligotox/pkpd/__init__.py
 src/oligotox/pkpd/bridge.py
 src/oligotox/pkpd/simulator.py
+src/oligotox/pkpd/simulators/__init__.py
+src/oligotox/pkpd/simulators/galnac_pkpd.py
+src/oligotox/reporting/__init__.py
+src/oligotox/reporting/oswg_report.py
 src/oligotox/rules/__init__.py
 src/oligotox/rules/engine.py
 src/oligotox/rules/engine_v2.py

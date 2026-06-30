@@ -1,0 +1,12 @@
+endpoint,status,n_rows,positive_rate,roc_auc_cv,pr_auc_cv,model_path
+cns_toxicity,trained,24,0.08333333333333333,0.4545454545454546,0.10795454545454546,artifacts/models/latest_train_baseline/cns_toxicity.joblib
+coagulation_effect,trained,24,0.20833333333333334,0.5789473684210527,0.4028195488721804,artifacts/models/latest_train_baseline/coagulation_effect.joblib
+complement_activation,trained,28,0.21428571428571427,0.7196969696969697,0.510440947940948,artifacts/models/latest_train_baseline/complement_activation.joblib
+cytokine_release,trained,28,0.25,0.6802721088435374,0.3593209213509966,artifacts/models/latest_train_baseline/cytokine_release.joblib
+hepatocellular_injury,trained,607,0.3344316309719934,0.9896112763985758,0.9872639430357314,artifacts/models/latest_train_baseline/hepatocellular_injury.joblib
+injection_site_reaction,trained,24,0.5,0.7499999999999999,0.7674404098317141,artifacts/models/latest_train_baseline/injection_site_reaction.joblib
+innate_immune_activation,trained,28,0.25,0.6802721088435374,0.3593209213509966,artifacts/models/latest_train_baseline/innate_immune_activation.joblib
+offtarget_gene_silencing,trained,544,0.125,0.9898356401384083,0.9720247712150295,artifacts/models/latest_train_baseline/offtarget_gene_silencing.joblib
+renal_accumulation,trained,24,0.2916666666666667,0.7815126050420168,0.5407596371882086,artifacts/models/latest_train_baseline/renal_accumulation.joblib
+renal_tubular_injury,trained,28,0.25,0.7278911564625851,0.47005582137161084,artifacts/models/latest_train_baseline/renal_tubular_injury.joblib
+thrombocytopenia,trained,28,0.14285714285714285,0.8854166666666667,0.7083333333333333,artifacts/models/latest_train_baseline/thrombocytopenia.joblib

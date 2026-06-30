@@ -1,0 +1,2862 @@
+[
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_eval_report.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.300704+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": true
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_eval_summary.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.300958+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_eval_comparison.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.301191+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_baseline.log",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_baseline.log",
+    "metrics": {
+      "source_file": "train_baseline.log"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.301596+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:metrics.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.301802+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_model_v4.log",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_model_v4.log",
+    "metrics": {
+      "source_file": "train_model_v4.log"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302025+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:eval_v4_summary.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302209+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:oligotox_v4_final_eval.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302390+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:neurotox_eval.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302640+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:eval_v4_feature_importance.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302868+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:models_index.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.147122+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:metrics.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.149859+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:train_eval_report.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.150433+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:train_eval_summary.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.150902+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:train_eval_comparison.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.151601+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:eval_v4_summary.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.152071+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:oligotox_v4_final_eval.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.152311+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:neurotox_eval.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.152556+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195033_4e768c26:eval_v4_feature_importance.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:50:36.152800+00:00",
+    "source_run_id": "train_model_v4_20260624_195033_4e768c26",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:models_index.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.320761+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:model_manifest.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.322895+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:metrics.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.323142+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:train_eval_report.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.323629+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:train_eval_summary.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.334218+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:train_eval_comparison.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.334698+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:eval_v4_summary.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.335168+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:oligotox_v4_final_eval.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.347648+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:neurotox_eval.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.347929+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195400_6d8161fd:eval_v4_feature_importance.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195400_6d8161fd/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:54:02.348179+00:00",
+    "source_run_id": "train_model_v4_20260624_195400_6d8161fd",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:cns_toxicity.joblib",
+    "endpoint": "cns_toxicity",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/cns_toxicity.joblib",
+    "metrics": {
+      "source_file": "cns_toxicity.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.120493+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:coagulation_effect.joblib",
+    "endpoint": "coagulation_effect",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/coagulation_effect.joblib",
+    "metrics": {
+      "source_file": "coagulation_effect.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.121317+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:complement_activation.joblib",
+    "endpoint": "complement_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/complement_activation.joblib",
+    "metrics": {
+      "source_file": "complement_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.121639+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:cytokine_release.joblib",
+    "endpoint": "cytokine_release",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/cytokine_release.joblib",
+    "metrics": {
+      "source_file": "cytokine_release.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.121936+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:hepatocellular_injury.joblib",
+    "endpoint": "hepatocellular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/hepatocellular_injury.joblib",
+    "metrics": {
+      "source_file": "hepatocellular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.122272+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:injection_site_reaction.joblib",
+    "endpoint": "injection_site_reaction",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/injection_site_reaction.joblib",
+    "metrics": {
+      "source_file": "injection_site_reaction.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.122634+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:innate_immune_activation.joblib",
+    "endpoint": "innate_immune_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/innate_immune_activation.joblib",
+    "metrics": {
+      "source_file": "innate_immune_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.123082+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:offtarget_gene_silencing.joblib",
+    "endpoint": "offtarget_gene_silencing",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/offtarget_gene_silencing.joblib",
+    "metrics": {
+      "source_file": "offtarget_gene_silencing.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.123427+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:renal_accumulation.joblib",
+    "endpoint": "renal_accumulation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/renal_accumulation.joblib",
+    "metrics": {
+      "source_file": "renal_accumulation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.123735+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:renal_tubular_injury.joblib",
+    "endpoint": "renal_tubular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/renal_tubular_injury.joblib",
+    "metrics": {
+      "source_file": "renal_tubular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.124036+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:thrombocytopenia.joblib",
+    "endpoint": "thrombocytopenia",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/thrombocytopenia.joblib",
+    "metrics": {
+      "source_file": "thrombocytopenia.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.124342+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:eval_v4_feature_importance.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.125723+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:eval_v4_summary.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.127018+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:metrics.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.129940+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:model_manifest.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.130587+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:models_index.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.131544+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:neurotox_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.132823+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:oligotox_v4_final_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.134148+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:train_eval_comparison.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.135476+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:train_eval_report.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.137206+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:train_eval_summary.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.138566+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_195742_275babcf:train_metadata.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195742_275babcf/train_metadata.json",
+    "metrics": {
+      "source_file": "train_metadata.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:57:45.138909+00:00",
+    "source_run_id": "train_model_v4_20260624_195742_275babcf",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:cns_toxicity.joblib",
+    "endpoint": "cns_toxicity",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/cns_toxicity.joblib",
+    "metrics": {
+      "source_file": "cns_toxicity.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.797125+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:coagulation_effect.joblib",
+    "endpoint": "coagulation_effect",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/coagulation_effect.joblib",
+    "metrics": {
+      "source_file": "coagulation_effect.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.798433+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:complement_activation.joblib",
+    "endpoint": "complement_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/complement_activation.joblib",
+    "metrics": {
+      "source_file": "complement_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.799079+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:cytokine_release.joblib",
+    "endpoint": "cytokine_release",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/cytokine_release.joblib",
+    "metrics": {
+      "source_file": "cytokine_release.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.799476+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:hepatocellular_injury.joblib",
+    "endpoint": "hepatocellular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/hepatocellular_injury.joblib",
+    "metrics": {
+      "source_file": "hepatocellular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.799860+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:injection_site_reaction.joblib",
+    "endpoint": "injection_site_reaction",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/injection_site_reaction.joblib",
+    "metrics": {
+      "source_file": "injection_site_reaction.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.800234+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:innate_immune_activation.joblib",
+    "endpoint": "innate_immune_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/innate_immune_activation.joblib",
+    "metrics": {
+      "source_file": "innate_immune_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.800626+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:offtarget_gene_silencing.joblib",
+    "endpoint": "offtarget_gene_silencing",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/offtarget_gene_silencing.joblib",
+    "metrics": {
+      "source_file": "offtarget_gene_silencing.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.801014+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:renal_accumulation.joblib",
+    "endpoint": "renal_accumulation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/renal_accumulation.joblib",
+    "metrics": {
+      "source_file": "renal_accumulation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.803096+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:renal_tubular_injury.joblib",
+    "endpoint": "renal_tubular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/renal_tubular_injury.joblib",
+    "metrics": {
+      "source_file": "renal_tubular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.803557+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:thrombocytopenia.joblib",
+    "endpoint": "thrombocytopenia",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/thrombocytopenia.joblib",
+    "metrics": {
+      "source_file": "thrombocytopenia.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.803966+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:eval_v4_feature_importance.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.806668+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:eval_v4_summary.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.808884+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:metrics.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.815212+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:model_manifest.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.816455+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:models_index.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.818997+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:neurotox_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.821965+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:oligotox_v4_final_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.824115+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:train_eval_comparison.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.828901+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:train_eval_report.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.832208+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:train_eval_summary.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.835317+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201132_88e466eb:train_metadata.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201132_88e466eb/train_metadata.json",
+    "metrics": {
+      "source_file": "train_metadata.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:11:35.835786+00:00",
+    "source_run_id": "train_model_v4_20260624_201132_88e466eb",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:cns_toxicity.joblib",
+    "endpoint": "cns_toxicity",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/cns_toxicity.joblib",
+    "metrics": {
+      "source_file": "cns_toxicity.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.379112+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:coagulation_effect.joblib",
+    "endpoint": "coagulation_effect",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/coagulation_effect.joblib",
+    "metrics": {
+      "source_file": "coagulation_effect.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.380471+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:complement_activation.joblib",
+    "endpoint": "complement_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/complement_activation.joblib",
+    "metrics": {
+      "source_file": "complement_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.380981+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:cytokine_release.joblib",
+    "endpoint": "cytokine_release",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/cytokine_release.joblib",
+    "metrics": {
+      "source_file": "cytokine_release.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.381659+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:hepatocellular_injury.joblib",
+    "endpoint": "hepatocellular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/hepatocellular_injury.joblib",
+    "metrics": {
+      "source_file": "hepatocellular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.382764+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:injection_site_reaction.joblib",
+    "endpoint": "injection_site_reaction",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/injection_site_reaction.joblib",
+    "metrics": {
+      "source_file": "injection_site_reaction.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.383367+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:innate_immune_activation.joblib",
+    "endpoint": "innate_immune_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/innate_immune_activation.joblib",
+    "metrics": {
+      "source_file": "innate_immune_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.383907+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:offtarget_gene_silencing.joblib",
+    "endpoint": "offtarget_gene_silencing",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/offtarget_gene_silencing.joblib",
+    "metrics": {
+      "source_file": "offtarget_gene_silencing.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.384436+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:renal_accumulation.joblib",
+    "endpoint": "renal_accumulation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/renal_accumulation.joblib",
+    "metrics": {
+      "source_file": "renal_accumulation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.384949+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:renal_tubular_injury.joblib",
+    "endpoint": "renal_tubular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/renal_tubular_injury.joblib",
+    "metrics": {
+      "source_file": "renal_tubular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.385462+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:thrombocytopenia.joblib",
+    "endpoint": "thrombocytopenia",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/thrombocytopenia.joblib",
+    "metrics": {
+      "source_file": "thrombocytopenia.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.386602+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:eval_v4_feature_importance.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.390521+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:eval_v4_summary.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.395041+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:metrics.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.404165+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:model_manifest.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.406833+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:models_index.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.409511+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:neurotox_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.414129+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:oligotox_v4_final_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.418337+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:train_eval_comparison.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.422677+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:train_eval_report.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.427378+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:train_eval_summary.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.431533+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_201740_107f19c4:train_metadata.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_201740_107f19c4/train_metadata.json",
+    "metrics": {
+      "source_file": "train_metadata.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:17:43.432083+00:00",
+    "source_run_id": "train_model_v4_20260624_201740_107f19c4",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:cns_toxicity.joblib",
+    "endpoint": "cns_toxicity",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/cns_toxicity.joblib",
+    "metrics": {
+      "source_file": "cns_toxicity.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.047648+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:coagulation_effect.joblib",
+    "endpoint": "coagulation_effect",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/coagulation_effect.joblib",
+    "metrics": {
+      "source_file": "coagulation_effect.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.048943+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:complement_activation.joblib",
+    "endpoint": "complement_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/complement_activation.joblib",
+    "metrics": {
+      "source_file": "complement_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.049590+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:cytokine_release.joblib",
+    "endpoint": "cytokine_release",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/cytokine_release.joblib",
+    "metrics": {
+      "source_file": "cytokine_release.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.050229+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:hepatocellular_injury.joblib",
+    "endpoint": "hepatocellular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/hepatocellular_injury.joblib",
+    "metrics": {
+      "source_file": "hepatocellular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.050848+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:injection_site_reaction.joblib",
+    "endpoint": "injection_site_reaction",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/injection_site_reaction.joblib",
+    "metrics": {
+      "source_file": "injection_site_reaction.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.051468+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:innate_immune_activation.joblib",
+    "endpoint": "innate_immune_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/innate_immune_activation.joblib",
+    "metrics": {
+      "source_file": "innate_immune_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.052071+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:offtarget_gene_silencing.joblib",
+    "endpoint": "offtarget_gene_silencing",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/offtarget_gene_silencing.joblib",
+    "metrics": {
+      "source_file": "offtarget_gene_silencing.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.052690+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:renal_accumulation.joblib",
+    "endpoint": "renal_accumulation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/renal_accumulation.joblib",
+    "metrics": {
+      "source_file": "renal_accumulation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.053325+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:renal_tubular_injury.joblib",
+    "endpoint": "renal_tubular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/renal_tubular_injury.joblib",
+    "metrics": {
+      "source_file": "renal_tubular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.054732+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:thrombocytopenia.joblib",
+    "endpoint": "thrombocytopenia",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/thrombocytopenia.joblib",
+    "metrics": {
+      "source_file": "thrombocytopenia.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.055746+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:eval_v4_feature_importance.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.062633+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:eval_v4_summary.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.067675+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:metrics.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.080377+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:model_manifest.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.084470+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:models_index.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.088813+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:neurotox_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.094243+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:oligotox_v4_final_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.100105+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:train_eval_comparison.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.105563+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:train_eval_report.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.111278+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:train_eval_summary.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.117260+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_202144_5f135916:train_metadata.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_202144_5f135916/train_metadata.json",
+    "metrics": {
+      "source_file": "train_metadata.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T00:21:46.117902+00:00",
+    "source_run_id": "train_model_v4_20260624_202144_5f135916",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:cns_toxicity.joblib",
+    "endpoint": "cns_toxicity",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/cns_toxicity.joblib",
+    "metrics": {
+      "source_file": "cns_toxicity.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.005248+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:coagulation_effect.joblib",
+    "endpoint": "coagulation_effect",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/coagulation_effect.joblib",
+    "metrics": {
+      "source_file": "coagulation_effect.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.007828+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:complement_activation.joblib",
+    "endpoint": "complement_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/complement_activation.joblib",
+    "metrics": {
+      "source_file": "complement_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.009217+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:cytokine_release.joblib",
+    "endpoint": "cytokine_release",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/cytokine_release.joblib",
+    "metrics": {
+      "source_file": "cytokine_release.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.010162+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:hepatocellular_injury.joblib",
+    "endpoint": "hepatocellular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/hepatocellular_injury.joblib",
+    "metrics": {
+      "source_file": "hepatocellular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.010919+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:injection_site_reaction.joblib",
+    "endpoint": "injection_site_reaction",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/injection_site_reaction.joblib",
+    "metrics": {
+      "source_file": "injection_site_reaction.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.012288+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:innate_immune_activation.joblib",
+    "endpoint": "innate_immune_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/innate_immune_activation.joblib",
+    "metrics": {
+      "source_file": "innate_immune_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.013088+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:offtarget_gene_silencing.joblib",
+    "endpoint": "offtarget_gene_silencing",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/offtarget_gene_silencing.joblib",
+    "metrics": {
+      "source_file": "offtarget_gene_silencing.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.014166+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:renal_accumulation.joblib",
+    "endpoint": "renal_accumulation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/renal_accumulation.joblib",
+    "metrics": {
+      "source_file": "renal_accumulation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.015582+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:renal_tubular_injury.joblib",
+    "endpoint": "renal_tubular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/renal_tubular_injury.joblib",
+    "metrics": {
+      "source_file": "renal_tubular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.017145+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:thrombocytopenia.joblib",
+    "endpoint": "thrombocytopenia",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/thrombocytopenia.joblib",
+    "metrics": {
+      "source_file": "thrombocytopenia.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.018383+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:eval_v4_feature_importance.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.031730+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:eval_v4_summary.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.042141+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:metrics.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.067545+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:model_manifest.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.074568+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:models_index.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.083235+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:neurotox_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.095129+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:oligotox_v4_final_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.107091+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:train_eval_comparison.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.118220+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:train_eval_report.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.130363+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:train_eval_summary.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.141258+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_211836_c85761ce:train_metadata.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_211836_c85761ce/train_metadata.json",
+    "metrics": {
+      "source_file": "train_metadata.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T01:18:38.142531+00:00",
+    "source_run_id": "train_model_v4_20260624_211836_c85761ce",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:cns_toxicity.joblib",
+    "endpoint": "cns_toxicity",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/cns_toxicity.joblib",
+    "metrics": {
+      "source_file": "cns_toxicity.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.205576+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:coagulation_effect.joblib",
+    "endpoint": "coagulation_effect",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/coagulation_effect.joblib",
+    "metrics": {
+      "source_file": "coagulation_effect.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.206714+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:complement_activation.joblib",
+    "endpoint": "complement_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/complement_activation.joblib",
+    "metrics": {
+      "source_file": "complement_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.207253+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:cytokine_release.joblib",
+    "endpoint": "cytokine_release",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/cytokine_release.joblib",
+    "metrics": {
+      "source_file": "cytokine_release.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.207765+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:hepatocellular_injury.joblib",
+    "endpoint": "hepatocellular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/hepatocellular_injury.joblib",
+    "metrics": {
+      "source_file": "hepatocellular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.208271+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:injection_site_reaction.joblib",
+    "endpoint": "injection_site_reaction",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/injection_site_reaction.joblib",
+    "metrics": {
+      "source_file": "injection_site_reaction.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.208781+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:innate_immune_activation.joblib",
+    "endpoint": "innate_immune_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/innate_immune_activation.joblib",
+    "metrics": {
+      "source_file": "innate_immune_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.209324+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:offtarget_gene_silencing.joblib",
+    "endpoint": "offtarget_gene_silencing",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/offtarget_gene_silencing.joblib",
+    "metrics": {
+      "source_file": "offtarget_gene_silencing.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.209917+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:renal_accumulation.joblib",
+    "endpoint": "renal_accumulation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/renal_accumulation.joblib",
+    "metrics": {
+      "source_file": "renal_accumulation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.210796+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:renal_tubular_injury.joblib",
+    "endpoint": "renal_tubular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/renal_tubular_injury.joblib",
+    "metrics": {
+      "source_file": "renal_tubular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.211339+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:thrombocytopenia.joblib",
+    "endpoint": "thrombocytopenia",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/thrombocytopenia.joblib",
+    "metrics": {
+      "source_file": "thrombocytopenia.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.211871+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:eval_v4_feature_importance.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.217490+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:eval_v4_summary.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.223910+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:metrics.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.238541+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:model_manifest.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.242611+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:models_index.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.248094+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:neurotox_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.254319+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:oligotox_v4_final_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.260277+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:train_eval_comparison.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.265528+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:train_eval_report.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.272804+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:train_eval_summary.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.278207+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232530_4175e26b:train_metadata.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232530_4175e26b/train_metadata.json",
+    "metrics": {
+      "source_file": "train_metadata.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.278778+00:00",
+    "source_run_id": "train_model_v4_20260624_232530_4175e26b",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:cns_toxicity.joblib",
+    "endpoint": "cns_toxicity",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/cns_toxicity.joblib",
+    "metrics": {
+      "source_file": "cns_toxicity.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.687326+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:coagulation_effect.joblib",
+    "endpoint": "coagulation_effect",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/coagulation_effect.joblib",
+    "metrics": {
+      "source_file": "coagulation_effect.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.688238+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:complement_activation.joblib",
+    "endpoint": "complement_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/complement_activation.joblib",
+    "metrics": {
+      "source_file": "complement_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.688944+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:cytokine_release.joblib",
+    "endpoint": "cytokine_release",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/cytokine_release.joblib",
+    "metrics": {
+      "source_file": "cytokine_release.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.689488+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:hepatocellular_injury.joblib",
+    "endpoint": "hepatocellular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/hepatocellular_injury.joblib",
+    "metrics": {
+      "source_file": "hepatocellular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.690153+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:injection_site_reaction.joblib",
+    "endpoint": "injection_site_reaction",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/injection_site_reaction.joblib",
+    "metrics": {
+      "source_file": "injection_site_reaction.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.691139+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:innate_immune_activation.joblib",
+    "endpoint": "innate_immune_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/innate_immune_activation.joblib",
+    "metrics": {
+      "source_file": "innate_immune_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.691737+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:offtarget_gene_silencing.joblib",
+    "endpoint": "offtarget_gene_silencing",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/offtarget_gene_silencing.joblib",
+    "metrics": {
+      "source_file": "offtarget_gene_silencing.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.692307+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:renal_accumulation.joblib",
+    "endpoint": "renal_accumulation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/renal_accumulation.joblib",
+    "metrics": {
+      "source_file": "renal_accumulation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.693540+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:renal_tubular_injury.joblib",
+    "endpoint": "renal_tubular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/renal_tubular_injury.joblib",
+    "metrics": {
+      "source_file": "renal_tubular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.694337+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:thrombocytopenia.joblib",
+    "endpoint": "thrombocytopenia",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/thrombocytopenia.joblib",
+    "metrics": {
+      "source_file": "thrombocytopenia.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.695354+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:eval_v4_feature_importance.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.701762+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:eval_v4_summary.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.707888+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:metrics.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.723050+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:model_manifest.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.728019+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:models_index.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.733213+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:neurotox_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.739074+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:oligotox_v4_final_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.744891+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:train_eval_comparison.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.751401+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:train_eval_report.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.758358+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:train_eval_summary.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.765371+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232532_513b57dc:train_metadata.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232532_513b57dc/train_metadata.json",
+    "metrics": {
+      "source_file": "train_metadata.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:33.765963+00:00",
+    "source_run_id": "train_model_v4_20260624_232532_513b57dc",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:cns_toxicity.joblib",
+    "endpoint": "cns_toxicity",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/cns_toxicity.joblib",
+    "metrics": {
+      "source_file": "cns_toxicity.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.528997+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": true,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:coagulation_effect.joblib",
+    "endpoint": "coagulation_effect",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/coagulation_effect.joblib",
+    "metrics": {
+      "source_file": "coagulation_effect.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.531142+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:complement_activation.joblib",
+    "endpoint": "complement_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/complement_activation.joblib",
+    "metrics": {
+      "source_file": "complement_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.532082+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:cytokine_release.joblib",
+    "endpoint": "cytokine_release",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/cytokine_release.joblib",
+    "metrics": {
+      "source_file": "cytokine_release.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.532703+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:hepatocellular_injury.joblib",
+    "endpoint": "hepatocellular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/hepatocellular_injury.joblib",
+    "metrics": {
+      "source_file": "hepatocellular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.533475+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:injection_site_reaction.joblib",
+    "endpoint": "injection_site_reaction",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/injection_site_reaction.joblib",
+    "metrics": {
+      "source_file": "injection_site_reaction.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.534101+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:innate_immune_activation.joblib",
+    "endpoint": "innate_immune_activation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/innate_immune_activation.joblib",
+    "metrics": {
+      "source_file": "innate_immune_activation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.534836+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:offtarget_gene_silencing.joblib",
+    "endpoint": "offtarget_gene_silencing",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/offtarget_gene_silencing.joblib",
+    "metrics": {
+      "source_file": "offtarget_gene_silencing.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.535462+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:renal_accumulation.joblib",
+    "endpoint": "renal_accumulation",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/renal_accumulation.joblib",
+    "metrics": {
+      "source_file": "renal_accumulation.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.536185+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:renal_tubular_injury.joblib",
+    "endpoint": "renal_tubular_injury",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/renal_tubular_injury.joblib",
+    "metrics": {
+      "source_file": "renal_tubular_injury.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.536827+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:thrombocytopenia.joblib",
+    "endpoint": "thrombocytopenia",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/thrombocytopenia.joblib",
+    "metrics": {
+      "source_file": "thrombocytopenia.joblib"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.537609+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_binary"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:eval_v4_feature_importance.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.545538+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:eval_v4_summary.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.552688+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:metrics.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.571685+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:model_manifest.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/model_manifest.json",
+    "metrics": {
+      "source_file": "model_manifest.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.577969+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:models_index.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/models_index.json",
+    "metrics": {
+      "source_file": "models_index.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.584983+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:neurotox_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.592257+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:oligotox_v4_final_eval.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.599599+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:train_eval_comparison.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.607502+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:train_eval_report.csv",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.615461+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:train_eval_summary.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.622921+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  },
+  {
+    "model_name": "train_model_v4_20260624_232539_a4e12478:train_metadata.json",
+    "endpoint": "report",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_232539_a4e12478/train_metadata.json",
+    "metrics": {
+      "source_file": "train_metadata.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-25T03:25:40.623579+00:00",
+    "source_run_id": "train_model_v4_20260624_232539_a4e12478",
+    "is_active": false,
+    "artifact_kind": "model_report"
+  }
+]

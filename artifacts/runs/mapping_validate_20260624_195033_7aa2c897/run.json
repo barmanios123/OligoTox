@@ -1,0 +1,46 @@
+{
+  "run_id": "mapping_validate_20260624_195033_7aa2c897",
+  "job_name": "mapping_validate",
+  "status": "succeeded",
+  "trigger": "cleanup_patch_test",
+  "started_at": "2026-06-24T23:50:33.388956+00:00",
+  "finished_at": "2026-06-24T23:50:33.435668+00:00",
+  "parameters": {},
+  "logs_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/mapping_validate_20260624_195033_7aa2c897/mapping_validate.log",
+  "artifacts": [
+    {
+      "name": "metrics.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/mapping_validate_20260624_195033_7aa2c897/metrics.json",
+      "kind": "validation_metrics",
+      "checksum_sha256": "1b794dceb5b9e2ff5d1a93cf89d0ef0adec77e0f4807c8f53311a0e7a4293561",
+      "size_bytes": 189
+    },
+    {
+      "name": "mapping_validate.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/mapping_validate_20260624_195033_7aa2c897/mapping_validate.log",
+      "kind": "validation_log",
+      "checksum_sha256": "1b794dceb5b9e2ff5d1a93cf89d0ef0adec77e0f4807c8f53311a0e7a4293561",
+      "size_bytes": 189
+    },
+    {
+      "name": "candidate_to_oligo_map.csv",
+      "path": "/Users/beshoyarmanios/oligotox/data/metadata/candidate_to_oligo_map.csv",
+      "kind": "mapping_snapshot",
+      "checksum_sha256": "2247e2612484753305595c939f4cff0d69ae8222207deef205f4db6130361224",
+      "size_bytes": 105590
+    }
+  ],
+  "metrics": {
+    "validation": {
+      "ok": true,
+      "errors": [],
+      "warnings": [],
+      "normalized_value": null,
+      "stats": {
+        "rows": 776,
+        "rows_with_any_mapping_info": 772
+      }
+    }
+  },
+  "error": null
+}

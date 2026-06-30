@@ -1,0 +1,132 @@
+[
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_eval_report.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_eval_report.csv",
+    "metrics": {
+      "source_file": "train_eval_report.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.300704+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": true
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_eval_summary.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_eval_summary.json",
+    "metrics": {
+      "source_file": "train_eval_summary.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.300958+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_eval_comparison.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_eval_comparison.csv",
+    "metrics": {
+      "source_file": "train_eval_comparison.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.301191+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_baseline.log",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_baseline.log",
+    "metrics": {
+      "source_file": "train_baseline.log"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.301596+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:metrics.json",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/metrics.json",
+    "metrics": {
+      "source_file": "metrics.json"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.301802+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:train_model_v4.log",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/train_model_v4.log",
+    "metrics": {
+      "source_file": "train_model_v4.log"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302025+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:eval_v4_summary.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/eval_v4_summary.csv",
+    "metrics": {
+      "source_file": "eval_v4_summary.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302209+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:oligotox_v4_final_eval.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/oligotox_v4_final_eval.csv",
+    "metrics": {
+      "source_file": "oligotox_v4_final_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302390+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:neurotox_eval.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/neurotox_eval.csv",
+    "metrics": {
+      "source_file": "neurotox_eval.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302640+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  },
+  {
+    "model_name": "train_model_v4_20260624_194615_f7fd3142:eval_v4_feature_importance.csv",
+    "endpoint": "multi_endpoint",
+    "artifact_path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_194615_f7fd3142/eval_v4_feature_importance.csv",
+    "metrics": {
+      "source_file": "eval_v4_feature_importance.csv"
+    },
+    "feature_schema_version": "v4",
+    "training_dataset_hash": null,
+    "created_at": "2026-06-24T23:46:18.302868+00:00",
+    "source_run_id": "train_model_v4_20260624_194615_f7fd3142",
+    "is_active": false
+  }
+]

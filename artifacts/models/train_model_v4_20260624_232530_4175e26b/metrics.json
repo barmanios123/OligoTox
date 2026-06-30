@@ -1,0 +1,12 @@
+{
+  "validation": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "normalized_value": null,
+    "stats": {
+      "rows": 776,
+      "rows_with_any_mapping_info": 772
+    }
+  }
+}

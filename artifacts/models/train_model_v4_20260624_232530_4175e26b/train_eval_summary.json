@@ -1,0 +1,10 @@
+{
+  "n_rows_evaluated": 3266,
+  "n_features": 124,
+  "n_endpoints": 13,
+  "group_definition": "source||series_id||seq_length||ps_fraction_rounded",
+  "files": {
+    "report_csv": "/Users/beshoyarmanios/oligotox/artifacts/eval/train_eval_report.csv",
+    "comparison_csv": "/Users/beshoyarmanios/oligotox/artifacts/eval/train_eval_comparison.csv"
+  }
+}

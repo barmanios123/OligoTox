@@ -1,0 +1,25 @@
+{
+  "run_id": "predict_sequence_20260624_194618_9ed74f0f",
+  "job_name": "predict_sequence",
+  "status": "succeeded",
+  "trigger": "assistant_acceptance",
+  "started_at": "2026-06-24T23:46:18.378124+00:00",
+  "finished_at": "2026-06-24T23:46:19.792484+00:00",
+  "parameters": {
+    "sequence": "GCCTGTTGTGAGCCTGATAGTGACAG"
+  },
+  "logs_path": null,
+  "artifacts": [
+    {
+      "name": "prediction.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/predict_sequence_20260624_194618_9ed74f0f/prediction.json",
+      "kind": "prediction",
+      "checksum_sha256": "c76280e420338a23df94bee3337614dfba2e220fda4d7d5eca0fec13aeaf8856",
+      "size_bytes": 1876
+    }
+  ],
+  "metrics": {
+    "sequence_length": 26
+  },
+  "error": null
+}

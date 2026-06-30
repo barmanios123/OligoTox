@@ -1,0 +1,72 @@
+{
+  "step_results": [
+    {
+      "step": "mapping_validate",
+      "command": [
+        "python3",
+        "scripts/validate_candidate_mapping_file.py"
+      ],
+      "returncode": 0,
+      "log_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_201714_d9b8b53a/mapping_validate.log"
+    },
+    {
+      "step": "dataset_rebuild",
+      "command": [
+        "python3",
+        "scripts/rebuild_base_training_dataset.py"
+      ],
+      "returncode": 0,
+      "log_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_201714_d9b8b53a/dataset_rebuild.log"
+    },
+    {
+      "step": "add_chem_features",
+      "command": [
+        "python3",
+        "scripts/add_chem_features.py"
+      ],
+      "returncode": 0,
+      "log_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_201714_d9b8b53a/add_chem_features.log"
+    },
+    {
+      "step": "build_dataset",
+      "command": [
+        "python3",
+        "scripts/build_dataset.py"
+      ],
+      "returncode": 0,
+      "log_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_201714_d9b8b53a/build_dataset.log"
+    },
+    {
+      "step": "rebuild_recheck",
+      "command": [
+        "python3",
+        "scripts/rebuild_dataset_recheck.py"
+      ],
+      "returncode": 0,
+      "log_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_201714_d9b8b53a/rebuild_recheck.log"
+    },
+    {
+      "step": "audit_sequence_coverage",
+      "command": [
+        "python3",
+        "scripts/audit_sequence_coverage.py"
+      ],
+      "returncode": 0,
+      "log_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_201714_d9b8b53a/audit_sequence_coverage.log"
+    },
+    {
+      "step": "train_baseline",
+      "command": [
+        "python3",
+        "scripts/train_baseline.py"
+      ],
+      "returncode": 0,
+      "log_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/dataset_rebuild_full_20260624_201714_d9b8b53a/train_baseline.log"
+    }
+  ],
+  "expected_outputs": {
+    "training_dataset": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset.csv",
+    "with_chem_dataset": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset_with_chem.csv",
+    "audit_file": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset_rebuilt_audit.csv"
+  }
+}

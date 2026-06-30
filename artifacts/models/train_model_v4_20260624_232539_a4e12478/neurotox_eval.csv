@@ -1,0 +1,3 @@
+endpoint,n,n_pos,n_neg,threshold,model,auroc,ap,brier
+moe_neurotox_invivo,2437,992,1445,3,RandomForest,0.841,0.769,0.18
+moe_neurotox_invivo,2437,992,1445,3,LogisticRegression,0.846,0.779,0.159

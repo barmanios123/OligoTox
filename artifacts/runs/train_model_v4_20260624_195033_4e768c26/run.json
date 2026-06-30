@@ -1,0 +1,207 @@
+{
+  "run_id": "train_model_v4_20260624_195033_4e768c26",
+  "job_name": "train_model_v4",
+  "status": "succeeded",
+  "trigger": "cleanup_patch_test",
+  "started_at": "2026-06-24T23:50:33.437086+00:00",
+  "finished_at": "2026-06-24T23:50:36.125698+00:00",
+  "parameters": {},
+  "logs_path": "/Users/beshoyarmanios/oligotox/artifacts/runs/train_model_v4_20260624_195033_4e768c26/train_model_v4.log",
+  "artifacts": [
+    {
+      "name": "train_model_v4.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/train_model_v4_20260624_195033_4e768c26/train_model_v4.log",
+      "kind": "training_log",
+      "checksum_sha256": "d940ce0c4ef2f5a8075174210cd15ae49e7b94158e21bcd97ebdf534b198570b",
+      "size_bytes": 22726
+    },
+    {
+      "name": "models_index.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/models_index.json",
+      "kind": "model_report",
+      "checksum_sha256": "126557e4103569806feed619a66f90dda4d4315086fb068fca0f168fc04d4846",
+      "size_bytes": 5408
+    },
+    {
+      "name": "train_eval_report.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_report.csv",
+      "kind": "model_report",
+      "checksum_sha256": "a551eb119025ea97e880eacf637f2ef426179ea734c00b8d72e748dd69cdeb75",
+      "size_bytes": 2840
+    },
+    {
+      "name": "train_eval_summary.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_summary.json",
+      "kind": "model_report",
+      "checksum_sha256": "dbe4eb529abf9d6614ad496e6c6a6b3a478cd5df45ed11db1a95a5859ceb1ffa",
+      "size_bytes": 351
+    },
+    {
+      "name": "train_eval_comparison.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_comparison.csv",
+      "kind": "model_report",
+      "checksum_sha256": "ad48f1fdbac6a09f0c63613e824faedd9c3c376aacb379226c4553c4b66f8a60",
+      "size_bytes": 1581
+    },
+    {
+      "name": "metrics.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/metrics.json",
+      "kind": "model_report",
+      "checksum_sha256": "6746ba08de8efa2e55d6c0f25dcedfcfd08a7e5e68ff080c449220611e15a7dd",
+      "size_bytes": 44
+    },
+    {
+      "name": "train_baseline.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_baseline.log",
+      "kind": "model_related_file",
+      "checksum_sha256": "d940ce0c4ef2f5a8075174210cd15ae49e7b94158e21bcd97ebdf534b198570b",
+      "size_bytes": 22726
+    },
+    {
+      "name": "train_model_v4.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_model_v4.log",
+      "kind": "model_related_file",
+      "checksum_sha256": "d940ce0c4ef2f5a8075174210cd15ae49e7b94158e21bcd97ebdf534b198570b",
+      "size_bytes": 22726
+    },
+    {
+      "name": "metrics.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/metrics.json",
+      "kind": "model_report",
+      "checksum_sha256": "1b794dceb5b9e2ff5d1a93cf89d0ef0adec77e0f4807c8f53311a0e7a4293561",
+      "size_bytes": 189
+    },
+    {
+      "name": "metrics.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/metrics.json",
+      "kind": "model_report",
+      "checksum_sha256": "1b794dceb5b9e2ff5d1a93cf89d0ef0adec77e0f4807c8f53311a0e7a4293561",
+      "size_bytes": 189
+    },
+    {
+      "name": "metrics.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/metrics.json",
+      "kind": "model_report",
+      "checksum_sha256": "188355793b4abeb2af92b5ac5c4ac723c0085dde0fdf2f52b51eb90955f22f9b",
+      "size_bytes": 38
+    },
+    {
+      "name": "train_model_v4.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_model_v4.log",
+      "kind": "model_related_file",
+      "checksum_sha256": "d940ce0c4ef2f5a8075174210cd15ae49e7b94158e21bcd97ebdf534b198570b",
+      "size_bytes": 22726
+    },
+    {
+      "name": "metrics.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/metrics.json",
+      "kind": "model_report",
+      "checksum_sha256": "1b794dceb5b9e2ff5d1a93cf89d0ef0adec77e0f4807c8f53311a0e7a4293561",
+      "size_bytes": 189
+    },
+    {
+      "name": "train_model_v4.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_model_v4.log",
+      "kind": "model_related_file",
+      "checksum_sha256": "d940ce0c4ef2f5a8075174210cd15ae49e7b94158e21bcd97ebdf534b198570b",
+      "size_bytes": 22726
+    },
+    {
+      "name": "eval_v4_summary.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/eval_v4_summary.csv",
+      "kind": "model_report",
+      "checksum_sha256": "68497f7dff5d632c78fe2e0cb3798ecc32432f435ec2f84632729329e1d19578",
+      "size_bytes": 1679
+    },
+    {
+      "name": "train_eval_report.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_report.csv",
+      "kind": "model_report",
+      "checksum_sha256": "a551eb119025ea97e880eacf637f2ef426179ea734c00b8d72e748dd69cdeb75",
+      "size_bytes": 2840
+    },
+    {
+      "name": "oligotox_v4_final_eval.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/oligotox_v4_final_eval.csv",
+      "kind": "model_report",
+      "checksum_sha256": "3c80d0c913bf5d6dd86360db5a7da4beda50a13d5718844c2ede8ef8e0964f01",
+      "size_bytes": 910
+    },
+    {
+      "name": "train_eval_summary.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_summary.json",
+      "kind": "model_report",
+      "checksum_sha256": "dbe4eb529abf9d6614ad496e6c6a6b3a478cd5df45ed11db1a95a5859ceb1ffa",
+      "size_bytes": 351
+    },
+    {
+      "name": "neurotox_eval.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/neurotox_eval.csv",
+      "kind": "model_report",
+      "checksum_sha256": "ee981e8ebe1d2f458c4e7f4d8518219367b76d300e17d31e808cc75c0aaf9a01",
+      "size_bytes": 193
+    },
+    {
+      "name": "train_eval_comparison.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_eval_comparison.csv",
+      "kind": "model_report",
+      "checksum_sha256": "ad48f1fdbac6a09f0c63613e824faedd9c3c376aacb379226c4553c4b66f8a60",
+      "size_bytes": 1581
+    },
+    {
+      "name": "train_baseline.log",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/train_baseline.log",
+      "kind": "model_related_file",
+      "checksum_sha256": "d940ce0c4ef2f5a8075174210cd15ae49e7b94158e21bcd97ebdf534b198570b",
+      "size_bytes": 22726
+    },
+    {
+      "name": "eval_v4_feature_importance.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/eval_v4_feature_importance.csv",
+      "kind": "model_report",
+      "checksum_sha256": "72620b97dfc1ed0d244ff402c8d4b70e37896d5d71ddbd00982990a28bbc0c18",
+      "size_bytes": 4795
+    },
+    {
+      "name": "eval_v4_summary.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/eval_v4_summary.csv",
+      "kind": "model_report",
+      "checksum_sha256": "68497f7dff5d632c78fe2e0cb3798ecc32432f435ec2f84632729329e1d19578",
+      "size_bytes": 1679
+    },
+    {
+      "name": "oligotox_v4_final_eval.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/oligotox_v4_final_eval.csv",
+      "kind": "model_report",
+      "checksum_sha256": "3c80d0c913bf5d6dd86360db5a7da4beda50a13d5718844c2ede8ef8e0964f01",
+      "size_bytes": 910
+    },
+    {
+      "name": "neurotox_eval.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/neurotox_eval.csv",
+      "kind": "model_report",
+      "checksum_sha256": "ee981e8ebe1d2f458c4e7f4d8518219367b76d300e17d31e808cc75c0aaf9a01",
+      "size_bytes": 193
+    },
+    {
+      "name": "eval_v4_feature_importance.csv",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/models/train_model_v4_20260624_195033_4e768c26/eval_v4_feature_importance.csv",
+      "kind": "model_report",
+      "checksum_sha256": "72620b97dfc1ed0d244ff402c8d4b70e37896d5d71ddbd00982990a28bbc0c18",
+      "size_bytes": 4795
+    },
+    {
+      "name": "metrics.json",
+      "path": "/Users/beshoyarmanios/oligotox/artifacts/runs/train_model_v4_20260624_195033_4e768c26/metrics.json",
+      "kind": "training_metrics",
+      "checksum_sha256": "85082fefa5d8aa56d4e6bcfaf2af3183c90d6f33b9a1ad1ea331b67bacd51ee7",
+      "size_bytes": 96
+    }
+  ],
+  "metrics": {
+    "copied_model_binaries": 0,
+    "copied_model_reports": 20,
+    "active_model_assigned": false
+  },
+  "error": null
+}

@@ -1,0 +1,262 @@
+{
+  "cns_toxicity": {
+    "reliability_level": "MEDIUM",
+    "note": "Reasonable label support but grouped metrics undefined; use with caution.",
+    "support": {
+      "total_positives": 1016,
+      "total_negatives": 2250,
+      "total_groups": 38,
+      "groups_with_positives": 6
+    },
+    "metrics_random": {
+      "pr_auc": 0.5525925993167287,
+      "roc_auc": 0.7781230544056449,
+      "brier": 0.171692863933478
+    },
+    "metrics_grouped": {
+      "pr_auc": null,
+      "roc_auc": null,
+      "brier": null
+    }
+  },
+  "coagulation_effect": {
+    "reliability_level": "LOW",
+    "note": "Very few positives/negatives; treat as exploratory only.",
+    "support": {
+      "total_positives": 4,
+      "total_negatives": 3262,
+      "total_groups": 38,
+      "groups_with_positives": 2
+    },
+    "metrics_random": {
+      "pr_auc": null,
+      "roc_auc": null,
+      "brier": null
+    },
+    "metrics_grouped": {
+      "pr_auc": null,
+      "roc_auc": null,
+      "brier": null
+    }
+  },
+  "complement_activation": {
+    "reliability_level": "HIGH",
+    "note": "Grouped performance acceptable relative to random; model generalizes across groups.",
+    "support": {
+      "total_positives": 6,
+      "total_negatives": 3260,
+      "total_groups": 38,
+      "groups_with_positives": 5
+    },
+    "metrics_random": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 6.0203197780140667e-05
+    },
+    "metrics_grouped": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0016429893108317
+    }
+  },
+  "cytokine_release": {
+    "reliability_level": "HIGH",
+    "note": "Grouped performance acceptable relative to random; model generalizes across groups.",
+    "support": {
+      "total_positives": 8,
+      "total_negatives": 3258,
+      "total_groups": 38,
+      "groups_with_positives": 6
+    },
+    "metrics_random": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0004024055574873
+    },
+    "metrics_grouped": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0007748344786218
+    }
+  },
+  "hepatic_vacuolation": {
+    "reliability_level": "HIGH",
+    "note": "Grouped performance acceptable relative to random; model generalizes across groups.",
+    "support": {
+      "total_positives": 6,
+      "total_negatives": 3260,
+      "total_groups": 38,
+      "groups_with_positives": 3
+    },
+    "metrics_random": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0015957592532244
+    },
+    "metrics_grouped": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0017791781867491
+    }
+  },
+  "hepatocellular_injury": {
+    "reliability_level": "HIGH",
+    "note": "Grouped performance acceptable relative to random; model generalizes across groups.",
+    "support": {
+      "total_positives": 346,
+      "total_negatives": 2920,
+      "total_groups": 38,
+      "groups_with_positives": 12
+    },
+    "metrics_random": {
+      "pr_auc": 0.7622839266470118,
+      "roc_auc": 0.975312770964945,
+      "brier": 0.0432408200004077
+    },
+    "metrics_grouped": {
+      "pr_auc": 0.6606611746274671,
+      "roc_auc": 0.738606015498446,
+      "brier": 0.2671219897198059
+    }
+  },
+  "injection_site_reaction": {
+    "reliability_level": "HIGH",
+    "note": "Grouped performance acceptable relative to random; model generalizes across groups.",
+    "support": {
+      "total_positives": 17,
+      "total_negatives": 3249,
+      "total_groups": 38,
+      "groups_with_positives": 15
+    },
+    "metrics_random": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0008046035248965
+    },
+    "metrics_grouped": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0011456261789043
+    }
+  },
+  "innate_immune_activation": {
+    "reliability_level": "HIGH",
+    "note": "Grouped performance acceptable relative to random; model generalizes across groups.",
+    "support": {
+      "total_positives": 7,
+      "total_negatives": 3259,
+      "total_groups": 38,
+      "groups_with_positives": 6
+    },
+    "metrics_random": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.000710830369153
+    },
+    "metrics_grouped": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0010668025590003
+    }
+  },
+  "kupffer_cell_activation": {
+    "reliability_level": "HIGH",
+    "note": "Grouped performance acceptable relative to random; model generalizes across groups.",
+    "support": {
+      "total_positives": 9,
+      "total_negatives": 3257,
+      "total_groups": 38,
+      "groups_with_positives": 5
+    },
+    "metrics_random": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0016836098546292
+    },
+    "metrics_grouped": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0017802630111283
+    }
+  },
+  "offtarget_gene_silencing": {
+    "reliability_level": "HIGH",
+    "note": "Grouped performance acceptable relative to random; model generalizes across groups.",
+    "support": {
+      "total_positives": 339,
+      "total_negatives": 2927,
+      "total_groups": 38,
+      "groups_with_positives": 6
+    },
+    "metrics_random": {
+      "pr_auc": 0.7280604835249797,
+      "roc_auc": 0.967288195141538,
+      "brier": 0.0458790099273873
+    },
+    "metrics_grouped": {
+      "pr_auc": 0.6534663977903591,
+      "roc_auc": 0.7369916027747353,
+      "brier": 0.2675382305294247
+    }
+  },
+  "renal_accumulation": {
+    "reliability_level": "LOW",
+    "note": "Very few positives/negatives; treat as exploratory only.",
+    "support": {
+      "total_positives": 3,
+      "total_negatives": 3263,
+      "total_groups": 38,
+      "groups_with_positives": 3
+    },
+    "metrics_random": {
+      "pr_auc": null,
+      "roc_auc": null,
+      "brier": null
+    },
+    "metrics_grouped": {
+      "pr_auc": null,
+      "roc_auc": null,
+      "brier": null
+    }
+  },
+  "renal_tubular_injury": {
+    "reliability_level": "MEDIUM",
+    "note": "Model has signal but grouped performance is lower; treat as moderate reliability.",
+    "support": {
+      "total_positives": 6,
+      "total_negatives": 3260,
+      "total_groups": 38,
+      "groups_with_positives": 6
+    },
+    "metrics_random": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0010600255927534
+    },
+    "metrics_grouped": {
+      "pr_auc": 0.2,
+      "roc_auc": 0.9923518164435946,
+      "brier": 0.0019755106231453
+    }
+  },
+  "thrombocytopenia": {
+    "reliability_level": "MEDIUM",
+    "note": "Reasonable label support but grouped metrics undefined; use with caution.",
+    "support": {
+      "total_positives": 6,
+      "total_negatives": 3260,
+      "total_groups": 38,
+      "groups_with_positives": 6
+    },
+    "metrics_random": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "brier": 0.0011518482571791
+    },
+    "metrics_grouped": {
+      "pr_auc": null,
+      "roc_auc": null,
+      "brier": null
+    }
+  }
+}
