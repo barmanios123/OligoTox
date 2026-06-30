@@ -12,3 +12,7 @@ Phase 2
 Phase 3
 - Integrate external model adapters for OligoFormer and ENsiRNA.
 - Publish standardized benchmark report and comparison tables.
+
+Phase 1.5
+- Generate leakage-aware train/val/test splits grouped by sequence family or target gene.
+- Verify zero group overlap across splits before any benchmark metrics are reported.
