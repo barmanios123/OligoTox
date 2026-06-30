@@ -26,8 +26,8 @@ except ImportError:
 # Resolved relative to repo root
 REPO_ROOT = Path(__file__).resolve().parents[2]
 MODEL_DIRS = [
-    REPO_ROOT / "artifacts" / "models_v4",
-    REPO_ROOT / "artifacts" / "models_neurotox",
+    REPO_ROOT / "artifacts" / "models" / "latest_train_baseline",
+    REPO_ROOT / "artifacts" / "models" / "latest_train_baseline",
 ]
 
 # ----------- feature engineering -----------
@@ -103,7 +103,7 @@ def predict_sequence(sequence: str) -> list[dict]:
     Returns a list of dicts, one per loaded model endpoint:
         [
           {'endpoint': 'hepatocellular_injury', 'prob': 0.42,
-           'risk_level': 'Medium', 'model_dir': 'models_v4'},
+           'risk_level': 'Medium', 'model_dir': 'latest_train_baseline'},
           ...
         ]
     """
