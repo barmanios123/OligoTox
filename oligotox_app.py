@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """
 OligoTox Operator Console & Sequence Analysis Platform
-Production-ready app wired to run_oligotox inference backend.
+Production-ready Streamlit app wired to the run_oligotox inference backend.
+
+This UI distinguishes:
+1. Trained backend outputs from run_oligotox
+2. Optional PK/PD bridge outputs
+3. Mechanistic proxy overlays used for interpretation/triage
 """
 
 import json
+import math
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import pandas as pd
 import streamlit as st
@@ -21,12 +27,11 @@ from oligotox.config.paths import (  # noqa: E402
     MODEL_ARTIFACTS_DIR,
     METRICS_ARTIFACTS_DIR,
 )
-from oligotox.inference.api import run_oligotox
+from oligotox.inference.api import run_oligotox  # noqa: E402
 from oligotox.ui_state import log_run, get_runs, get_last_run  # noqa: E402
 
-# Optional PK/PD bridge
 try:
-    from oligotox.pkpd.bridge import compute_pkpd_enriched_features
+    from oligotox.pkpd.bridge import compute_pkpd_enriched_features  # noqa: E402
 
     PKPD_AVAILABLE = True
 except Exception:
@@ -36,13 +41,45 @@ except Exception:
         return {}
 
 
+APP_TITLE = "🧬 OligoTox: Oligonucleotide Toxicity Prediction Platform"
+APP_CAPTION = (
+    "Mechanism-aware toxicity prediction and safety decision support for ASOs, "
+    "siRNAs, and RNA-targeting therapeutics"
+)
+
+TAB_NAMES = [
+    "Sequence Analysis",
+    "Overview",
+    "Curation",
+    "Runs",
+    "Models",
+    "Predictions",
+    "Evaluation",
+    "Comparator",
+    "Assays",
+    "Regulatory Report",
+]
+
+
 def normalize_sequence(seq: str) -> str:
-    """Simple sequence normalization."""
-    return seq.upper().replace(" ", "").replace("\n", "").replace("T", "U")
+    return seq.upper().replace(" ", "").replace("\n", "").replace("\t", "").replace("T", "U")
+
+
+def validate_sequence(seq: str) -> Tuple[bool, str]:
+    if not seq:
+        return False, "Sequence is empty."
+    allowed = set("ACGUN")
+    bad = sorted(set(ch for ch in seq if ch not in allowed))
+    if bad:
+        return False, f"Invalid characters found: {', '.join(bad)}. Allowed: A, C, G, U, N, and DNA T (auto-normalized to U)."
+    if len(seq) < 8:
+        return False, "Sequence is too short for meaningful interpretation."
+    if len(seq) > 80:
+        return False, "Sequence is too long for this interface. Please use <= 80 nt."
+    return True, ""
 
 
 def confidence_label(prob: float) -> str:
-    """Simple probability-distance proxy for confidence."""
     dist = abs(float(prob) - 0.5)
     if dist >= 0.40:
         return "High"
@@ -52,8 +89,16 @@ def confidence_label(prob: float) -> str:
 
 
 def uncertainty_band(prob: float) -> float:
-    """Higher near 0.5, lower near 0 or 1."""
     return round(1.0 - abs(float(prob) - 0.5) * 2.0, 4)
+
+
+def safe_float(x: Any, default: float = 0.0) -> float:
+    try:
+        if x is None or (isinstance(x, float) and math.isnan(x)):
+            return default
+        return float(x)
+    except Exception:
+        return default
 
 
 def build_pkpd_metrics(
@@ -63,7 +108,6 @@ def build_pkpd_metrics(
     dose_mg_kg: float | None,
     schedule: str | None,
 ) -> Dict[str, float]:
-    """Compute PK/PD metrics if enough inputs are available."""
     if not PKPD_AVAILABLE:
         return {}
     if dose_mg_kg is None or dose_mg_kg <= 0:
@@ -107,16 +151,17 @@ def detect_modality_class(modality: str, chemistry: str, conjugate: str, sequenc
 
 def engine_dataset_registry(modality_class: str) -> Dict[str, Any]:
     base = {
-        "tox_engine": "OligoTox endpoint classifiers",
-        "mechanistic_layer": "D1/D2/D3 attribution + rule layer",
+        "tox_engine": "OligoTox endpoint classifiers (backend via run_oligotox)",
+        "mechanistic_layer": "D1/D2/D3 attribution + interpretable rule/proxy layer",
         "benchmark_validation": ["OligoGym", "openASO", "PFRED", "scASO"],
         "regulatory_basis": ["OSWG off-target workflow", "FDA ONT nonclinical safety framing"],
+        "backend_status": "Trained OligoTox toxicity backend wired; external efficacy engine family names may reflect architecture/roadmap unless separately integrated.",
     }
 
     if modality_class == "GalNAc-siRNA":
         base.update(
             {
-                "efficacy_engine": "OligoFormer / ENsiRNA / OligoGraph family",
+                "efficacy_engine": "GalNAc-siRNA scoring context",
                 "pkpd_bridge": "GalNAc PK/PD translational bridge",
                 "primary_benchmarks": ["OligoGym", "Huesken siRNA", "PBMC immunostimulation"],
             }
@@ -124,7 +169,7 @@ def engine_dataset_registry(modality_class: str) -> Dict[str, Any]:
     elif modality_class in ("siRNA", "siRNA-like"):
         base.update(
             {
-                "efficacy_engine": "OligoFormer / ENsiRNA / siDPT / OligoGraph",
+                "efficacy_engine": "siRNA-oriented ONT scoring context",
                 "pkpd_bridge": "Optional delivery-aware bridge",
                 "primary_benchmarks": ["OligoGym", "Huesken siRNA", "PBMC immunostimulation"],
             }
@@ -132,7 +177,7 @@ def engine_dataset_registry(modality_class: str) -> Dict[str, Any]:
     elif modality_class == "Gapmer/ASO":
         base.update(
             {
-                "efficacy_engine": "openASO / PFRED / ASOptimizer-aligned ASO scoring",
+                "efficacy_engine": "ASO/gapmer-oriented ONT scoring context",
                 "pkpd_bridge": "ASO liver/kidney exposure bridge",
                 "primary_benchmarks": ["openASO", "PFRED", "LNA gapmer cytotox", "scASO"],
             }
@@ -213,22 +258,27 @@ def build_assay_recommendations(result: Dict[str, Any], mech: Dict[str, float], 
     if modality_class in ("ASO", "Gapmer/ASO"):
         recs.append("RNase H1 / hybridization off-target assessment")
 
-    if "dominant_endpoint" in result:
-        dominant = str(result["dominant_endpoint"]).lower()
-        if "complement" in dominant:
-            recs.append("Complement activation biomarker follow-up")
-        if "coag" in dominant:
-            recs.append("Coagulation panel and platelet safety review")
-        if "renal" in dominant:
-            recs.append("Kidney injury biomarkers and renal histopath follow-up")
-        if "hep" in dominant:
-            recs.append("ALT / AST and hepatocyte stress biomarker follow-up")
+    dominant = str(result.get("dominant_endpoint", "")).lower()
+    if "complement" in dominant:
+        recs.append("Complement activation biomarker follow-up")
+    if "coag" in dominant or "platelet" in dominant or "thrombo" in dominant:
+        recs.append("Coagulation panel and platelet safety review")
+    if "renal" in dominant or "kidney" in dominant:
+        recs.append("Kidney injury biomarkers and renal histopath follow-up")
+    if "hep" in dominant or "liver" in dominant:
+        recs.append("ALT / AST and hepatocyte stress biomarker follow-up")
+
+    omics = result.get("omics", {})
+    if isinstance(omics, dict):
+        for rec in omics.get("recommended_assays", []) or []:
+            if rec:
+                recs.append(str(rec))
 
     deduped = []
     for r in recs:
         if r not in deduped:
             deduped.append(r)
-    return deduped[:8]
+    return deduped[:10]
 
 
 def generate_regulatory_report(
@@ -265,6 +315,7 @@ def generate_regulatory_report(
 - Efficacy engine: {registry.get('efficacy_engine', 'NA')}
 - PK/PD bridge: {registry.get('pkpd_bridge', 'NA')}
 - Benchmarks: {", ".join(registry.get('primary_benchmarks', []))}
+- Backend status note: {registry.get('backend_status', 'NA')}
 
 ## 5. Recommended Follow-Up Assays
 {chr(10).join(f"- {x}" for x in recs) if recs else "- No additional assays suggested"}
@@ -272,7 +323,39 @@ def generate_regulatory_report(
 ## 6. Regulatory Framing
 - OSWG-style interpretation: integrate in silico complementarity, cell context, in vitro verification, biological role assessment, and unavoidable off-target management
 - FDA-style interpretation: align candidate risk with nonclinical safety package planning and modality-specific follow-up
+
+## 7. Important Interpretation Note
+- Trained model outputs come from the OligoTox backend.
+- Intermediate mechanistic signals shown in the UI are interpretation/triage overlays and are not themselves validated clinical endpoints.
 """.strip()
+
+
+def flatten_endpoint_scores(result: Dict[str, Any]) -> pd.DataFrame:
+    rows = []
+
+    if "per_endpoint" in result and isinstance(result["per_endpoint"], dict):
+        for endpoint, info in result["per_endpoint"].items():
+            if isinstance(info, dict):
+                prob = info.get("prob", info.get("risk_score", info.get("score", 0.5)))
+                label = info.get("label", "")
+                row = {"Endpoint": endpoint, "Risk Score": safe_float(prob, 0.5), "Label": label}
+                for k, v in info.items():
+                    if k not in row:
+                        row[k] = v
+                rows.append(row)
+            else:
+                rows.append({"Endpoint": endpoint, "Risk Score": safe_float(info, 0.5)})
+    elif "risk_scores" in result and isinstance(result["risk_scores"], dict):
+        for endpoint, prob in result["risk_scores"].items():
+            rows.append({"Endpoint": endpoint, "Risk Score": safe_float(prob, 0.5)})
+
+    if not rows:
+        return pd.DataFrame()
+
+    df = pd.DataFrame(rows)
+    if "Risk Score" in df.columns:
+        df = df.sort_values("Risk Score", ascending=False).reset_index(drop=True)
+    return df
 
 
 def compare_candidates_df(candidates: List[Dict[str, str]]) -> pd.DataFrame:
@@ -302,71 +385,70 @@ def compare_candidates_df(candidates: List[Dict[str, str]]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def summarize_runs_df(runs: List[Dict[str, Any]]) -> pd.DataFrame:
+    rows = []
+    for r in runs:
+        result = r.get("result", {}) if isinstance(r.get("result"), dict) else {}
+        mech = compute_intermediate_safety_metrics(
+            r.get("sequence", ""),
+            r.get("chemistry", ""),
+            r.get("conjugate", ""),
+            r.get("modality", ""),
+        )
+        rows.append(
+            {
+                "Run ID": r.get("run_id", ""),
+                "Timestamp": r.get("timestamp", ""),
+                "Sequence": r.get("sequence", ""),
+                "Length": len(r.get("sequence", "") or ""),
+                "Modality": r.get("modality", ""),
+                "Chemistry": r.get("chemistry", ""),
+                "Conjugate": r.get("conjugate", ""),
+                "Dominant Endpoint": result.get("dominant_endpoint", ""),
+                "Hybridization Proxy": mech.get("hybridization_risk_proxy", 0.0),
+                "TLR7/8 Proxy": mech.get("tlr78_risk_proxy", 0.0),
+                "Platelet/PS Proxy": mech.get("platelet_ps_risk_proxy", 0.0),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def render_pkpd_panel(result: Dict[str, Any], fallback_pkpd: Dict[str, float] | None = None) -> None:
-    """Render PK/PD exposure metrics panel."""
     pkpd_metrics = result.get("pkpd_metrics", {}) if isinstance(result, dict) else {}
     if not pkpd_metrics and fallback_pkpd:
         pkpd_metrics = fallback_pkpd
-
     if not pkpd_metrics:
         return
 
     st.markdown("### Exposure Metrics (if dose/schedule provided)")
     c1, c2, c3 = st.columns(3)
-    c1.metric("Liver AUC (pmol·g⁻¹·h)", f"{pkpd_metrics.get('liver_auc_pmol_g_h', 0):,.1f}")
-    c2.metric("Liver Cmax (pmol/g)", f"{pkpd_metrics.get('liver_cmax_pmol_g', 0):,.1f}")
-    c3.metric("Liver Half-life (h)", f"{pkpd_metrics.get('liver_half_life_h', 0):,.1f}")
+    c1.metric("Liver AUC (pmol·g⁻¹·h)", f"{safe_float(pkpd_metrics.get('liver_auc_pmol_g_h')):,.1f}")
+    c2.metric("Liver Cmax (pmol/g)", f"{safe_float(pkpd_metrics.get('liver_cmax_pmol_g')):,.1f}")
+    c3.metric("Liver Half-life (h)", f"{safe_float(pkpd_metrics.get('liver_half_life_h')):,.1f}")
 
     extra_cols = st.columns(2)
     if "peak_knockdown_pct" in pkpd_metrics:
-        extra_cols[0].metric("Peak Knockdown (%)", f"{pkpd_metrics.get('peak_knockdown_pct', 0):.1f}")
+        extra_cols[0].metric("Peak Knockdown (%)", f"{safe_float(pkpd_metrics.get('peak_knockdown_pct')):.1f}")
     if "exposure_score" in pkpd_metrics:
-        extra_cols[1].metric("Exposure Score", f"{pkpd_metrics.get('exposure_score', 0):.2f}")
+        extra_cols[1].metric("Exposure Score", f"{safe_float(pkpd_metrics.get('exposure_score')):.2f}")
 
-    st.caption(
-        "PK/PD metrics are shown when dose and schedule are provided and PK/PD bridging is available."
-    )
+    with st.expander("Raw PK/PD payload"):
+        st.json(pkpd_metrics)
+
+    st.caption("PK/PD metrics are shown when dose and schedule are provided and PK/PD bridging is available.")
 
 
 def render_confidence_panel(result: Dict[str, Any]) -> None:
-    """Render endpoint-level confidence table."""
     st.markdown("### Prediction Confidence")
-
     conf_rows = []
+    endpoint_df = flatten_endpoint_scores(result)
 
-    if "per_endpoint" in result and isinstance(result["per_endpoint"], dict):
-        for endpoint, info in result["per_endpoint"].items():
-            if isinstance(info, dict):
-                prob = info.get("prob", info.get("risk_score", info.get("score", 0.5)))
-                try:
-                    prob = float(prob)
-                except Exception:
-                    prob = 0.5
-            else:
-                try:
-                    prob = float(info)
-                except Exception:
-                    prob = 0.5
-
+    if not endpoint_df.empty:
+        for _, row in endpoint_df.iterrows():
+            prob = safe_float(row.get("Risk Score", 0.5), 0.5)
             conf_rows.append(
                 {
-                    "Endpoint": endpoint,
-                    "Risk Score": round(prob, 4),
-                    "Confidence": confidence_label(prob),
-                    "Uncertainty Band": uncertainty_band(prob),
-                }
-            )
-
-    elif "risk_scores" in result and isinstance(result["risk_scores"], dict):
-        for endpoint, prob in result["risk_scores"].items():
-            try:
-                prob = float(prob)
-            except Exception:
-                prob = 0.5
-
-            conf_rows.append(
-                {
-                    "Endpoint": endpoint,
+                    "Endpoint": row.get("Endpoint", ""),
                     "Risk Score": round(prob, 4),
                     "Confidence": confidence_label(prob),
                     "Uncertainty Band": uncertainty_band(prob),
@@ -398,6 +480,7 @@ def render_modality_result_card(modality_class: str, registry: Dict[str, Any]) -
             f"**Mechanistic layer:** {registry.get('mechanistic_layer', 'N/A')}\n\n"
             f"**Primary benchmarks:** {', '.join(registry.get('primary_benchmarks', []))}"
         )
+    st.caption(registry.get("backend_status", ""))
     with st.expander("Benchmark & provenance support"):
         st.json(registry)
 
@@ -417,7 +500,9 @@ def render_intermediate_outputs(mech: Dict[str, float]) -> None:
     bottom[2].metric("Renal Accumulation", mech.get("renal_accumulation_proxy", 0))
     bottom[3].metric("Length (nt)", mech.get("length_nt", 0))
 
-    st.dataframe(pd.DataFrame([mech]), use_container_width=True)
+    with st.expander("Intermediate calculation table"):
+        st.dataframe(pd.DataFrame([mech]), use_container_width=True)
+
     st.caption("These are mechanistic-support proxy calculations for interpretation and triage, not final validated clinical scores.")
 
 
@@ -430,6 +515,71 @@ def render_assay_recommendations(recs: List[str]) -> None:
         st.info("No assay recommendations generated.")
 
 
+def render_last_result_snapshot(last: Dict[str, Any]) -> None:
+    result = last.get("result", {}) if isinstance(last.get("result"), dict) else {}
+    endpoint_df = flatten_endpoint_scores(result)
+    st.markdown("### Latest Prediction Snapshot")
+    st.markdown(f"**Run ID:** `{last.get('run_id', '')}`")
+    st.markdown(
+        f"**Sequence:** `{last.get('sequence', '')}` | "
+        f"**Modality:** {last.get('modality', '')} | "
+        f"**Chemistry:** {last.get('chemistry', '')} | "
+        f"**Conjugate:** {last.get('conjugate', '') or 'None'}"
+    )
+    if result.get("dominant_endpoint"):
+        st.info(f"🎯 Dominant endpoint: {result.get('dominant_endpoint')}")
+    if not endpoint_df.empty:
+        st.dataframe(endpoint_df, use_container_width=True)
+    else:
+        st.json(result)
+
+
+def dataset_summary(dataset_path: Path) -> Dict[str, Any]:
+    info: Dict[str, Any] = {"exists": dataset_path.exists(), "path": str(dataset_path)}
+    if not dataset_path.exists():
+        return info
+
+    df = pd.read_csv(dataset_path)
+    info["rows"] = len(df)
+    info["columns"] = len(df.columns)
+    info["column_names"] = list(df.columns)
+    if "sequence" in df.columns:
+        seq_series = df["sequence"].dropna().astype(str)
+        info["sequence_coverage"] = int(seq_series.shape[0])
+        if not seq_series.empty:
+            info["median_length"] = int(seq_series.map(len).median())
+            info["min_length"] = int(seq_series.map(len).min())
+            info["max_length"] = int(seq_series.map(len).max())
+    return info
+
+
+def model_registry_df() -> pd.DataFrame:
+    rows = []
+    if MODEL_ARTIFACTS_DIR.exists():
+        for p in sorted(list(MODEL_ARTIFACTS_DIR.glob("*.pkl")) + list(MODEL_ARTIFACTS_DIR.glob("*.joblib"))):
+            rows.append(
+                {
+                    "Artifact": p.name,
+                    "Size (KB)": round(p.stat().st_size / 1024, 2),
+                    "Modified": datetime.fromtimestamp(p.stat().st_mtime).isoformat(timespec="seconds"),
+                    "Path": str(p),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def metrics_summary() -> Dict[str, Any]:
+    metrics_file = METRICS_ARTIFACTS_DIR / "training_summary.json"
+    out = {"metrics_file": str(metrics_file), "exists": metrics_file.exists()}
+    if metrics_file.exists():
+        try:
+            with open(metrics_file, "r") as f:
+                out["payload"] = json.load(f)
+        except Exception as e:
+            out["error"] = str(e)
+    return out
+
+
 st.set_page_config(
     page_title="OligoTox Platform",
     page_icon="🧬",
@@ -437,34 +587,25 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.title("🧬 OligoTox: Oligonucleotide Toxicity Prediction Platform")
-st.caption(
-    "Mechanism-aware toxicity prediction and safety decision support for ASOs, siRNAs, and RNA-targeting therapeutics"
-)
+st.title(APP_TITLE)
+st.caption(APP_CAPTION)
 
-tabs = st.tabs(
-    [
-        "Sequence Analysis",
-        "Overview",
-        "Curation",
-        "Runs",
-        "Models",
-        "Predictions",
-        "Evaluation",
-        "Comparator",
-        "Assays",
-        "Regulatory Report",
-    ]
-)
+with st.sidebar:
+    st.header("Platform Status")
+    st.success("Backend entrypoint: run_oligotox")
+    st.write(f"PK/PD bridge available: {'Yes' if PKPD_AVAILABLE else 'No'}")
+    st.write(f"Processed data dir: `{PROCESSED_DATA_DIR}`")
+    st.write(f"Model artifacts dir: `{MODEL_ARTIFACTS_DIR}`")
+    st.write(f"Metrics dir: `{METRICS_ARTIFACTS_DIR}`")
 
-# ============================================================================
+tabs = st.tabs(TAB_NAMES)
+
+# ----------------------------------------------------------------------------
 # TAB 0: SEQUENCE ANALYSIS
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[0]:
     st.subheader("Sequence Analysis")
-    st.caption(
-        "Enter an oligonucleotide sequence for full toxicity risk profiling using the trained OligoTox model."
-    )
+    st.caption("Enter an oligonucleotide sequence for full toxicity risk profiling using the trained OligoTox backend.")
 
     col1, col2 = st.columns([2, 1])
 
@@ -473,7 +614,7 @@ with tabs[0]:
             "Input Sequence (RNA/DNA)",
             height=120,
             placeholder="e.g., AUGCUAGCUAGCUAGCUAGC",
-            help="Paste ASO, siRNA, or other oligo sequence (ACGTU alphabet)",
+            help="Paste ASO, siRNA, or other oligo sequence (ACGTUN alphabet; DNA T auto-normalized to U).",
         )
 
     with col2:
@@ -499,15 +640,30 @@ with tabs[0]:
             help="Optional: choose a dosing schedule for PK/PD exposure context.",
         )
 
+    with st.expander("Input preview"):
+        seq_norm_preview = normalize_sequence(seq_input) if seq_input else ""
+        st.write(
+            {
+                "normalized_sequence": seq_norm_preview,
+                "length_nt": len(seq_norm_preview),
+                "modality": modality,
+                "chemistry": chemistry,
+                "conjugate": conjugate,
+                "dose_mg_kg": dose_mg_kg_input,
+                "schedule": schedule_input,
+            }
+        )
+
     run_btn = st.button("🔬 Run Full OligoTox Prediction", type="primary", use_container_width=True)
 
     if run_btn:
-        if not seq_input or not seq_input.strip():
-            st.error("Please enter a valid sequence.")
+        seq_clean = normalize_sequence(seq_input)
+        is_valid, err = validate_sequence(seq_clean)
+
+        if not is_valid:
+            st.error(err)
         else:
             try:
-                seq_clean = normalize_sequence(seq_input)
-
                 with st.spinner("Running OligoTox inference backend..."):
                     inp = {
                         "sequence": seq_clean,
@@ -555,28 +711,20 @@ with tabs[0]:
 
                 st.markdown("### Toxicity Risk Profile")
                 st.markdown(f"**Sequence:** `{seq_clean}` ({len(seq_clean)} nt)")
-                st.markdown(
-                    f"**Modality:** {modality} | **Chemistry:** {chemistry} | **Conjugate:** {conjugate}"
-                )
+                st.markdown(f"**Modality:** {modality} | **Chemistry:** {chemistry} | **Conjugate:** {conjugate}")
 
                 st.markdown("---")
                 st.markdown("#### Per-Endpoint Risk Scores")
 
-                if "per_endpoint" in result:
-                    df_endpoints = pd.DataFrame(result["per_endpoint"]).T
-                    df_endpoints = df_endpoints.reset_index().rename(columns={"index": "Endpoint"})
-                    st.dataframe(df_endpoints, use_container_width=True)
-                elif "risk_scores" in result:
-                    df_scores = pd.DataFrame(
-                        [{"Endpoint": k, "Risk Score": v} for k, v in result["risk_scores"].items()]
-                    )
-                    st.dataframe(df_scores, use_container_width=True)
+                endpoint_df = flatten_endpoint_scores(result)
+                if not endpoint_df.empty:
+                    st.dataframe(endpoint_df, use_container_width=True)
                 else:
                     st.json(result)
 
                 st.download_button(
                     label="📥 Download Full Result (JSON)",
-                    data=json.dumps(result, indent=2),
+                    data=json.dumps(result, indent=2, default=str),
                     file_name=f"oligotox_result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                     mime="application/json",
                 )
@@ -613,154 +761,206 @@ with tabs[0]:
                 st.markdown("#### Mechanistic Attribution (D1/D2/D3)")
                 st.markdown(
                     """
-                - **D1 (On-target):** Exaggerated pharmacology from intended target engagement  
-                - **D2 (Hybridization off-target):** Unintended RNA binding via sequence complementarity  
-                - **D3 (Chemistry/delivery):** Chemical-class or delivery-vehicle liabilities  
-                """
+- **D1 (On-target):** Exaggerated pharmacology from intended target engagement  
+- **D2 (Hybridization off-target):** Unintended RNA binding via sequence complementarity  
+- **D3 (Chemistry/delivery):** Chemical-class or delivery-vehicle liabilities  
+                    """
                 )
 
                 if "omics" in result and isinstance(result["omics"], dict):
                     if "adjustment_summary" in result["omics"]:
                         st.markdown(f"**Mechanistic Notes:** {result['omics']['adjustment_summary']}")
-
                     explanation = result["omics"].get("explanation", {})
                     if isinstance(explanation, dict) and explanation.get("summary"):
                         st.caption(explanation["summary"])
+
+                with st.expander("Raw backend payload"):
+                    st.json(result)
 
             except Exception as e:
                 st.error(f"Prediction failed: {str(e)}")
                 st.exception(e)
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # TAB 1: OVERVIEW
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[1]:
     st.subheader("Platform Overview")
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Training Rows", "1576")
-    with col2:
-        st.metric("Active Endpoints", "15+")
-    with col3:
-        st.metric("Model Status", "Trained")
+    ds_path = PROCESSED_DATA_DIR / "training_dataset.csv"
+    model_df = model_registry_df()
+    metric_info = metrics_summary()
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Training Dataset Present", "Yes" if ds_path.exists() else "No")
+    c2.metric("Model Artifacts", len(model_df))
+    c3.metric("Metrics Summary", "Yes" if metric_info.get("exists") else "No")
+    c4.metric("PK/PD Bridge", "Available" if PKPD_AVAILABLE else "Unavailable")
 
     st.markdown("---")
     st.markdown(
         """
-    ### OligoTox Platform
+### OligoTox Platform
 
-    **Mission:** Mechanism-aware toxicity prediction for oligonucleotide therapeutics.
+**Mission:** Mechanism-aware toxicity prediction for oligonucleotide therapeutics.
 
-    **Core Framework: D1/D2/D3**
-    - **D1:** On-target pharmacology
-    - **D2:** Hybridization-dependent off-target effects
-    - **D3:** Chemistry and delivery liabilities
+**Core Framework: D1/D2/D3**
+- **D1:** On-target pharmacology
+- **D2:** Hybridization-dependent off-target effects
+- **D3:** Chemistry and delivery liabilities
 
-    **Key Features:**
-    - Endpoint-specific risk scores
-    - Uncertainty and confidence indicators
-    - Mechanistic attribution
-    - Assay and biomarker recommendations
-    - Candidate comparison support
-    - Regulatory-style reporting
-    """
+**Current App Scope**
+- Trained OligoTox backend inference via `run_oligotox`
+- Session-based run logging and comparison
+- Optional PK/PD exposure bridge
+- Mechanistic proxy overlays for interpretation
+- Regulatory-style summary generation
+- Artifact-aware model and metrics inspection
+        """
     )
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # TAB 2: CURATION
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[2]:
     st.subheader("Data Curation Status")
 
     try:
         dataset_path = PROCESSED_DATA_DIR / "training_dataset.csv"
-        if dataset_path.exists():
-            df = pd.read_csv(dataset_path, nrows=10)
-            st.success(f"✅ Training dataset found: {dataset_path}")
-            st.dataframe(df.head(), use_container_width=True)
+        info = dataset_summary(dataset_path)
 
-            if "sequence" in df.columns:
-                full_df = pd.read_csv(dataset_path)
-                n_total = len(full_df)
-                n_with_seq = full_df["sequence"].notna().sum()
-                st.metric("Sequence Coverage", f"{n_with_seq}/{n_total}")
+        if info["exists"]:
+            st.success(f"✅ Training dataset found: {info['path']}")
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Rows", info.get("rows", 0))
+            c2.metric("Columns", info.get("columns", 0))
+            c3.metric("Seq Coverage", info.get("sequence_coverage", 0))
+            c4.metric("Median Length", info.get("median_length", "NA"))
+
+            preview = pd.read_csv(dataset_path, nrows=15)
+            st.dataframe(preview, use_container_width=True)
+
+            with st.expander("Dataset metadata"):
+                st.json(info)
         else:
             st.warning("Training dataset not found.")
     except Exception as e:
         st.error(f"Error loading dataset: {e}")
+        st.exception(e)
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # TAB 3: RUNS
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[3]:
     st.subheader("Pipeline Runs")
-    st.info("This tab shows rebuild, training, and batch prediction run history.")
-    st.markdown("*(Run tracking not yet implemented in this version)*")
+    st.caption("Session-level run history generated from Sequence Analysis activity.")
 
-# ============================================================================
+    runs = get_runs(st)
+    if runs:
+        run_df = summarize_runs_df(runs)
+        st.success(f"Found {len(run_df)} logged run(s) in session state.")
+        st.dataframe(run_df, use_container_width=True)
+
+        latest = get_last_run(st)
+        if latest:
+            with st.expander("Latest run details", expanded=True):
+                render_last_result_snapshot(latest)
+    else:
+        st.info("No logged runs yet. Execute a Sequence Analysis run to populate this tab.")
+
+# ----------------------------------------------------------------------------
 # TAB 4: MODELS
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[4]:
     st.subheader("Model Registry")
 
     try:
-        if MODEL_ARTIFACTS_DIR.exists():
-            models = list(MODEL_ARTIFACTS_DIR.glob("*.pkl")) + list(MODEL_ARTIFACTS_DIR.glob("*.joblib"))
-            if models:
-                st.success(f"Found {len(models)} model artifact(s)")
-                for m in models:
-                    st.markdown(f"- `{m.name}` ({m.stat().st_size // 1024} KB)")
-            else:
-                st.info("No model binaries found. Train a model first.")
+        df_models = model_registry_df()
+        if not df_models.empty:
+            st.success(f"Found {len(df_models)} model artifact(s)")
+            st.dataframe(df_models, use_container_width=True)
         else:
-            st.warning("Model artifacts directory does not exist.")
+            st.info("No model binaries found. Train a model first.")
+
+        with st.expander("Artifact directories"):
+            st.write(
+                {
+                    "MODEL_ARTIFACTS_DIR": str(MODEL_ARTIFACTS_DIR),
+                    "METRICS_ARTIFACTS_DIR": str(METRICS_ARTIFACTS_DIR),
+                }
+            )
     except Exception as e:
         st.error(f"Error reading model registry: {e}")
+        st.exception(e)
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # TAB 5: PREDICTIONS
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[5]:
     st.subheader("Recent Predictions")
-    st.info("This tab tracks recent prediction runs and batch analyses.")
-    st.markdown("*(Prediction logging not yet implemented in this version)*")
+    st.caption("Detailed prediction outputs from this session.")
 
-# ============================================================================
+    runs = get_runs(st)
+    if runs:
+        run_options = [r.get("run_id", f"run_{i}") for i, r in enumerate(runs)]
+        selected_run_id = st.selectbox("Select a run", run_options, index=len(run_options) - 1)
+        selected_run = next((r for r in runs if r.get("run_id") == selected_run_id), runs[-1])
+
+        result = selected_run.get("result", {})
+        endpoint_df = flatten_endpoint_scores(result)
+
+        st.markdown(
+            f"**Sequence:** `{selected_run.get('sequence', '')}` | "
+            f"**Modality:** {selected_run.get('modality', '')} | "
+            f"**Chemistry:** {selected_run.get('chemistry', '')} | "
+            f"**Conjugate:** {selected_run.get('conjugate', '') or 'None'}"
+        )
+
+        if result.get("dominant_endpoint"):
+            st.info(f"🎯 Dominant endpoint: {result.get('dominant_endpoint')}")
+
+        if not endpoint_df.empty:
+            st.dataframe(endpoint_df, use_container_width=True)
+        else:
+            st.json(result)
+
+        st.download_button(
+            label="📥 Download Selected Prediction JSON",
+            data=json.dumps(result, indent=2, default=str),
+            file_name=f"{selected_run_id}_prediction.json",
+            mime="application/json",
+        )
+    else:
+        st.info("No prediction runs logged yet. Execute Sequence Analysis first.")
+
+# ----------------------------------------------------------------------------
 # TAB 6: EVALUATION
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[6]:
     st.subheader("📊 Model Evaluation & Clinical Metrics")
     st.caption("Rigorous evaluation with leakage controls, calibration, and uncertainty quantification")
 
     st.markdown(
         """
-    ### Evaluation Philosophy
+### Evaluation Philosophy
 
-    This platform follows best practices for clinical prediction:
+1. **Leakage-Resistant Splitting**
+   - Sequence similarity
+   - Batch effects
+   - Temporal structure
+   - Study/assay families
 
-    1. **Leakage-Resistant Splitting:** DataSAIL-based train/val/test splits accounting for:
-       - Sequence similarity
-       - Batch effects
-       - Temporal structure
-       - Study/assay families
+2. **Clinically Meaningful Metrics**
+   - AUROC and AUPRC
+   - Brier score
+   - Per-endpoint thresholds
+   - Reliability-oriented tracking
 
-    2. **Clinically Meaningful Metrics:**
-       - AUROC and AUPRC for discrimination
-       - Brier score for calibration quality
-       - Calibration curves (reliability diagrams)
-       - Per-endpoint performance tracking
-
-    3. **Uncertainty Quantification:**
-       - Confidence bands (Low/Medium/High)
-       - Coverage estimation
-       - Out-of-distribution detection
-
-    4. **Endpoint-Specific Evaluation:**
-       - Risk band thresholds per endpoint
-       - D1/D2/D3 mechanistic decomposition
-       - Translational biomarker alignment
-    """
+3. **Uncertainty Quantification**
+   - Confidence bands
+   - Coverage estimation
+   - OOD-aware future extensions
+        """
     )
 
     st.markdown("---")
@@ -776,9 +976,9 @@ with tabs[6]:
 
             col1, col2, col3 = st.columns(3)
             if "composite_auroc" in metrics:
-                col1.metric("Composite AUROC", f"{metrics['composite_auroc']:.3f}")
+                col1.metric("Composite AUROC", f"{safe_float(metrics['composite_auroc']):.3f}")
             if "composite_brier" in metrics:
-                col2.metric("Composite Brier Score", f"{metrics['composite_brier']:.3f}")
+                col2.metric("Composite Brier Score", f"{safe_float(metrics['composite_brier']):.3f}")
             if "n_endpoints" in metrics:
                 col3.metric("Evaluated Endpoints", metrics["n_endpoints"])
 
@@ -812,15 +1012,10 @@ with tabs[6]:
                 st.info("DataSAIL leakage diagnostic not found. Run training pipeline to generate.")
         else:
             st.warning("⚠️ No evaluation metrics found. Train the model to generate metrics.")
-            st.markdown(
-                """
-            **To generate evaluation metrics:**
-            1. Ensure `data/processed/training_dataset.csv` exists
-            2. Run: `python train.py`
-            3. Metrics will be saved to `artifacts/metrics/training_summary.json`
-            """
+            st.code(
+                "python train.py",
+                language="bash",
             )
-
     except Exception as e:
         st.error(f"Error loading evaluation metrics: {e}")
         st.exception(e)
@@ -829,21 +1024,19 @@ with tabs[6]:
     st.markdown("### Calibration & Uncertainty")
     st.markdown(
         """
-    **Calibration:** Does a predicted 70% risk correspond to 70% observed frequency?  
-    **Uncertainty:** How confident is the model? Does it know when it doesn't know?
+**Calibration:** Does a predicted 70% risk correspond to 70% observed frequency?  
+**Uncertainty:** How confident is the model? Does it know when it doesn't know?
 
-    These are critical for clinical decision support, where miscalibrated predictions can lead to poor therapeutic decisions.
-
-    *(Calibration plots and uncertainty visualizations will be added in the next iteration)*
-    """
+Current UI confidence labels are probability-distance proxies; formal calibrated uncertainty should come from model-level calibration or ensemble variance.
+        """
     )
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # TAB 7: COMPARATOR
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[7]:
     st.subheader("Candidate Comparator")
-    st.caption("Compare multiple oligonucleotide candidates on intermediate safety proxies.")
+    st.caption("Compare multiple oligonucleotide candidates on sequence-derived mechanistic overlays and session runs.")
 
     runs = get_runs(st)
     if runs:
@@ -859,7 +1052,7 @@ with tabs[7]:
         ]
         df_cmp = compare_candidates_df(candidates)
         st.dataframe(df_cmp, use_container_width=True)
-        st.caption("Comparator uses logged session runs.")
+        st.caption("Comparator is populated from logged session runs.")
     else:
         sample_candidates = [
             {
@@ -888,23 +1081,25 @@ with tabs[7]:
         st.dataframe(df_cmp, use_container_width=True)
         st.caption("No logged runs yet; showing sample candidates.")
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # TAB 8: ASSAYS
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[8]:
     st.subheader("Assay Recommendation Center")
     st.caption("Mechanism-linked follow-up assay suggestions.")
 
     last = get_last_run(st)
-    recs = []
     if last and isinstance(last.get("result"), dict):
-        omics = last["result"].get("omics", {})
-        if isinstance(omics, dict):
-            recs = omics.get("recommended_assays", []) or []
+        seq = last.get("sequence", "")
+        modality = last.get("modality", "")
+        chemistry = last.get("chemistry", "")
+        conjugate = last.get("conjugate", "")
+        result = last.get("result", {})
+        modality_class = detect_modality_class(modality, chemistry, conjugate, seq)
+        mech = compute_intermediate_safety_metrics(seq, chemistry, conjugate, modality)
+        recs = build_assay_recommendations(result, mech, modality_class)
 
-    if recs:
-        for rec in recs:
-            st.markdown(f"- {rec}")
+        render_assay_recommendations(recs)
         st.caption("Showing assay recommendations from the latest Sequence Analysis run.")
     else:
         st.markdown(
@@ -917,13 +1112,13 @@ with tabs[8]:
 - RNase H1 / hybridization off-target confirmation
 - Complement activation biomarker panel
 - Coagulation and thrombocytopenia follow-up
-        """
+            """
         )
         st.caption("No run-linked assay recommendations yet; showing default panel.")
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # TAB 9: REGULATORY REPORT
-# ============================================================================
+# ----------------------------------------------------------------------------
 with tabs[9]:
     last = get_last_run(st)
     if last and last.get("regulatory_md"):
@@ -936,19 +1131,21 @@ with tabs[9]:
             file_name="latest_oligotox_regulatory_summary.md",
             mime="text/markdown",
         )
+
+        with st.expander("Latest run payload"):
+            st.json(last.get("result", {}))
     else:
         st.subheader("OSWG / FDA Report Framing")
         st.caption("Run-level output should map predictions into a structured preclinical safety narrative.")
-
         st.markdown(
             """
 ### Recommended Report Sections
-1. Candidate context and modality.
-2. D1 / D2 / D3 mechanistic interpretation.
-3. Endpoint risks and uncertainty.
-4. Intermediate calculations and exposure context.
-5. Assay recommendations.
-6. OSWG off-target workflow interpretation.
-7. FDA-oriented nonclinical safety planning notes.
-        """
-    )
+1. Candidate context and modality
+2. D1 / D2 / D3 mechanistic interpretation
+3. Endpoint risks and uncertainty
+4. Intermediate calculations and exposure context
+5. Assay recommendations
+6. OSWG off-target workflow interpretation
+7. FDA-oriented nonclinical safety planning notes
+            """
+        )

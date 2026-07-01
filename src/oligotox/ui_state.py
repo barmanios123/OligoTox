@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, asdict
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
@@ -23,7 +23,8 @@ def _now_iso() -> str:
 
 
 def make_run_id(seq: str) -> str:
-    return f"run-{_now_iso().replace(':','').replace('-','')}-{len(seq)}"
+    ts = _now_iso().replace(":", "").replace("-", "")
+    return f"run-{ts}-{len(seq)}"
 
 
 def log_run(
@@ -50,12 +51,21 @@ def log_run(
     )
     runs.append(asdict(run))
     st.session_state["runs"] = runs
+    st.session_state["last_run"] = asdict(run)
 
 
 def get_runs(st) -> List[Dict[str, Any]]:
     return st.session_state.get("runs", [])
 
 
-def get_last_run(st) -> Dict[str, Any] | None:
+def get_last_run(st) -> Optional[Dict[str, Any]]:
+    last = st.session_state.get("last_run")
+    if last:
+        return last
     runs = st.session_state.get("runs", [])
     return runs[-1] if runs else None
+
+
+def clear_runs(st) -> None:
+    st.session_state["runs"] = []
+    st.session_state["last_run"] = None

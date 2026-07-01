@@ -76,18 +76,20 @@ class Registry:
         if not path.exists():
             return []
         try:
-            return json.loads(path.read_text())
+            payload = json.loads(path.read_text())
+            return payload if isinstance(payload, list) else []
         except Exception:
             return []
 
     def _save_index(self, path: Path, rows: list[dict]) -> None:
-        path.write_text(json.dumps(rows, indent=2))
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(rows, indent=2, default=str))
 
     def save_run(self, run: PipelineRun) -> Path:
         run_dir = self.runs_dir / run.run_id
         run_dir.mkdir(parents=True, exist_ok=True)
         run_path = run_dir / "run.json"
-        run_path.write_text(json.dumps(asdict(run), indent=2))
+        run_path.write_text(json.dumps(asdict(run), indent=2, default=str))
         rows = [r for r in self._load_index(self.runs_index_path) if r.get("run_id") != run.run_id]
         rows.append(asdict(run))
         self._save_index(self.runs_index_path, rows)
@@ -121,7 +123,7 @@ class Registry:
             path=str(p),
             kind=kind,
             checksum_sha256=sha256_file(p),
-            size_bytes=p.stat().st_size if p.exists() else None,
+            size_bytes=p.stat().st_size if p.exists() and p.is_file() else None,
         )
 
     def register_model(self, record: ModelRecord) -> None:
@@ -143,3 +145,9 @@ class Registry:
         binaries = [r for r in rows if r.get("artifact_kind") == "model_binary"]
         active = [r for r in binaries if r.get("is_active")]
         return active[0] if active else (binaries[0] if binaries else None)
+
+    def list_artifacts_for_run(self, run_id: str) -> list[dict]:
+        run = self.load_run(run_id)
+        if not run:
+            return []
+        return run.get("artifacts", [])

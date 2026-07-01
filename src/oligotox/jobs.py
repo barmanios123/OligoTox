@@ -59,6 +59,13 @@ def _safe_read_text(path: Path) -> str | None:
         return None
 
 
+def _append_artifact(run: PipelineRun, path: str | Path, kind: str, name: Optional[str] = None) -> None:
+    try:
+        run.artifacts.append(REGISTRY.register_artifact(path, kind=kind, name=name))
+    except Exception:
+        pass
+
+
 def _execute_step(run_dir: Path, step_name: str, command: List[str]) -> dict:
     log_path = run_dir / f"{step_name}.log"
     with log_path.open("w") as log:
@@ -70,7 +77,12 @@ def _execute_step(run_dir: Path, step_name: str, command: List[str]) -> dict:
             stderr=subprocess.STDOUT,
             text=True,
         )
-    return {"step": step_name, "command": command, "returncode": proc.returncode, "log_path": str(log_path)}
+    return {
+        "step": step_name,
+        "command": command,
+        "returncode": proc.returncode,
+        "log_path": str(log_path),
+    }
 
 
 def run_mapping_validate(trigger: str = "manual") -> dict:
@@ -87,20 +99,25 @@ def run_mapping_validate(trigger: str = "manual") -> dict:
     )
     REGISTRY.save_run(run)
 
-    validation = validate_mapping_file(REPO_ROOT / "data/metadata/candidate_to_oligo_map.csv")
-    payload = {"validation": asdict(validation)}
+    mapping_file = REPO_ROOT / "data/metadata/candidate_to_oligo_map.csv"
+    validation = validate_mapping_file(mapping_file)
+    payload = {"validation": asdict(validation), "mapping_file": str(mapping_file)}
     _write_json(run_dir / "metrics.json", payload)
-    (run_dir / "mapping_validate.log").write_text(json.dumps(payload, indent=2))
+    (run_dir / "mapping_validate.log").write_text(json.dumps(payload, indent=2, default=str))
 
     run.status = "succeeded" if validation.ok else "failed"
     run.finished_at = utc_now_iso()
-    run.metrics = payload
-    run.artifacts.append(REGISTRY.register_artifact(run_dir / "metrics.json", kind="validation_metrics"))
-    run.artifacts.append(REGISTRY.register_artifact(run_dir / "mapping_validate.log", kind="validation_log"))
+    run.metrics = {
+        "ok": bool(validation.ok),
+        "n_errors": len(getattr(validation, "errors", []) or []),
+        "n_warnings": len(getattr(validation, "warnings", []) or []),
+    }
 
-    mapping_file = REPO_ROOT / "data/metadata/candidate_to_oligo_map.csv"
+    _append_artifact(run, run_dir / "metrics.json", kind="validation_metrics")
+    _append_artifact(run, run_dir / "mapping_validate.log", kind="validation_log")
+
     if mapping_file.exists():
-        run.artifacts.append(REGISTRY.register_artifact(mapping_file, kind="mapping_snapshot"))
+        _append_artifact(run, mapping_file, kind="mapping_snapshot")
 
     REGISTRY.save_run(run)
     return REGISTRY.load_run(run_id)
@@ -123,11 +140,14 @@ def run_full_rebuild(trigger: str = "manual", parameters: Optional[Dict[str, Any
 
     step_results = []
     overall_ok = True
+    failed_step = None
+
     for step_name, command in CANONICAL_REBUILD_STEPS:
         result = _execute_step(run_dir, step_name, command)
         step_results.append(result)
         if result["returncode"] != 0:
             overall_ok = False
+            failed_step = step_name
             run.error = f"Step failed: {step_name}"
             break
 
@@ -137,32 +157,43 @@ def run_full_rebuild(trigger: str = "manual", parameters: Optional[Dict[str, Any
             "training_dataset": str(REPO_ROOT / "data/processed/training_dataset.csv"),
             "with_chem_dataset": str(REPO_ROOT / "data/processed/training_dataset_with_chem.csv"),
             "audit_file": str(REPO_ROOT / "data/processed/training_dataset_rebuilt_audit.csv"),
+            "feature_matrix": str(REPO_ROOT / "data/processed/feature_matrix.csv"),
+            "label_matrix": str(REPO_ROOT / "data/processed/label_matrix.csv"),
+            "dataset_metadata": str(REPO_ROOT / "data/processed/dataset_metadata.json"),
         },
     }
 
     run.status = "succeeded" if overall_ok else "failed"
     run.finished_at = utc_now_iso()
-    run.metrics = {"n_steps": len(step_results), "n_steps_succeeded": sum(r["returncode"] == 0 for r in step_results)}
+    run.metrics = {
+        "n_steps": len(step_results),
+        "n_steps_succeeded": sum(r["returncode"] == 0 for r in step_results),
+        "n_steps_failed": sum(r["returncode"] != 0 for r in step_results),
+        "failed_step": failed_step,
+    }
+
     _write_json(run_dir / "outputs.json", outputs)
     _write_json(run_dir / "metrics.json", run.metrics)
 
     for key, value in outputs["expected_outputs"].items():
         p = Path(value)
         if p.exists():
-            run.artifacts.append(REGISTRY.register_artifact(p, kind=key))
+            _append_artifact(run, p, kind=key)
 
     combined_logs = []
     for r in step_results:
         txt = _safe_read_text(Path(r["log_path"]))
         if txt:
             combined_logs.append(f"\n===== {r['step']} =====\n{txt}")
-            run.artifacts.append(REGISTRY.register_artifact(r["log_path"], kind="step_log"))
+            _append_artifact(run, r["log_path"], kind="step_log", name=f"{r['step']}.log")
+
     if combined_logs:
         (run_dir / "master.log").write_text("\n".join(combined_logs))
-        run.artifacts.append(REGISTRY.register_artifact(run_dir / "master.log", kind="master_log"))
+        _append_artifact(run, run_dir / "master.log", kind="master_log")
 
-    run.artifacts.append(REGISTRY.register_artifact(run_dir / "outputs.json", kind="outputs_manifest"))
-    run.artifacts.append(REGISTRY.register_artifact(run_dir / "metrics.json", kind="run_metrics"))
+    _append_artifact(run, run_dir / "outputs.json", kind="outputs_manifest")
+    _append_artifact(run, run_dir / "metrics.json", kind="run_metrics")
+
     REGISTRY.save_run(run)
     return REGISTRY.load_run(run_id)
 
@@ -185,15 +216,16 @@ def run_train_model_v4(trigger: str = "manual") -> dict:
 
     result = _execute_step(run_dir, "train_model_v4", ["python3", "scripts/train_baseline.py"])
     run.finished_at = utc_now_iso()
-    run.artifacts.append(REGISTRY.register_artifact(result["log_path"], kind="training_log"))
+    _append_artifact(run, result["log_path"], kind="training_log")
 
     if result["returncode"] != 0:
         run.status = "failed"
         run.error = "Model training script failed."
+        run.metrics = {"returncode": result["returncode"]}
         REGISTRY.save_run(run)
         return REGISTRY.load_run(run_id)
 
-    discovered = []
+    discovered: List[Path] = []
     stable_model_drop = REPO_ROOT / "artifacts" / "models" / "latest_train_baseline"
 
     if stable_model_drop.exists():
@@ -204,22 +236,28 @@ def run_train_model_v4(trigger: str = "manual") -> dict:
     for folder in [REPO_ROOT / "artifacts", REPO_ROOT / "reports", REPO_ROOT / "models"]:
         if folder.exists():
             for p in folder.rglob("*"):
-                if p.is_file() and p not in discovered and any(tok in p.name.lower() for tok in ["model", "baseline", "logreg", "eval", "metric"]):
+                if (
+                    p.is_file()
+                    and p not in discovered
+                    and any(tok in p.name.lower() for tok in ["model", "baseline", "logreg", "eval", "metric"])
+                ):
                     discovered.append(p)
 
-    copied_binaries = []
-    copied_reports = []
-    copied_other = []
+    copied_binaries: List[Path] = []
+    copied_reports: List[Path] = []
+    copied_other: List[Path] = []
     seen = set()
 
     for p in discovered:
-        if str(p) in seen:
+        if str(p.resolve()) in seen:
             continue
-        seen.add(str(p))
+        seen.add(str(p.resolve()))
         dest = model_dir / p.name
         try:
             if p.resolve() != dest.resolve():
                 shutil.copy2(p, dest)
+            else:
+                dest = p
         except Exception:
             try:
                 if p.exists():
@@ -230,13 +268,13 @@ def run_train_model_v4(trigger: str = "manual") -> dict:
         ext = dest.suffix.lower()
         if ext in MODEL_BINARY_EXTS:
             copied_binaries.append(dest)
-            run.artifacts.append(REGISTRY.register_artifact(dest, kind="model_binary"))
+            _append_artifact(run, dest, kind="model_binary")
         elif ext in REPORT_EXTS:
             copied_reports.append(dest)
-            run.artifacts.append(REGISTRY.register_artifact(dest, kind="model_report"))
+            _append_artifact(run, dest, kind="model_report")
         else:
             copied_other.append(dest)
-            run.artifacts.append(REGISTRY.register_artifact(dest, kind="model_related_file"))
+            _append_artifact(run, dest, kind="model_related_file")
 
     active_assigned = False
     for p in sorted(copied_binaries):
@@ -279,17 +317,24 @@ def run_train_model_v4(trigger: str = "manual") -> dict:
         "stable_model_drop": str(stable_model_drop),
     }
     _write_json(run_dir / "metrics.json", run.metrics)
-    run.artifacts.append(REGISTRY.register_artifact(run_dir / "metrics.json", kind="training_metrics"))
+    _append_artifact(run, run_dir / "metrics.json", kind="training_metrics")
     REGISTRY.save_run(run)
     return REGISTRY.load_run(run_id)
 
 
-def run_predict_sequence(sequence: str, trigger: str = "manual") -> dict:
+def run_predict_sequence(
+    sequence: str,
+    trigger: str = "manual",
+    context: Optional[Dict[str, Any]] = None,
+) -> dict:
     from oligotox import ml_predict
 
     validation = validate_sequence_input(sequence)
     if not validation.ok:
         return {"ok": False, "errors": validation.errors}
+
+    context = context or {}
+    normalized_sequence = validation.normalized_value
 
     run_id = _run_id("predict_sequence")
     run_dir = ARTIFACTS_DIR / "runs" / run_id
@@ -300,20 +345,29 @@ def run_predict_sequence(sequence: str, trigger: str = "manual") -> dict:
         job_name="predict_sequence",
         status="running",
         trigger=trigger,
-        parameters={"sequence": validation.normalized_value},
+        parameters={
+            "sequence": normalized_sequence,
+            "context": context,
+        },
     )
     REGISTRY.save_run(run)
 
     if hasattr(ml_predict, "predict_sequence"):
-        prediction = ml_predict.predict_sequence(validation.normalized_value)
+        try:
+            prediction = ml_predict.predict_sequence(normalized_sequence, context=context)
+        except TypeError:
+            prediction = ml_predict.predict_sequence(normalized_sequence)
     elif hasattr(ml_predict, "main_predict"):
-        prediction = ml_predict.main_predict(validation.normalized_value)
+        try:
+            prediction = ml_predict.main_predict(normalized_sequence, context=context)
+        except TypeError:
+            prediction = ml_predict.main_predict(normalized_sequence)
     else:
         raise AttributeError("ml_predict.py must expose predict_sequence() or main_predict().")
 
     if hasattr(ml_predict, "get_top_features"):
         try:
-            top_features = ml_predict.get_top_features(validation.normalized_value)
+            top_features = ml_predict.get_top_features(normalized_sequence)
         except Exception as e:
             top_features = {"warning": str(e)}
     else:
@@ -321,18 +375,22 @@ def run_predict_sequence(sequence: str, trigger: str = "manual") -> dict:
 
     active_model = REGISTRY.get_active_model()
     payload = {
-        "input": validation.normalized_value,
+        "input": normalized_sequence,
         "validation": asdict(validation),
         "prediction": prediction,
         "top_features": top_features,
         "run_id": run_id,
         "active_model": active_model,
+        "context": context,
     }
 
     _write_json(run_dir / "prediction.json", payload)
     run.status = "succeeded"
     run.finished_at = utc_now_iso()
-    run.metrics = {"sequence_length": validation.stats.get("length")}
-    run.artifacts.append(REGISTRY.register_artifact(run_dir / "prediction.json", kind="prediction"))
+    run.metrics = {
+        "sequence_length": validation.stats.get("length"),
+        "has_active_model": active_model is not None,
+    }
+    _append_artifact(run, run_dir / "prediction.json", kind="prediction")
     REGISTRY.save_run(run)
     return {"ok": True, "run_id": run_id, "payload": payload}

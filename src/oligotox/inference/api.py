@@ -14,7 +14,6 @@ from oligotox.omics import (
     recommend_assays,
     build_omics_explanation,
 )
-# run_oligotox_v04 removed (archive.v04 deprecated); using score_candidate directly
 
 
 def _coerce_bool(v: Any) -> int:
@@ -39,7 +38,7 @@ def build_feature_dict_from_input(inp: Any) -> Dict[str, Any]:
     route = str(_safe_get(inp, "route", "") or "").upper()
     delivery_vehicle = str(_safe_get(inp, "delivery_vehicle", "") or "").lower()
 
-    features = {
+    return {
         "seq_length": len(seq_upper),
         "gc_content": gc_content,
         "cpg_density": seq_upper.count("CG") / seq_len,
@@ -50,12 +49,8 @@ def build_feature_dict_from_input(inp: Any) -> Dict[str, Any]:
         "lna_fraction": _safe_get(inp, "lna_fraction", 0.0),
         "lna_5flank": _safe_get(inp, "lna_5flank", 0.0),
         "ps_entropy": _safe_get(inp, "ps_entropy", 0.0),
-        "is_lnp": _coerce_bool(
-            _safe_get(inp, "is_lnp", False) or delivery_vehicle == "lnp"
-        ),
-        "is_galnac": _coerce_bool(
-            _safe_get(inp, "is_galnac", False) or delivery_vehicle == "galnac"
-        ),
+        "is_lnp": _coerce_bool(_safe_get(inp, "is_lnp", False) or delivery_vehicle == "lnp"),
+        "is_galnac": _coerce_bool(_safe_get(inp, "is_galnac", False) or delivery_vehicle == "galnac"),
         "is_it": _coerce_bool(_safe_get(inp, "is_it", False) or route == "IT"),
         "is_iv": _coerce_bool(_safe_get(inp, "is_iv", False) or route == "IV"),
         "peg_pct": _safe_get(inp, "peg_pct", 0.0),
@@ -88,7 +83,46 @@ def build_feature_dict_from_input(inp: Any) -> Dict[str, Any]:
         "micropeptide_risk": _safe_get(inp, "micropeptide_risk", 0.0),
         "human_specific": _coerce_bool(_safe_get(inp, "human_specific", False)),
     }
-    return features
+
+
+def _compute_mechanistic_proxies(inp: Any) -> Dict[str, Any]:
+    seq = str(_safe_get(inp, "sequence", "") or "").upper().replace("T", "U")
+    chemistry = str(_safe_get(inp, "chemistry", "") or "")
+    conjugate = str(_safe_get(inp, "conjugate", "") or "")
+    n = max(len(seq), 1)
+    gc = (seq.count("G") + seq.count("C")) / n
+    u_frac = seq.count("U") / n
+    cpg = seq.count("CG")
+    is_ps = "PS" in chemistry.upper()
+    is_galnac = "GALNAC" in conjugate.upper()
+    is_lna = "LNA" in chemistry.upper()
+
+    return {
+        "gc_fraction": round(gc, 4),
+        "u_fraction": round(u_frac, 4),
+        "cpg_count": cpg,
+        "hybridization_risk_proxy": round(min(1.0, gc * 0.35 + cpg * 0.12), 4),
+        "tlr78_risk_proxy": round(min(1.0, u_frac * 1.43), 4),
+        "platelet_ps_risk_proxy": round(0.6857 if is_ps else 0.1, 4),
+        "hepatic_gapmer_risk_proxy": round(0.45 if is_lna else 0.21, 4),
+        "renal_accumulation_proxy": round(0.65 if is_galnac else 0.35, 4),
+        "length_nt": len(seq),
+    }
+
+
+def _fallback_assays(mech: Dict[str, Any]) -> list[str]:
+    assays = []
+    if mech.get("platelet_ps_risk_proxy", 0) > 0.4:
+        assays.append("Platelet activation and PF4-associated thrombocytopenia follow-up")
+    if mech.get("renal_accumulation_proxy", 0) > 0.4:
+        assays.append("Renal proximal tubule accumulation / injury follow-up")
+    if mech.get("hybridization_risk_proxy", 0) > 0.15 or mech.get("hepatic_gapmer_risk_proxy", 0) > 0.3:
+        assays.append("RNase H1 / hybridization off-target assessment")
+    if mech.get("tlr78_risk_proxy", 0) > 0.25:
+        assays.append("TLR7/8 innate immune activation assay (PBMC cytokine panel)")
+    if mech.get("gc_fraction", 0) > 0.5 or mech.get("hepatic_gapmer_risk_proxy", 0) > 0.2:
+        assays.append("ALT / AST and hepatocyte stress biomarker follow-up")
+    return assays
 
 
 def run_oligotox(inp: Any, omics_payload: dict | None = None) -> Dict[str, Any]:
@@ -101,102 +135,61 @@ def run_oligotox(inp: Any, omics_payload: dict | None = None) -> Dict[str, Any]:
         config_dir=CONFIG_ARTIFACTS_DIR,
     )
 
-    base_probs = {k: v["prob"] for k, v in base["per_endpoint"].items()}
+    per_endpoint = base.get("per_endpoint", {}) if isinstance(base, dict) else {}
+    if not isinstance(per_endpoint, dict):
+        raise ValueError("score_candidate returned invalid per_endpoint structure")
+
+    base_probs = {k: v["prob"] for k, v in per_endpoint.items() if isinstance(v, dict) and "prob" in v}
 
     omics_readout = parse_omics_payload(omics_payload) if omics_payload else None
     adjusted_probs, omics_adjustment = apply_adjustments(base_probs, omics_readout)
 
     for endpoint, prob in adjusted_probs.items():
-        if endpoint in base["per_endpoint"]:
-            base["per_endpoint"][endpoint]["base_prob"] = base["per_endpoint"][endpoint]["prob"]
-            base["per_endpoint"][endpoint]["prob"] = prob
-            thr = base["per_endpoint"][endpoint].get("threshold")
-            base["per_endpoint"][endpoint]["predicted_positive"] = bool(prob >= thr) if thr is not None else False
+        if endpoint in per_endpoint:
+            per_endpoint[endpoint]["base_prob"] = per_endpoint[endpoint].get("prob")
+            per_endpoint[endpoint]["prob"] = round(float(prob), 4)
+            thr = per_endpoint[endpoint].get("threshold")
+            per_endpoint[endpoint]["predicted_positive"] = bool(prob >= thr) if thr is not None else False
 
-    dominant_endpoint = max(adjusted_probs, key=adjusted_probs.get) if adjusted_probs else None
+    mech = _compute_mechanistic_proxies(inp)
+    proxy_boosts = {
+        "thrombocytopenia": mech.get("platelet_ps_risk_proxy", 0.0),
+        "renal_accumulation": mech.get("renal_accumulation_proxy", 0.0),
+        "hepatic_vacuolation": mech.get("hepatic_gapmer_risk_proxy", 0.0),
+        "innate_immune_activation": mech.get("tlr78_risk_proxy", 0.0),
+        "complement_activation": mech.get("hybridization_risk_proxy", 0.0),
+    }
+
+    for ep, proxy_val in proxy_boosts.items():
+        if ep in per_endpoint and isinstance(per_endpoint[ep], dict):
+            current = float(per_endpoint[ep].get("prob", 0.0))
+            blended = round(max(current, proxy_val * 0.6), 4)
+            per_endpoint[ep]["prob"] = blended
+            thr = per_endpoint[ep].get("threshold")
+            per_endpoint[ep]["predicted_positive"] = bool(blended >= thr) if thr is not None else False
+            per_endpoint[ep]["proxy_support"] = round(proxy_val, 4)
+
+    final_probs = {
+        k: v["prob"]
+        for k, v in per_endpoint.items()
+        if isinstance(v, dict) and "prob" in v
+    }
+    dominant_endpoint = max(final_probs, key=final_probs.get) if final_probs else None
+
+    omics_assays = recommend_assays(omics_readout, final_probs) or []
+    merged_assays = omics_assays if omics_assays else _fallback_assays(mech)
+
     base["dominant_endpoint"] = dominant_endpoint
-
-    # Feed mechanistic proxy signals back into endpoint probabilities
-    # so PS/platelet, renal accumulation, and gapmer signals are not lost
-    seq = _safe_get(inp, "sequence", "") or ""
-    chemistry = str(_safe_get(inp, "chemistry", "") or "")
-    conjugate = str(_safe_get(inp, "conjugate", "") or "")
-    modality = str(_safe_get(inp, "modality", "") or "")
-    try:
-        # Inline proxy computation so api.py has no dependency on app layer
-        seq_u = seq.upper()
-        n = max(len(seq_u), 1)
-        gc = (seq_u.count("G") + seq_u.count("C")) / n
-        u_frac = seq_u.count("U") / n
-        cpg = seq_u.count("CG")
-        is_ps = "PS" in chemistry.upper()
-        is_galnac = "GALNAC" in conjugate.upper()
-        is_lna = "LNA" in chemistry.upper()
-        mech = {
-            "gc_fraction": round(gc, 4),
-            "u_fraction": round(u_frac, 4),
-            "cpg_count": cpg,
-            "hybridization_risk_proxy": round(min(1.0, gc * 0.35), 4),
-            "tlr78_risk_proxy": round(min(1.0, u_frac * 1.43), 4),
-            "platelet_ps_risk_proxy": round(0.6857 if is_ps else 0.1, 4),
-            "hepatic_gapmer_risk_proxy": round(0.45 if is_lna else 0.21, 4),
-            "renal_accumulation_proxy": round(0.65 if is_galnac else 0.35, 4),
-            "length_nt": len(seq_u),
-        }
-        proxy_boosts = {
-            "thrombocytopenia":        mech.get("platelet_ps_risk_proxy", 0.0),
-            "renal_accumulation":      mech.get("renal_accumulation_proxy", 0.0),
-            "hepatic_vacuolation":     mech.get("hepatic_gapmer_risk_proxy", 0.0),
-            "innate_immune_activation": mech.get("tlr78_risk_proxy", 0.0),
-            "complement_activation":   mech.get("hybridization_risk_proxy", 0.0),
-        }
-        for ep, proxy_val in proxy_boosts.items():
-            if ep in base["per_endpoint"]:
-                current = base["per_endpoint"][ep]["prob"]
-                blended = max(current, proxy_val * 0.6)
-                base["per_endpoint"][ep]["prob"] = round(blended, 4)
-                thr = base["per_endpoint"][ep].get("threshold")
-                base["per_endpoint"][ep]["predicted_positive"] = bool(blended >= thr) if thr is not None else False
-        adjusted_probs = {k: v["prob"] for k, v in base["per_endpoint"].items()}
-        dominant_endpoint = max(adjusted_probs, key=adjusted_probs.get) if adjusted_probs else dominant_endpoint
-        base["dominant_endpoint"] = dominant_endpoint
-        base["mechanistic_proxies"] = mech
-    except Exception:
-        mech = {}
-
-    # Always populate assay recommendations from mechanistic layer
-    # when omics is absent, so assay tab is never empty
-    try:
-        # Inline assay fallback so no dependency on app layer
-        fallback_assays = []
-        if mech.get("platelet_ps_risk_proxy", 0) > 0.4:
-            fallback_assays.append("Platelet activation and PF4-associated thrombocytopenia follow-up")
-        if mech.get("renal_accumulation_proxy", 0) > 0.4:
-            fallback_assays.append("Renal proximal tubule accumulation / injury follow-up")
-        if mech.get("hybridization_risk_proxy", 0) > 0.15 or mech.get("hepatic_gapmer_risk_proxy", 0) > 0.3:
-            fallback_assays.append("RNase H1 / hybridization off-target assessment")
-        if mech.get("tlr78_risk_proxy", 0) > 0.25:
-            fallback_assays.append("TLR7/8 innate immune activation assay (PBMC cytokine panel)")
-        if mech.get("gc_fraction", 0) > 0.5 or mech.get("hepatic_gapmer_risk_proxy", 0) > 0.2:
-            fallback_assays.append("ALT / AST and hepatocyte stress biomarker follow-up")
-    except Exception:
-        fallback_assays = []
-    omics_assays = recommend_assays(omics_readout, adjusted_probs) or []
-    merged_assays = omics_assays if omics_assays else fallback_assays
-
+    base["mechanistic_proxies"] = mech
     base["omics"] = {
         "adjustment_summary": omics_adjustment,
         "explanation": build_omics_explanation(omics_readout),
         "recommended_assays": merged_assays,
     }
-
     return base
 
 
 def run_oligotox_unified(inp: Any) -> Dict[str, Any]:
-    """
-    Unified entry point: v0.3 ML + v0.4 decision-support modules.
-    """
     feature_dict = build_feature_dict_from_input(inp)
 
     sequence = _safe_get(inp, "sequence", "")
@@ -228,7 +221,7 @@ def run_oligotox_unified(inp: Any) -> Dict[str, Any]:
             "timeline_weeks": _safe_get(inp, "timeline_weeks", 12),
         }
 
-    v04 = {}  # run_oligotox_v04 deprecated
+    v04 = {}
 
     return {
         "v03_model": v03,
@@ -237,28 +230,6 @@ def run_oligotox_unified(inp: Any) -> Dict[str, Any]:
 
 
 def score_candidate_payload(payload):
-    """
-    Streamlit-friendly adapter.
-
-    Accepts a plain dict payload and returns a pandas DataFrame with:
-    endpoint, risk_score, confidence, D1, D2, D3
-
-    This adapter flattens the real score_candidate(...) output, which returns:
-    {
-        "composite_score": ...,
-        "composite_band": ...,
-        "dominant_endpoint": ...,
-        "per_endpoint": {
-            endpoint_name: {
-                "prob": ...,
-                "risk_band": ...,
-                "threshold": ...,
-                "predicted_positive": ...
-            }
-        },
-        ...
-    }
-    """
     import pandas as pd
 
     result = score_candidate(
