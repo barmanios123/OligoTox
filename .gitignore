@@ -92,3 +92,7 @@ _backups/
 _local_only/
 
 reports/today_build/
+_local_only/
+*.log
+__pycache__/
+.ipynb_checkpoints/
