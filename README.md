@@ -1,122 +1,141 @@
 # OligoTox
 
-OligoTox is a mechanism-aware safety, translational interpretation, and candidate triage platform for oligonucleotide therapeutics.
+OligoTox is a mechanism-aware safety, translational interpretation, and candidate triage platform for oligonucleotide therapeutics. It combines multi-endpoint toxicity scoring, efficacy model integration, PK/PD context, and regulatory-style reporting in a Streamlit-based operator workflow.
 
-## What OligoTox does
+## Overview
 
-The platform helps evaluate oligonucleotide candidates across key toxicity and translation risk domains relevant to ASOs, gapmers, siRNAs, lncRNA-targeting oligos, and related modalities. Its scientific framing is organized around three mechanistic classes:
+OligoTox is designed to evaluate oligonucleotide candidates across the major preclinical liability classes relevant to translational decision-making. Its scientific framing is organized around three broad mechanistic domains:
 
 - **D1:** exaggerated on-target pharmacology
 - **D2:** hybridization-dependent off-target effects
-- **D3:** chemistry, formulation, conjugate, and delivery-class liabilities
+- **D3:** chemistry, formulation, conjugate, and delivery-related liabilities
 
-## What is working now
+The platform is intended to support candidate review for modalities such as ASOs, gapmers, siRNAs, and related oligonucleotide formats.
 
-The current Streamlit app supports:
+## Current capabilities
 
-- Single-sequence toxicity analysis
-- Modality, chemistry, and conjugate-aware input
-- Multi-endpoint risk prediction through the OligoTox inference backend
-- Confidence and uncertainty proxy display
-- Intermediate safety calculations such as GC content, hybridization risk, innate immune proxy, platelet/PS proxy, hepatic gapmer proxy, and renal accumulation proxy
-- Optional PK/PD context using dose and schedule inputs
-- Assay recommendation generation
-- Candidate comparison scaffolding
-- Regulatory-style safety summary output
-- JSON result export
+The current platform supports the following verified capabilities:
 
-## App entrypoint
+- Streamlit app launch through `oligotox_app.py`
+- Multi-endpoint toxicity inference through the OligoTox backend
+- Modality- and chemistry-aware candidate input
+- Endpoint-level output including composite score, dominant endpoint, and per-endpoint detail
+- Efficacy model integration through the package registry
+- PK/PD context integration in the operator console workflow
+- Regulatory-style safety reporting
+- JSON-style result export
+- Local validation through `validate_platform.py`
+- Project health checks through `scripts/project_health.sh`
 
-Main app:
+## Repository structure
 
-- `oligotox_app.py`
+Key areas in the repository include:
 
-Core package code:
+- `oligotox_app.py` — primary Streamlit operator console entrypoint
+- `src/oligotox/` — core package code for inference, training, efficacy, PK/PD, and reporting
+- `scripts/` — launchers, health checks, and utility scripts
+- `docs/` — architecture, notes, integrations, and supporting documentation
+- `configs/` — configuration and integration files
+- `benchmarks/` — benchmarking utilities
+- `data/` — local data assets used in the workflow
+- `reports/` — generated and development-stage reports
 
-- `src/oligotox/`
+## Quickstart
 
-Supporting areas include:
+### 1. Clone the repository
 
-- `docs/` — architecture, status, and strategy documents
-- `data/` — processed and source data
-- `tests/` — test suite
-- `scripts/` — utilities
+```bash
+git clone https://github.com/barmanios123/OligoTox.git
+cd OligoTox
+```
 
-## Run locally
+### 2. Create and activate an environment
 
-### Launch the app
+Using `venv`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Or using Conda:
+
+```bash
+conda create -n oligotox python=3.11 -y
+conda activate oligotox
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -U pip
+pip install -e .
+pip install streamlit pandas numpy scikit-learn joblib
+```
+
+### 4. Validate the platform
+
+```bash
+python validate_platform.py
+bash scripts/project_health.sh
+```
+
+### 5. Launch the app
 
 ```bash
 streamlit run oligotox_app.py --server.port 8502
 ```
 
-Then open:
+Open:
 
 ```text
 http://localhost:8502
 ```
 
-### Run training
+## Typical usage flow
+
+1. Launch the app locally.
+2. Enter a candidate oligonucleotide sequence.
+3. Select modality and chemistry.
+4. Optionally provide dose and PK/PD context.
+5. Run the analysis.
+6. Review toxicity, efficacy, PK/PD, and regulatory-style outputs.
+7. Save or export the resulting run outputs.
+
+## Training
+
+If retraining is needed and the local environment includes the training module:
 
 ```bash
-# training entrypoint moved or removed from minimal runtime repo
+python -m oligotox.training.train
 ```
 
-If you prefer the package entrypoint and it is wired in your environment:
+After retraining, rerun validation and health checks:
 
 ```bash
-python src/oligotox/training/train.py
+python validate_platform.py
+bash scripts/project_health.sh
 ```
 
-### Run tests
+## Documentation
 
-```bash
-pytest
-```
+For detailed setup and operating instructions, see:
 
-## How to use the app
+- `docs/RUNNING_OLIGOTOX.md`
 
-1. Open the **Sequence Analysis** tab.
-2. Paste an oligonucleotide sequence.
-3. Choose modality, chemistry, and conjugate.
-4. Optionally enter dose and schedule for PK/PD context.
-5. Run prediction to view endpoint risks, mechanistic support metrics, confidence display, assay suggestions, and the regulatory-style summary.
+## Status
 
-## What was updated today
+The repository currently contains a working Streamlit app entrypoint, validated backend components, health-check scripts, and a cleaned public-facing repository structure. The platform is suitable for internal review, demo workflows, and iterative client-facing refinement.
 
-Today’s work focused on stabilizing and extending the app:
-
-- Restored and verified a working `oligotox_app.py`
-- Reconnected the Streamlit app to the `run_oligotox` inference backend
-- Added modality-aware result context
-- Added intermediate safety interpretation outputs
-- Added assay recommendation logic
-- Added comparator/report scaffolding
-- Verified the app compiles and launches successfully
-- Pushed the updated app state to GitHub
-
-## Current status
-
-The app is running and the latest Streamlit enhancement commit has been pushed to GitHub. The platform is functional for demo and iterative development, but some components are still evolving and should be described according to what is currently verified in code and local execution.
-
-## Development note
-
-Keep root-level clutter minimal. Longer status notes, architecture writeups, and provenance documents should live under `docs/` where possible.
-
----
-
-## 📄 License
+## License
 
 **Proprietary and Confidential**
 
-This software is proprietary and confidential. It is provided for **evaluation purposes only** to authorized clients and collaborators.
+This software is proprietary and confidential. It is provided for evaluation purposes only to authorized clients and collaborators.
 
-- ❌ No commercial use without license
-- ❌ No modification or derivative works
-- ❌ No distribution or sublicensing
-- ✅ Evaluation and collaboration discussions only
+- No commercial use without license
+- No modification or derivative works
+- No distribution or sublicensing
+- Evaluation and collaboration discussions only
 
-For commercial licensing inquiries, please contact the repository owner.
-
-See [LICENSE](LICENSE) file for complete terms.
-
+For licensing inquiries, contact the repository owner. See the `LICENSE` file for full terms.
