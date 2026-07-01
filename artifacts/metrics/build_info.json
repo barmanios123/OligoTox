@@ -1,7 +1,7 @@
 {
   "training_csv": "/Users/beshoyarmanios/oligotox/data/processed/training_dataset.csv",
-  "rows": 1576,
-  "n_features": 187,
+  "rows": 1614,
+  "n_features": 191,
   "n_labels": 13,
   "feature_columns": [
     "sequence",
@@ -38,6 +38,10 @@
     "tlr7_score",
     "ps_x_len",
     "lna_x_gc",
+    "label_hepatic_vacuolation",
+    "label_kupffer_activation",
+    "chemistry",
+    "evidence_tier",
     "tx_nfkb_sig",
     "tx_ifn_sig",
     "tx_stress_sig",
@@ -209,7 +213,8 @@
   ],
   "id_columns": [
     "candidate_id",
-    "source"
+    "source",
+    "notes"
   ],
   "omics_modalities_loaded": [
     "transcriptomics",

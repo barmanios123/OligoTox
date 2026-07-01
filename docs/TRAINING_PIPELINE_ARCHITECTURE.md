@@ -5,7 +5,7 @@
 
 ## 🎯 Overview: What You're Training
 
-You're training **19 independent binary classifiers** that predict whether an oligonucleotide will cause specific toxicity endpoints. Each model learns patterns from **54 chemical/structural features** extracted from **1,614 unique oligonucleotides** with known toxicity outcomes.
+You're training **13 independent binary classifiers** that predict whether an oligonucleotide will cause specific toxicity endpoints. Each model learns patterns from **54 chemical/structural features** extracted from **1,614 unique oligonucleotides** with known toxicity outcomes.
 
 **Think of it as:**
 ```
@@ -86,9 +86,9 @@ Oligonucleotide Sequence → Feature Extraction → 19 Models → Toxicity Risk 
 ---
 
 ### Label Matrix: `data/processed/label_matrix.csv`
-**Dimensions:** 1,614 rows × 19 endpoint columns
+**Dimensions:** 1,614 rows × 13 endpoints columns
 
-#### The 19 Toxicity Endpoints (Y):
+#### The 13 toxicity endpoints (Y):
 
 ```python
 endpoints = [
@@ -169,7 +169,7 @@ Example for `hepatocellular_injury` (2.47% prevalence):
 
 ## ⚙️ Training Process: Step-by-Step
 
-### **For Each of the 19 Endpoints:**
+### **For Each of the 13 endpoints:**
 
 #### Step 1: Data Loading
 ```python
@@ -240,7 +240,7 @@ model_path = f'models/hepatocellular_injury_model.pkl'
 joblib.dump(model, model_path)
 ```
 
-**Repeat Steps 1-5 for all 19 endpoints → 19 `.pkl` files**
+**Repeat Steps 1-5 for all 13 endpoints → 19 `.pkl` files**
 
 ---
 
@@ -410,7 +410,7 @@ RAW LITERATURE DATA (Papers, Patents, FDA Filings)
 CURATION PIPELINE
   ├─ Extract oligonucleotide sequences
   ├─ Annotate chemical modifications
-  ├─ Label toxicity outcomes (19 endpoints)
+  ├─ Label toxicity outcomes (13 endpoints)
   └─ Aggregate multi-study data
          ↓
 FEATURE ENGINEERING
@@ -446,7 +446,7 @@ OUTPUT: Toxicity Risk Profile + Safety Recommendations
 
 ### What's Working:
 - ✅ **Pipeline is operational** (data → features → models → predictions)
-- ✅ **19 endpoints trained** (comprehensive toxicity coverage)
+- ✅ **13 endpoints trained** (comprehensive toxicity coverage)
 - ✅ **Feature engineering complete** (54 mechanistically relevant features)
 - ✅ **Inference deployed** (Streamlit app functional)
 

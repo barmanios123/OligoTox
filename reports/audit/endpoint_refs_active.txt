@@ -1,0 +1,1258 @@
+src/oligotox/partner_import.py:10:ENDPOINT_COLS  = [
+src/oligotox/partner_import.py:11:    "endpoint_hepatocellular_injury","endpoint_renal_tubular_injury",
+src/oligotox/partner_import.py:12:    "endpoint_thrombocytopenia","endpoint_complement_activation",
+src/oligotox/partner_import.py:13:    "endpoint_innate_immune_activation","endpoint_cytokine_release",
+src/oligotox/partner_import.py:14:    "endpoint_injection_site_reaction","endpoint_offtarget_gene_silencing",
+src/oligotox/partner_import.py:15:    "endpoint_cns_delayed_toxicity","endpoint_lnp_immune_effects",
+src/oligotox/partner_import.py:16:    "endpoint_reproductive_developmental_risk","endpoint_genotoxicity",
+src/oligotox/partner_import.py:17:    "endpoint_ontarget_excessive_knockdown","endpoint_transcriptome_perturbation",
+src/oligotox/partner_import.py:18:    "endpoint_lncrna_network_disruption"
+src/oligotox/partner_import.py:39:        warnings_list.append(f"SMALL_DATASET: only {len(df)} rows. Model training requires >= 20 rows with any endpoint labeled.")
+src/oligotox/partner_import.py:58:    # 5. Endpoint coverage
+src/oligotox/partner_import.py:59:    ep_found = [ep for ep in ENDPOINT_COLS if ep in df.columns]
+src/oligotox/partner_import.py:60:    stats["endpoints_present"]   = ep_found
+src/oligotox/partner_import.py:61:    stats["endpoints_missing"]   = [ep for ep in ENDPOINT_COLS if ep not in df.columns]
+src/oligotox/partner_import.py:68:    stats["endpoint_label_counts"] = ep_label_counts
+src/oligotox/partner_import.py:70:    stats["trainable_endpoints"] = trainable_eps
+src/oligotox/partner_import.py:72:        warnings_list.append("NO_TRAINABLE_ENDPOINTS: no endpoint has >= 10 positives AND >= 10 negatives")
+src/oligotox/partner_import.py:98:    # Add missing endpoint cols as NaN
+src/oligotox/partner_import.py:99:    for ep in ENDPOINT_COLS:
+src/oligotox/partner_import.py:120:                         "trainable_endpoints": validation_report["stats"].get("trainable_endpoints"),
+src/oligotox/reporting/oswg_report.py:40:                "toxicity_endpoints": self.toxicity_predictions,
+src/oligotox/reporting/oswg_report.py:56:            'hepatocellular_injury': 0.25,
+src/oligotox/reporting/oswg_report.py:57:            'complement_activation': 0.20,
+src/oligotox/reporting/oswg_report.py:58:            'thrombocytopenia': 0.20,
+src/oligotox/reporting/oswg_report.py:59:            'renal_accumulation': 0.15,
+src/oligotox/reporting/oswg_report.py:79:        # Check hepatotoxicity
+src/oligotox/reporting/oswg_report.py:80:        if self.toxicity_predictions.get('hepatocellular_injury', 0) > 0.5:
+src/oligotox/reporting/oswg_report.py:83:        # Check immune activation
+src/oligotox/reporting/oswg_report.py:84:        if self.toxicity_predictions.get('complement_activation', 0) > 0.4:
+src/oligotox/reporting/oswg_report.py:87:        # Check renal
+src/oligotox/reporting/oswg_report.py:88:        if self.toxicity_predictions.get('renal_accumulation', 0) > 0.5:
+src/oligotox/reporting/oswg_report.py:89:            notes.append("Renal function monitoring advised")
+src/oligotox/omics/feature_dictionary.py:7:    "complement",
+src/oligotox/omics/feature_dictionary.py:9:    "platelet",
+src/oligotox/omics/feature_dictionary.py:19:    "cytokine_signaling",
+src/oligotox/omics/feature_dictionary.py:22:    "hepatocyte_injury",
+src/oligotox/omics/feature_dictionary.py:24:    "renal_tubular_stress",
+src/oligotox/omics/registry.py:49:    "cytokines": OmicsModalitySpec(
+src/oligotox/omics/registry.py:50:        name="cytokines",
+src/oligotox/omics/registry.py:51:        file_name="cytokines_features.csv",
+src/oligotox/omics/registry.py:56:    "complement": OmicsModalitySpec(
+src/oligotox/omics/registry.py:57:        name="complement",
+src/oligotox/omics/registry.py:58:        file_name="complement_features.csv",
+src/oligotox/omics/assay_recommender.py:8:def recommend_assays(readout: OmicsReadout | None, endpoint_probs: dict[str, float]) -> list[dict[str, Any]]:
+src/oligotox/omics/assay_recommender.py:14:    if endpoint_probs.get("innate_immune_activation", 0.0) > 0.35 or endpoint_probs.get("cytokine_release", 0.0) > 0.35:
+src/oligotox/omics/assay_recommender.py:15:        add("PBMC cytokine release panel", "Innate / cytokine liability appears elevated", "high")
+src/oligotox/omics/assay_recommender.py:16:        add("TLR / IFN pathway reporter assay", "Clarify innate immune mechanism", "high")
+src/oligotox/omics/assay_recommender.py:18:    if endpoint_probs.get("complement_activation", 0.0) > 0.30:
+src/oligotox/omics/assay_recommender.py:19:        add("Human complement activation panel (C3a/C5a/sC5b-9)", "Complement liability signal elevated", "high")
+src/oligotox/omics/assay_recommender.py:21:    if endpoint_probs.get("thrombocytopenia", 0.0) > 0.25 or endpoint_probs.get("coagulation_effect", 0.0) > 0.25:
+src/oligotox/omics/assay_recommender.py:22:        add("Platelet activation / aggregation assay", "Platelet or coagulation risk is non-trivial", "high")
+src/oligotox/omics/assay_recommender.py:23:        add("PF4 / coagulation biomarker panel", "Resolve thrombocytopenia vs coagulation liability", "medium")
+src/oligotox/omics/assay_recommender.py:25:    if endpoint_probs.get("hepatocellular_injury", 0.0) > 0.35:
+src/oligotox/omics/assay_recommender.py:26:        add("Primary hepatocyte tox time-course", "Hepatocellular injury risk elevated", "high")
+src/oligotox/omics/assay_recommender.py:29:    if endpoint_probs.get("renal_tubular_injury", 0.0) > 0.30:
+src/oligotox/omics/assay_recommender.py:30:        add("Renal proximal tubule assay", "Renal tubular liability signal elevated", "high")
+src/oligotox/omics/assay_recommender.py:32:    if endpoint_probs.get("offtarget_gene_silencing", 0.0) > 0.30:
+src/oligotox/omics/assay_recommender.py:33:        add("Transcriptome-wide off-target profiling", "Potential hybridization-dependent off-target risk", "high")
+src/oligotox/omics/__init__.py:9:from .mechanistic_rules import apply_adjustments, compute_endpoint_adjustments
+src/oligotox/omics/__init__.py:30:    "compute_endpoint_adjustments",
+Binary file src/oligotox/omics/__pycache__/gene_sets.cpython-313.pyc matches
+Binary file src/oligotox/omics/__pycache__/registry.cpython-313.pyc matches
+Binary file src/oligotox/omics/__pycache__/assay_recommender.cpython-313.pyc matches
+Binary file src/oligotox/omics/__pycache__/feature_dictionary.cpython-313.pyc matches
+Binary file src/oligotox/omics/__pycache__/__init__.cpython-313.pyc matches
+Binary file src/oligotox/omics/__pycache__/mechanistic_rules.cpython-313.pyc matches
+src/oligotox/omics/mechanistic_rules.py:10:class EndpointAdjustment:
+src/oligotox/omics/mechanistic_rules.py:11:    endpoint: str
+src/oligotox/omics/mechanistic_rules.py:24:def compute_endpoint_adjustments(readout: OmicsReadout) -> dict[str, EndpointAdjustment]:
+src/oligotox/omics/mechanistic_rules.py:27:    out: dict[str, EndpointAdjustment] = {}
+src/oligotox/omics/mechanistic_rules.py:29:    def add(endpoint: str, delta: float, reason: str) -> None:
+src/oligotox/omics/mechanistic_rules.py:31:        if endpoint not in out:
+src/oligotox/omics/mechanistic_rules.py:32:            out[endpoint] = EndpointAdjustment(endpoint=endpoint, delta=0.0, reasons=[])
+src/oligotox/omics/mechanistic_rules.py:33:        out[endpoint].delta += scaled
+src/oligotox/omics/mechanistic_rules.py:34:        out[endpoint].reasons.append(reason)
+src/oligotox/omics/mechanistic_rules.py:37:        add("innate_immune_activation", 0.18, "High interferon / innate pathway activity")
+src/oligotox/omics/mechanistic_rules.py:38:        add("cytokine_release", 0.10, "Innate signaling suggests cytokine liability")
+src/oligotox/omics/mechanistic_rules.py:40:    if _pw(readout, "nfkb") > 0.5 or _pw(readout, "cytokine_signaling") > 0.5:
+src/oligotox/omics/mechanistic_rules.py:41:        add("cytokine_release", 0.14, "NF-kB / cytokine pathways elevated")
+src/oligotox/omics/mechanistic_rules.py:44:    if _pw(readout, "complement") > 0.5 or _sent(readout, "C3") > 0.5 or _sent(readout, "C5") > 0.5:
+src/oligotox/omics/mechanistic_rules.py:45:        add("complement_activation", 0.20, "Complement program elevated")
+src/oligotox/omics/mechanistic_rules.py:46:        add("thrombocytopenia", 0.06, "Complement-linked platelet liability plausible")
+src/oligotox/omics/mechanistic_rules.py:47:        add("coagulation_effect", 0.06, "Complement/coagulation cross-talk signal")
+src/oligotox/omics/mechanistic_rules.py:49:    if _pw(readout, "platelet") > 0.5 or _sent(readout, "PF4") > 0.5:
+src/oligotox/omics/mechanistic_rules.py:50:        add("thrombocytopenia", 0.18, "Platelet biology signature elevated")
+src/oligotox/omics/mechanistic_rules.py:51:        add("coagulation_effect", 0.10, "Platelet / coagulation biology perturbed")
+src/oligotox/omics/mechanistic_rules.py:53:    if _pw(readout, "hepatocyte_injury") > 0.5 or _pw(readout, "apoptosis") > 0.5:
+src/oligotox/omics/mechanistic_rules.py:54:        add("hepatocellular_injury", 0.18, "Hepatocyte injury / apoptosis program elevated")
+src/oligotox/omics/mechanistic_rules.py:57:        add("hepatic_vacuolation", 0.08, "Bile acid / hepatobiliary stress pattern")
+src/oligotox/omics/mechanistic_rules.py:59:    if _pw(readout, "renal_tubular_stress") > 0.5:
+src/oligotox/omics/mechanistic_rules.py:60:        add("renal_tubular_injury", 0.18, "Renal tubular stress program elevated")
+src/oligotox/omics/mechanistic_rules.py:61:        add("renal_accumulation", 0.10, "Renal liability / accumulation pattern")
+src/oligotox/omics/mechanistic_rules.py:64:        add("hepatocellular_injury", 0.12, "RNase H1 / long-transcript liability signal")
+src/oligotox/omics/mechanistic_rules.py:68:        add("offtarget_gene_silencing", 0.22, "Hybridization-dependent off-target signature")
+src/oligotox/omics/mechanistic_rules.py:74:        add("hepatocellular_injury", 0.10, "Oxidative / mitochondrial stress elevation")
+src/oligotox/omics/mechanistic_rules.py:75:        add("renal_tubular_injury", 0.05, "General cellular stress may affect kidney")
+src/oligotox/omics/mechanistic_rules.py:87:    adjustments = compute_endpoint_adjustments(readout)
+src/oligotox/omics/mechanistic_rules.py:90:    for endpoint, adj in adjustments.items():
+src/oligotox/omics/mechanistic_rules.py:91:        base = adjusted.get(endpoint, 0.0)
+src/oligotox/omics/mechanistic_rules.py:92:        adjusted[endpoint] = max(0.0, min(1.0, base + adj.delta))
+src/oligotox/omics/mechanistic_rules.py:98:            endpoint: {
+src/oligotox/omics/mechanistic_rules.py:102:            for endpoint, adj in adjustments.items()
+src/oligotox/omics/gene_sets.py:14:    "complement": _s("C1QA", "C1QB", "C1QC", "C2", "C3", "C4A", "C4B", "CFB", "CFD", "C5", "C6", "C7", "C8A", "C8B", "C9"),
+src/oligotox/omics/gene_sets.py:16:    "platelet": _s("PF4", "PPBP", "ITGA2B", "ITGB3", "GP1BB", "VWF", "GP9", "THBS1"),
+src/oligotox/omics/gene_sets.py:26:    "cytokine_signaling": _s("IL6", "IL1B", "TNFA", "CXCL10", "CCL2", "CCL5"),
+src/oligotox/omics/gene_sets.py:29:    "hepatocyte_injury": _s("ALDH1A1", "CYP3A4", "CYP2E1", "CYP2C9", "SLC10A1", "KRT8", "KRT18", "GLUL"),
+src/oligotox/omics/gene_sets.py:31:    "renal_tubular_stress": _s("HAVCR1", "LCN2", "SLC22A2", "SLC22A8"),
+src/oligotox/translation/species.py:1:"""Species correction factors per endpoint"""
+src/oligotox/translation/species.py:5:        'renal_tubular_injury':0.35,'renal_accumulation':0.40,'hepatocellular_injury':0.75,
+src/oligotox/translation/species.py:6:        'thrombocytopenia':0.60,'complement_activation':0.50,'innate_immune_activation':0.65,
+src/oligotox/translation/species.py:7:        'coagulation_effect':0.70,'cns_toxicity':0.80,'offtarget_gene_silencing':0.55,
+src/oligotox/translation/species.py:10:        'renal_tubular_injury':0.30,'complement_activation':0.35,'thrombocytopenia':0.45,
+src/oligotox/translation/species.py:11:        'hepatocellular_injury':0.65,'offtarget_gene_silencing':0.45,
+src/oligotox/translation/species.py:14:        'complement_activation':0.90,'thrombocytopenia':0.85,'hepatocellular_injury':0.88,
+src/oligotox/translation/species.py:15:        'renal_tubular_injury':0.80,'coagulation_effect':0.85,'innate_immune_activation':0.82,
+src/oligotox/translation/species.py:16:        'offtarget_gene_silencing':0.75,'cns_toxicity':0.78,
+src/oligotox/translation/bridge.py:7:from oligotox.schemas.tox_endpoints import ToxProfile
+src/oligotox/translation/bridge.py:10:    'hepatocellular_injury':    dict(preclinical='ALT/AST/GDH/H&E/casp-3', clinical='ALT/AST; Hy Law',
+src/oligotox/translation/bridge.py:12:    'hepatic_vacuolation':      dict(preclinical='H&E; Oil Red O; LAMP1', clinical='ALT; liver imaging',
+src/oligotox/translation/bridge.py:14:    'renal_tubular_injury':     dict(preclinical='KIM-1/NGAL/clusterin; H&E', clinical='eGFR; ACR; urine KIM-1',
+src/oligotox/translation/bridge.py:15:        note='Do not use rat renal for human extrapolation (ICH S7A).'),
+src/oligotox/translation/bridge.py:16:    'renal_accumulation':       dict(preclinical='H&E+PAS+LAMP1; tissue TK', clinical='eGFR; urine protein',
+src/oligotox/translation/bridge.py:17:        note='Same caveat as renal tubular injury.'),
+src/oligotox/translation/bridge.py:18:    'thrombocytopenia':         dict(preclinical='CBC; PF4-PS; C3d/C4d flow', clinical='CBC; anti-PF4 Ab; C3d/C4d',
+src/oligotox/translation/bridge.py:22:    'complement_activation':    dict(preclinical='C3a/C5a/SC5b-9/CH50/AH50', clinical='C3/C4/CH50; infusion reaction',
+src/oligotox/translation/bridge.py:24:    'innate_immune_activation': dict(preclinical='TLR7/8/9; RIG-I/MDA-5; IFN-a', clinical='IFN-a; PBMC; cytokines',
+src/oligotox/translation/bridge.py:26:    'cytokine_release':         dict(preclinical='MSD/Luminex; Trp:Kyn; IDO1', clinical='IL-6/TNF-a; Trp:Kyn ratio',
+src/oligotox/translation/bridge.py:28:    'kupffer_cell_activation':  dict(preclinical='CD68/F4/80 IHC; cytokines', clinical='CRP; ferritin; cytokines',
+src/oligotox/translation/bridge.py:30:    'cns_toxicity':             dict(preclinical='NfL/GFAP CSF+serum; TDP-43 IHC', clinical='Serum NfL+GFAP; CSF',
+src/oligotox/translation/bridge.py:34:    'injection_site_reaction':  dict(preclinical='SC ISR H&E+IHC; cytokines', clinical='ISR scoring; biopsy if severe',
+src/oligotox/translation/bridge.py:40:    endpoint: str; preclinical_marker: str; clinical_marker: str; risk: float; note: str
+src/oligotox/translation/bridge.py:52:            endpoint=ep.value, preclinical_marker=bm.get('preclinical','See label'),
+src/oligotox/translation/bridge.py:57:        caveats += ['Cynomolgus ASGPR and complement closely model human.',
+src/oligotox/translation/bridge.py:58:                    'Preferred species for complement, platelet, and hepatic endpoints.',
+src/oligotox/translation/bridge.py:59:                    'DART: EFD MPS or surrogate sequence; pre-IND FDA/EMA consult.',
+src/oligotox/translation/bridge.py:62:        caveats += ['Rat renal tubular injury overestimates human (ICH S7A).',
+src/oligotox/translation/bridge.py:64:                    'Rat complement less predictive than cynomolgus.']
+src/oligotox/translation/bridge.py:70:    print(f'  {"Endpoint":<30}{"Preclinical":<24}{"Clinical":<18}{"Risk"}')
+src/oligotox/translation/bridge.py:73:        print(f'  {e.endpoint:<30}{e.preclinical_marker[:23]:<24}{e.clinical_marker[:17]:<18}{e.risk:.3f}')
+src/oligotox/config/integration_config_v03.yaml:48:  endpoints:
+src/oligotox/config/integration_config_v03.yaml:49:    - hepatocellular_injury
+src/oligotox/config/integration_config_v03.yaml:50:    - renal_tubular_injury
+src/oligotox/config/integration_config_v03.yaml:51:    - thrombocytopenia
+src/oligotox/config/integration_config_v03.yaml:53:    - complement_activation
+src/oligotox/config/integration_config_v03.yaml:54:    - innate_immune_activation
+src/oligotox/config/integration_config_v03.yaml:55:    - cytokine_release
+src/oligotox/config/integration_config_v03.yaml:56:    - cns_neurotoxicity
+src/oligotox/config/integration_config_v03.yaml:57:    - reproductive_developmental
+src/oligotox/config/integration_config_v03.yaml:60:    - lnp_immune_effect
+Binary file src/oligotox/config/__pycache__/risk_config.cpython-313.pyc matches
+src/oligotox/config/risk_config.py:3:ENDPOINT_SEVERITY_WEIGHTS = {
+src/oligotox/config/risk_config.py:4:    "hepatocellular_injury": 1.00,
+src/oligotox/config/risk_config.py:5:    "hepatic_vacuolation": 0.55,
+src/oligotox/config/risk_config.py:6:    "renal_tubular_injury": 0.95,
+src/oligotox/config/risk_config.py:7:    "renal_accumulation": 0.50,
+src/oligotox/config/risk_config.py:8:    "thrombocytopenia": 0.95,
+src/oligotox/config/risk_config.py:10:    "complement_activation": 0.85,
+src/oligotox/config/risk_config.py:11:    "innate_immune_activation": 0.70,
+src/oligotox/config/risk_config.py:12:    "cytokine_release": 0.85,
+src/oligotox/config/risk_config.py:14:    "cns_toxicity": 1.00,
+src/oligotox/registry.py:37:    endpoint: str
+src/oligotox/training/train.py:25:    ENDPOINT_SEVERITY_WEIGHTS,
+src/oligotox/training/train.py:36:    evaluate_endpoint,
+src/oligotox/training/train.py:142:    # Simple binary label proxy: union of any positive endpoint.
+src/oligotox/training/train.py:200:    print(f"Endpoint labels: {Y.shape[1]}")
+src/oligotox/training/train.py:224:    for endpoint in Y.columns:
+src/oligotox/training/train.py:225:        y = pd.to_numeric(Y[endpoint], errors="coerce").fillna(0).astype(int).values
+src/oligotox/training/train.py:240:            endpoint_metrics = None
+src/oligotox/training/train.py:249:            endpoint_metrics = None
+src/oligotox/training/train.py:279:                endpoint_metrics = evaluate_endpoint(y, y_prob, endpoint_name=endpoint)
+src/oligotox/training/train.py:281:                endpoint_metrics = None
+src/oligotox/training/train.py:284:        joblib.dump(model, MODEL_ARTIFACTS_DIR / f"{endpoint}.joblib")
+src/oligotox/training/train.py:286:        oof_true[endpoint] = y
+src/oligotox/training/train.py:287:        oof_prob[endpoint] = y_prob
+src/oligotox/training/train.py:289:        summary[endpoint] = {
+src/oligotox/training/train.py:298:            "datasail_eval": endpoint_metrics,
+src/oligotox/training/train.py:304:            f"{endpoint:28s} "
+src/oligotox/training/train.py:313:        y_true_by_endpoint=oof_true,
+src/oligotox/training/train.py:314:        y_prob_by_endpoint=oof_prob,
+src/oligotox/training/train.py:322:        "endpoint_weights": ENDPOINT_SEVERITY_WEIGHTS,
+src/oligotox/training/train.py:328:    _json_dump(CONFIG_ARTIFACTS_DIR / "endpoint_thresholds.json", thresholds)
+src/oligotox/ml_predict.py:4:and generates per-endpoint toxicity probability scores for a given nucleotide sequence.
+src/oligotox/ml_predict.py:9:    # -> [{'endpoint': 'hepatocellular_injury', 'prob': 0.34, ...}, ...]
+src/oligotox/ml_predict.py:65:    """Return dict of {endpoint_label: model} lazily loaded from disk."""
+src/oligotox/ml_predict.py:84:                        # Unwrap dict-wrapped models (e.g. neurotox {model, feature_names, threshold})
+src/oligotox/ml_predict.py:103:    Returns a list of dicts, one per loaded model endpoint:
+src/oligotox/ml_predict.py:105:          {'endpoint': 'hepatocellular_injury', 'prob': 0.42,
+src/oligotox/ml_predict.py:145:                    "endpoint": label,
+src/oligotox/ml_predict.py:153:                {"endpoint": label, "prob": None, "prob_%": None,
+src/oligotox/ml_predict.py:176:        prob_str = f"{r['prob']:.3f}" if r['prob'] is not None else 'N/A'; print(f"  {r['endpoint']:<35s}  prob={prob_str}  risk={r['risk_level']}")
+src/oligotox/ml_predict.py:179:def get_top_features(sequence: str, endpoint: str, n: int = 10) -> list[dict]:
+src/oligotox/ml_predict.py:180:    """Return the top-n most important features for a given endpoint model.
+src/oligotox/ml_predict.py:184:        endpoint: Model label (e.g. 'hepatocellular_injury').
+src/oligotox/ml_predict.py:192:    model = models.get(endpoint)
+src/oligotox/features/structure_features.py:46:def _reverse_complement_rna(seq: str) -> str:
+src/oligotox/features/structure_features.py:54:    rc = _reverse_complement_rna(seq)
+src/oligotox/features/structure_features.py:79:    rc_right = _reverse_complement_rna(right)
+src/oligotox/features/engineer.py:32:    pc = inp.platelet_complement
+src/oligotox/features/engineer.py:93:    # Platelet/complement biomarkers
+src/oligotox/features/engineer.py:96:        (pc.platelet_count_baseline - pc.platelet_count_treated)
+src/oligotox/features/engineer.py:97:        / max(pc.platelet_count_baseline, 1),
+src/oligotox/features/engineer.py:103:    carpa = float(pc.complement_activation_ex_vivo)
+src/oligotox/features/engineer.py:104:    c3d_pos = float(pc.platelet_c3d_c4d_positive)
+src/oligotox/features/engineer.py:111:    il6 = _safe_val(om.cytokine_il6)
+src/oligotox/features/engineer.py:112:    tnfa = _safe_val(om.cytokine_tnfa)
+src/oligotox/features/engineer.py:113:    ifna = _safe_val(om.cytokine_ifna)
+src/oligotox/features/engineer.py:118:    pw_comp = om.pathway_scores.get("pw_complement", om.pathway_scores.get("complement", 0.0))
+src/oligotox/features/engineer.py:119:    pw_plt = om.pathway_scores.get("pw_platelet", om.pathway_scores.get("platelet", 0.0))
+src/oligotox/features/engineer.py:133:        self_complementarity=self_comp,
+src/oligotox/features/engineer.py:148:        platelet_drop_fraction=plt_drop,
+Binary file src/oligotox/features/__pycache__/structure_features.cpython-313.pyc matches
+Binary file src/oligotox/features/__pycache__/engineer.cpython-313.pyc matches
+src/oligotox/features/aso_optimizer_v03.py:32:    "hepatocellular_injury",
+src/oligotox/features/aso_optimizer_v03.py:33:    "hepatic_vacuolation",
+src/oligotox/features/aso_optimizer_v03.py:34:    "renal_tubular_injury",
+src/oligotox/features/aso_optimizer_v03.py:35:    "renal_accumulation",
+src/oligotox/features/aso_optimizer_v03.py:36:    "thrombocytopenia",
+src/oligotox/features/aso_optimizer_v03.py:38:    "complement_activation",
+src/oligotox/features/aso_optimizer_v03.py:39:    "innate_immune_activation",
+src/oligotox/features/aso_optimizer_v03.py:40:    "cytokine_release",
+src/oligotox/features/aso_optimizer_v03.py:42:    "cns_toxicity",
+src/oligotox/features/aso_optimizer_v03.py:47:CURATED_ENDPOINT_MAP = {
+src/oligotox/features/aso_optimizer_v03.py:48:    "hepatocellular_injury": "endpoint_hepatocellular_injury",
+src/oligotox/features/aso_optimizer_v03.py:49:    "hepatic_vacuolation": "endpoint_hepatic_vacuolation",
+src/oligotox/features/aso_optimizer_v03.py:50:    "renal_tubular_injury": "endpoint_renal_tubular_injury",
+src/oligotox/features/aso_optimizer_v03.py:51:    "renal_accumulation": "endpoint_renal_accumulation",
+src/oligotox/features/aso_optimizer_v03.py:52:    "thrombocytopenia": "endpoint_thrombocytopenia",
+src/oligotox/features/aso_optimizer_v03.py:53:    "coagulation_effect": "endpoint_coagulation_effect",
+src/oligotox/features/aso_optimizer_v03.py:54:    "complement_activation": "endpoint_complement_activation",
+src/oligotox/features/aso_optimizer_v03.py:55:    "innate_immune_activation": "endpoint_innate_immune_activation",
+src/oligotox/features/aso_optimizer_v03.py:56:    "cytokine_release": "endpoint_cytokine_release",
+src/oligotox/features/aso_optimizer_v03.py:57:    "kupffer_cell_activation": "endpoint_kupffer_cell_activation",
+src/oligotox/features/aso_optimizer_v03.py:58:    "cns_toxicity": "endpoint_cns_neurotoxicity",
+src/oligotox/features/aso_optimizer_v03.py:59:    "offtarget_gene_silencing": "endpoint_offtarget_gene_silencing",
+src/oligotox/features/aso_optimizer_v03.py:60:    "injection_site_reaction": "endpoint_injection_site_reaction",
+src/oligotox/features/aso_optimizer_v03.py:83:    protected = set(ID_COLUMNS + LABEL_COLUMNS + list(CURATED_ENDPOINT_MAP.values()))
+src/oligotox/features/aso_optimizer_v03.py:301:    for label_col, curated_col in CURATED_ENDPOINT_MAP.items():
+src/oligotox/features/build_matrix.py:6:    "hepatocellular_injury",
+src/oligotox/features/build_matrix.py:7:    "hepatic_vacuolation",
+src/oligotox/features/build_matrix.py:8:    "renal_tubular_injury",
+src/oligotox/features/build_matrix.py:9:    "renal_accumulation",
+src/oligotox/features/build_matrix.py:10:    "thrombocytopenia",
+src/oligotox/features/build_matrix.py:12:    "complement_activation",
+src/oligotox/features/build_matrix.py:13:    "innate_immune_activation",
+src/oligotox/features/build_matrix.py:14:    "cytokine_release",
+src/oligotox/features/build_matrix.py:16:    "cns_toxicity",
+src/oligotox/pipelines/thresholds.py:13:    endpoint: str
+src/oligotox/pipelines/thresholds.py:32:    endpoint: str,
+src/oligotox/pipelines/thresholds.py:46:            endpoint=endpoint,
+src/oligotox/pipelines/thresholds.py:76:                    endpoint=endpoint,
+src/oligotox/pipelines/thresholds.py:90:    y_true_by_endpoint: dict[str, np.ndarray],
+src/oligotox/pipelines/thresholds.py:91:    y_prob_by_endpoint: dict[str, np.ndarray],
+src/oligotox/pipelines/thresholds.py:98:    for endpoint, y_true in y_true_by_endpoint.items():
+src/oligotox/pipelines/thresholds.py:99:        if endpoint not in y_prob_by_endpoint:
+src/oligotox/pipelines/thresholds.py:103:            y_prob=y_prob_by_endpoint[endpoint],
+src/oligotox/pipelines/thresholds.py:104:            endpoint=endpoint,
+src/oligotox/pipelines/thresholds.py:110:        out[endpoint] = {
+src/oligotox/pipelines/build_training_dataset.py:32:    "hepatocellular_injury",
+src/oligotox/pipelines/build_training_dataset.py:33:    "hepatic_vacuolation",
+src/oligotox/pipelines/build_training_dataset.py:34:    "renal_tubular_injury",
+src/oligotox/pipelines/build_training_dataset.py:35:    "renal_accumulation",
+src/oligotox/pipelines/build_training_dataset.py:36:    "thrombocytopenia",
+src/oligotox/pipelines/build_training_dataset.py:38:    "complement_activation",
+src/oligotox/pipelines/build_training_dataset.py:39:    "innate_immune_activation",
+src/oligotox/pipelines/build_training_dataset.py:40:    "cytokine_release",
+src/oligotox/pipelines/build_training_dataset.py:42:    "cns_toxicity",
+src/oligotox/pipelines/build_training_dataset.py:47:CURATED_ENDPOINT_MAP = {
+src/oligotox/pipelines/build_training_dataset.py:48:    "hepatocellular_injury": "endpoint_hepatocellular_injury",
+src/oligotox/pipelines/build_training_dataset.py:49:    "hepatic_vacuolation": "endpoint_hepatic_vacuolation",
+src/oligotox/pipelines/build_training_dataset.py:50:    "renal_tubular_injury": "endpoint_renal_tubular_injury",
+src/oligotox/pipelines/build_training_dataset.py:51:    "renal_accumulation": "endpoint_renal_accumulation",
+src/oligotox/pipelines/build_training_dataset.py:52:    "thrombocytopenia": "endpoint_thrombocytopenia",
+src/oligotox/pipelines/build_training_dataset.py:53:    "coagulation_effect": "endpoint_coagulation_effect",
+src/oligotox/pipelines/build_training_dataset.py:54:    "complement_activation": "endpoint_complement_activation",
+src/oligotox/pipelines/build_training_dataset.py:55:    "innate_immune_activation": "endpoint_innate_immune_activation",
+src/oligotox/pipelines/build_training_dataset.py:56:    "cytokine_release": "endpoint_cytokine_release",
+src/oligotox/pipelines/build_training_dataset.py:57:    "kupffer_cell_activation": "endpoint_kupffer_cell_activation",
+src/oligotox/pipelines/build_training_dataset.py:58:    "cns_toxicity": "endpoint_cns_neurotoxicity",
+src/oligotox/pipelines/build_training_dataset.py:59:    "offtarget_gene_silencing": "endpoint_offtarget_gene_silencing",
+src/oligotox/pipelines/build_training_dataset.py:60:    "injection_site_reaction": "endpoint_injection_site_reaction",
+src/oligotox/pipelines/build_training_dataset.py:83:    protected = set(ID_COLUMNS + LABEL_COLUMNS + list(CURATED_ENDPOINT_MAP.values()))
+src/oligotox/pipelines/build_training_dataset.py:297:    for label_col, curated_col in CURATED_ENDPOINT_MAP.items():
+Binary file src/oligotox/pipelines/__pycache__/composite.cpython-313.pyc matches
+Binary file src/oligotox/pipelines/__pycache__/thresholds.cpython-313.pyc matches
+Binary file src/oligotox/pipelines/__pycache__/score_candidate.cpython-313.pyc matches
+Binary file src/oligotox/pipelines/__pycache__/build_training_dataset.cpython-313.pyc matches
+src/oligotox/pipelines/score_candidate.py:10:    load_endpoint_models,
+src/oligotox/pipelines/score_candidate.py:16:    top_risk_endpoint,
+src/oligotox/pipelines/score_candidate.py:17:    summarize_endpoint,
+src/oligotox/pipelines/score_candidate.py:52:    endpoints: list[str] | None = None,
+src/oligotox/pipelines/score_candidate.py:65:    label_cols = endpoints or meta["label_columns"]
+src/oligotox/pipelines/score_candidate.py:66:    models = load_endpoint_models(model_dir, label_cols)
+src/oligotox/pipelines/score_candidate.py:74:    endpoint_probs = {}
+src/oligotox/pipelines/score_candidate.py:75:    per_endpoint = {}
+src/oligotox/pipelines/score_candidate.py:77:    for endpoint, model in models.items():
+src/oligotox/pipelines/score_candidate.py:79:        endpoint_probs[endpoint] = prob
+src/oligotox/pipelines/score_candidate.py:80:        thr = thresholds.get(endpoint, {}).get("threshold")
+src/oligotox/pipelines/score_candidate.py:81:        per_endpoint[endpoint] = summarize_endpoint(
+src/oligotox/pipelines/score_candidate.py:82:            endpoint=endpoint,
+src/oligotox/pipelines/score_candidate.py:89:        endpoint_probs=endpoint_probs,
+src/oligotox/pipelines/score_candidate.py:90:        endpoint_weights=composite_cfg["endpoint_weights"],
+src/oligotox/pipelines/score_candidate.py:92:    dominant = top_risk_endpoint(endpoint_probs)
+src/oligotox/pipelines/score_candidate.py:97:        "dominant_endpoint": dominant,
+src/oligotox/pipelines/score_candidate.py:98:        "per_endpoint": per_endpoint,
+src/oligotox/pipelines/composite.py:20:    endpoint_probs: Dict[str, float],
+src/oligotox/pipelines/composite.py:21:    endpoint_weights: Dict[str, float],
+src/oligotox/pipelines/composite.py:23:    pairs = [(endpoint_probs[e], endpoint_weights[e]) for e in endpoint_probs if e in endpoint_weights]
+src/oligotox/pipelines/composite.py:33:def top_risk_endpoint(endpoint_probs: Dict[str, float]) -> str | None:
+src/oligotox/pipelines/composite.py:34:    if not endpoint_probs:
+src/oligotox/pipelines/composite.py:36:    return max(endpoint_probs, key=endpoint_probs.get)
+src/oligotox/pipelines/composite.py:39:def summarize_endpoint(
+src/oligotox/pipelines/composite.py:40:    endpoint: str,
+src/oligotox/system_status.py:36:    if audit_df is not None and "endpoint" in audit_df.columns and "n_labeled" in audit_df.columns:
+src/oligotox/models/comparator.py:6:from oligotox.schemas.tox_endpoints import ToxProfile, ToxEndpoint
+src/oligotox/models/comparator.py:11:    endpoint_scores: Dict[str,float] = field(default_factory=dict)
+src/oligotox/models/comparator.py:12:    dominant_endpoint: str = ''
+src/oligotox/models/comparator.py:21:                                        rank=0, endpoint_scores=scores, dominant_endpoint=dominant))
+Binary file src/oligotox/models/__pycache__/loader.cpython-313.pyc matches
+src/oligotox/models/model.py:11:DEFAULT_ENDPOINTS = [
+src/oligotox/models/model.py:12:    "hepatocellular_injury",
+src/oligotox/models/model.py:13:    "hepatic_vacuolation",
+src/oligotox/models/model.py:14:    "renal_tubular_injury",
+src/oligotox/models/model.py:15:    "renal_accumulation",
+src/oligotox/models/model.py:16:    "thrombocytopenia",
+src/oligotox/models/model.py:18:    "complement_activation",
+src/oligotox/models/model.py:19:    "innate_immune_activation",
+src/oligotox/models/model.py:20:    "cytokine_release",
+src/oligotox/models/model.py:22:    "cns_toxicity",
+src/oligotox/models/model.py:29:class EndpointModelResult:
+src/oligotox/models/model.py:30:    endpoint: str
+src/oligotox/models/model.py:37:class EndpointToxModel:
+src/oligotox/models/model.py:40:        endpoints: List[str] | None = None,
+src/oligotox/models/model.py:45:        self.endpoints = endpoints or DEFAULT_ENDPOINTS
+src/oligotox/models/model.py:66:    def fit(self, df: pd.DataFrame, feature_columns: List[str]) -> Dict[str, EndpointModelResult]:
+src/oligotox/models/model.py:69:        results: Dict[str, EndpointModelResult] = {}
+src/oligotox/models/model.py:71:        for endpoint in self.endpoints:
+src/oligotox/models/model.py:72:            if endpoint not in df.columns:
+src/oligotox/models/model.py:75:            y = df[endpoint].astype(int)
+src/oligotox/models/model.py:81:            self.models[endpoint] = pipe
+src/oligotox/models/model.py:83:            result = EndpointModelResult(
+src/oligotox/models/model.py:84:                endpoint=endpoint,
+src/oligotox/models/model.py:90:            results[endpoint] = result
+src/oligotox/models/model.py:91:            self.training_summary[endpoint] = {
+src/oligotox/models/model.py:102:        for endpoint, model in self.models.items():
+src/oligotox/models/model.py:103:            out[endpoint] = model.predict_proba(X[self.feature_columns])[:, 1]
+src/oligotox/models/model.py:109:        joblib.dump(self.models, output_dir / "endpoint_models.joblib")
+src/oligotox/models/model.py:115:        self.models = joblib.load(output_dir / "endpoint_models.joblib")
+src/oligotox/models/safety/thrombocytopenia.py:2:Thrombocytopenia integration stub for OligoTox.
+src/oligotox/models/safety/thrombocytopenia.py:6:class Thrombocytopenia:
+src/oligotox/models/safety/thrombocytopenia.py:15:            "name": "Thrombocytopenia",
+src/oligotox/models/safety/hepatotox.py:2:Hepatotoxicity integration stub for OligoTox.
+src/oligotox/models/safety/hepatotox.py:6:class Hepatotoxicity:
+src/oligotox/models/safety/hepatotox.py:15:            "name": "Hepatotoxicity",
+src/oligotox/models/loader.py:36:    return _read_json(config_dir / "endpoint_thresholds.json")
+src/oligotox/models/loader.py:44:def load_endpoint_models(model_dir: str | Path, endpoints: list[str]) -> dict[str, object]:
+src/oligotox/models/loader.py:47:    for endpoint in endpoints:
+src/oligotox/models/loader.py:48:        path = model_dir / f"{endpoint}.joblib"
+src/oligotox/models/loader.py:50:            out[endpoint] = joblib.load(path)
+src/oligotox/models/loader.py:52:        raise RuntimeError(f"No endpoint models found in {model_dir}")
+src/oligotox/models/trainer.py:15:    "hepatocellular_injury",
+src/oligotox/models/trainer.py:16:    "hepatic_vacuolation",
+src/oligotox/models/trainer.py:17:    "renal_tubular_injury",
+src/oligotox/models/trainer.py:18:    "renal_accumulation",
+src/oligotox/models/trainer.py:19:    "thrombocytopenia",
+src/oligotox/models/trainer.py:21:    "complement_activation",
+src/oligotox/models/trainer.py:22:    "innate_immune_activation",
+src/oligotox/models/trainer.py:23:    "cytokine_release",
+src/oligotox/models/trainer.py:25:    "cns_toxicity",
+src/oligotox/models/trainer.py:63:def fit_one_endpoint(X, y, endpoint_name):
+src/oligotox/models/trainer.py:69:        "endpoint": endpoint_name,
+src/oligotox/models/trainer.py:137:        raise ValueError("No known endpoint labels found in label matrix.")
+src/oligotox/models/trainer.py:140:    for endpoint in label_cols:
+src/oligotox/models/trainer.py:141:        model, metrics = fit_one_endpoint(X, Y[endpoint], endpoint)
+src/oligotox/models/trainer.py:143:        save_json(metrics_dir / f"{endpoint}.json", metrics)
+src/oligotox/models/trainer.py:145:            save_model(model_dir / f"{endpoint}.joblib", model)
+Binary file src/oligotox/__pycache__/ml_predict.cpython-313.pyc matches
+src/oligotox/schemas/__init__.py:3:    from .tox_endpoints import *
+Binary file src/oligotox/schemas/__pycache__/tox_endpoints.cpython-313.pyc matches
+Binary file src/oligotox/schemas/__pycache__/data_models.cpython-313.pyc matches
+Binary file src/oligotox/schemas/__pycache__/__init__.cpython-313.pyc matches
+src/oligotox/schemas/data_models.py:57:class DevelopmentStage(str, Enum):
+src/oligotox/schemas/data_models.py:125:class PlateletComplement:
+src/oligotox/schemas/data_models.py:126:    platelet_count_baseline:       float = 220.0
+src/oligotox/schemas/data_models.py:127:    platelet_count_treated:        float = 220.0
+src/oligotox/schemas/data_models.py:132:    complement_activation_ex_vivo: bool  = False
+src/oligotox/schemas/data_models.py:133:    platelet_c3d_c4d_positive:     bool  = False
+src/oligotox/schemas/data_models.py:142:    cytokine_il6:     float            = 0.0
+src/oligotox/schemas/data_models.py:143:    cytokine_tnfa:    float            = 0.0
+src/oligotox/schemas/data_models.py:144:    cytokine_ifna:    float            = 0.0
+src/oligotox/schemas/data_models.py:154:    platelet_complement: PlateletComplement  = field(default_factory=PlateletComplement)
+src/oligotox/schemas/data_models.py:157:    dev_stage:           DevelopmentStage    = DevelopmentStage.CANDIDATE_NOM
+src/oligotox/schemas/tox_endpoints.py:1:"""OligoTox Endpoint Registry"""
+src/oligotox/schemas/tox_endpoints.py:12:class ToxEndpoint(str, Enum):
+src/oligotox/schemas/tox_endpoints.py:13:    HEPATOCELLULAR_INJURY    = 'hepatocellular_injury'
+src/oligotox/schemas/tox_endpoints.py:14:    HEPATIC_VACUOLATION      = 'hepatic_vacuolation'
+src/oligotox/schemas/tox_endpoints.py:15:    RENAL_TUBULAR_INJURY     = 'renal_tubular_injury'
+src/oligotox/schemas/tox_endpoints.py:16:    RENAL_ACCUMULATION       = 'renal_accumulation'
+src/oligotox/schemas/tox_endpoints.py:17:    THROMBOCYTOPENIA         = 'thrombocytopenia'
+src/oligotox/schemas/tox_endpoints.py:19:    COMPLEMENT_ACTIVATION    = 'complement_activation'
+src/oligotox/schemas/tox_endpoints.py:20:    INNATE_IMMUNE_ACTIVATION = 'innate_immune_activation'
+src/oligotox/schemas/tox_endpoints.py:21:    CYTOKINE_RELEASE         = 'cytokine_release'
+src/oligotox/schemas/tox_endpoints.py:23:    CNS_TOXICITY             = 'cns_toxicity'
+src/oligotox/schemas/tox_endpoints.py:27:ENDPOINT_DOMAIN: Dict['ToxEndpoint', RiskDomain] = {
+src/oligotox/schemas/tox_endpoints.py:28:    ToxEndpoint.CNS_TOXICITY:             RiskDomain.D1,
+src/oligotox/schemas/tox_endpoints.py:29:    ToxEndpoint.OFFTARGET_GENE_SILENCING: RiskDomain.D2,
+src/oligotox/schemas/tox_endpoints.py:30:    ToxEndpoint.HEPATOCELLULAR_INJURY:    RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:31:    ToxEndpoint.HEPATIC_VACUOLATION:      RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:32:    ToxEndpoint.RENAL_TUBULAR_INJURY:     RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:33:    ToxEndpoint.RENAL_ACCUMULATION:       RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:34:    ToxEndpoint.THROMBOCYTOPENIA:         RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:35:    ToxEndpoint.COAGULATION_EFFECT:       RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:36:    ToxEndpoint.COMPLEMENT_ACTIVATION:    RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:37:    ToxEndpoint.INNATE_IMMUNE_ACTIVATION: RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:38:    ToxEndpoint.CYTOKINE_RELEASE:         RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:39:    ToxEndpoint.KUPFFER_CELL_ACTIVATION:  RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:40:    ToxEndpoint.INJECTION_SITE_REACTION:  RiskDomain.D3,
+src/oligotox/schemas/tox_endpoints.py:45:    endpoint: ToxEndpoint
+src/oligotox/schemas/tox_endpoints.py:57:    predictions: Dict[ToxEndpoint, ToxPrediction] = field(default_factory=dict)
+src/oligotox/schemas/tox_endpoints.py:71:        dominant_ep = sorted_preds[0].endpoint.value if sorted_preds else 'n/a'
+src/oligotox/schemas/tox_endpoints.py:82:            f'  {"Endpoint":<42}{"Dom":>5}{"Score":>8}  {"Class":<12}{"Conf":>6}',
+src/oligotox/schemas/tox_endpoints.py:86:            lines.append(f'  {p.endpoint.value:<42}{p.primary_domain.value:>5}{p.risk_score:>8.3f}'
+src/oligotox/integrations_v03/structure_signals.py:4:Computes 12 structure/innate immune features per sequence.
+src/oligotox/integrations_v03/structure_signals.py:15:  - Self-complementarity score (palindrome fraction)
+src/oligotox/integrations_v03/structure_signals.py:44:    Compute structure and innate immune features for one sequence.
+src/oligotox/integrations_v03/structure_signals.py:68:    # --- Self-complementarity (palindrome fraction) ---
+src/oligotox/integrations_v03/structure_signals.py:69:    feats["struct_self_comp_score"] = _self_complementarity(sequence)
+src/oligotox/integrations_v03/structure_signals.py:115:    # Self-complementarity as palindrome fraction (proxy for dsRNA)
+src/oligotox/integrations_v03/structure_signals.py:116:    sc = _self_complementarity(sequence)
+src/oligotox/integrations_v03/structure_signals.py:194:def _self_complementarity(sequence: str, window: int = 6) -> float:
+src/oligotox/integrations_v03/structure_signals.py:196:    Compute palindrome fraction: fraction of windows that are reverse complements.
+src/oligotox/integrations_v03/structure_signals.py:197:    Proxy for self-complementarity / dsRNA formation potential.
+src/oligotox/integrations_v03/datasail_splits.py:142:def evaluate_endpoint(y_true, y_prob, endpoint_name="endpoint") -> dict:
+src/oligotox/integrations_v03/datasail_splits.py:145:        return {"endpoint": endpoint_name, "pr_auc": float("nan"),
+src/oligotox/integrations_v03/datasail_splits.py:148:        "endpoint": endpoint_name,
+Binary file src/oligotox/integrations_v03/__pycache__/feature_matrix.cpython-313.pyc matches
+src/oligotox/integrations_v03/offtarget_burden.py:2:Integration 3: Transcriptome-Aware Seed/Off-Target Burden
+src/oligotox/integrations_v03/offtarget_burden.py:4:Implements TargetScan 7-mer seed hierarchy for off-target silencing risk.
+src/oligotox/integrations_v03/offtarget_burden.py:9:  8mer:    positions 2-8 + A1 anchor + complementary position 8
+src/oligotox/integrations_v03/offtarget_burden.py:35:    Returns complement DNA sequences (for 3'UTR scanning).
+src/oligotox/integrations_v03/aso_optimizer.py:150:    # --- Activity proxy (inverted = off-target burden) ---
+src/oligotox/integrations_v03/aso_optimizer.py:151:    # Empirical: high-LNA + full PS + short gap → high activity → higher off-target risk
+src/oligotox/integrations_v03/feature_matrix.py:88:ENDPOINTS = [
+src/oligotox/integrations_v03/feature_matrix.py:89:    "hepatocellular_injury","renal_tubular_injury","thrombocytopenia",
+src/oligotox/integrations_v03/feature_matrix.py:90:    "coagulation_effect","complement_activation","innate_immune_activation",
+src/oligotox/integrations_v03/feature_matrix.py:91:    "cytokine_release","cns_neurotoxicity","reproductive_developmental",
+src/oligotox/integrations_v03/feature_matrix.py:93:    "lnp_immune_effect","proinflammatory_vasculitis",
+src/oligotox/integrations_v03/feature_matrix.py:120:    # Integration 3: off-target burden
+src/oligotox/integrations/candidate_mechanism.py:8:from oligotox.integrations.tlr_immune import score_tlr_innate
+src/oligotox/integrations/candidate_mechanism.py:16:def infer_deg_list_from_endpoints(top_endpoints: List[str]) -> List[str]:
+src/oligotox/integrations/candidate_mechanism.py:19:    endpoint_to_degs = {
+src/oligotox/integrations/candidate_mechanism.py:20:        "innate_immune_activation": ["IL6", "CXCL8", "NFKBIA", "ISG15", "OAS1"],
+src/oligotox/integrations/candidate_mechanism.py:21:        "cytokine_release":         ["IL6", "CXCL8", "NFKBIA", "ISG15", "OAS1"],
+src/oligotox/integrations/candidate_mechanism.py:22:        "complement_activation":    ["C3", "C5", "CFB"],
+src/oligotox/integrations/candidate_mechanism.py:23:        "thrombocytopenia":         ["PF4", "VWF", "SERPINE1"],
+src/oligotox/integrations/candidate_mechanism.py:25:        "hepatocellular_injury":    ["BAX", "DDIT3", "ATF4"],
+src/oligotox/integrations/candidate_mechanism.py:26:        "renal_tubular_injury":     ["KIM1", "LCN2"],
+src/oligotox/integrations/candidate_mechanism.py:29:    for ep in top_endpoints:
+src/oligotox/integrations/candidate_mechanism.py:30:        if ep in endpoint_to_degs:
+src/oligotox/integrations/candidate_mechanism.py:31:            degs.extend(endpoint_to_degs[ep])
+src/oligotox/integrations/candidate_mechanism.py:52:    # Innate immune scoring
+src/oligotox/integrations/candidate_mechanism.py:60:        raise RuntimeError(f"tlr_immune failed: {e}") from e
+src/oligotox/integrations/candidate_mechanism.py:63:    top_endpoints = risk_df.head(5)["endpoint"].tolist()
+src/oligotox/integrations/candidate_mechanism.py:64:    degs = infer_deg_list_from_endpoints(top_endpoints)
+src/oligotox/integrations/chembl_benchmark.py:8:        known_tox={'coagulation_effect':0.75,'renal_tubular_injury':0.40,'thrombocytopenia':0.35,
+src/oligotox/integrations/chembl_benchmark.py:9:                   'injection_site_reaction':0.20,'cns_toxicity':0.15,'hepatocellular_injury':0.10},
+src/oligotox/integrations/chembl_benchmark.py:10:        note='Black box: thrombocytopenia, coagulation. Monitor APTT+CBC.'),
+src/oligotox/integrations/chembl_benchmark.py:13:        known_tox={'complement_activation':0.85,'cytokine_release':0.60,'innate_immune_activation':0.55,
+src/oligotox/integrations/chembl_benchmark.py:14:                   'hepatic_vacuolation':0.40,'injection_site_reaction':0.30,'thrombocytopenia':0.20},
+src/oligotox/integrations/chembl_benchmark.py:18:        known_tox={'renal_tubular_injury':0.65,'hepatocellular_injury':0.55,'injection_site_reaction':0.40,
+src/oligotox/integrations/chembl_benchmark.py:19:                   'cytokine_release':0.25,'innate_immune_activation':0.20},
+src/oligotox/integrations/chembl_benchmark.py:20:        note='Hepatotoxicity warning. Renal monitoring mandatory.'),
+src/oligotox/integrations/chembl_benchmark.py:23:        known_tox={'injection_site_reaction':0.85,'renal_tubular_injury':0.25,'hepatocellular_injury':0.15,'thrombocytopenia':0.10},
+src/oligotox/integrations/chembl_benchmark.py:24:        note='ISR most common AE (~8%). Favorable hepatic/renal profile.'),
+src/oligotox/integrations/chembl_benchmark.py:27:        known_tox={'hepatocellular_injury':0.80,'hepatic_vacuolation':0.70,'injection_site_reaction':0.90,
+src/oligotox/integrations/chembl_benchmark.py:28:                   'renal_tubular_injury':0.35,'thrombocytopenia':0.30,'coagulation_effect':0.40},
+src/oligotox/integrations/chembl_benchmark.py:29:        note='REMS: hepatotoxicity. High ISR. Full-PS gapmer class ref.'),
+src/oligotox/integrations/chembl_benchmark.py:32:        known_tox={'thrombocytopenia':0.90,'renal_tubular_injury':0.75,'hepatocellular_injury':0.50,
+src/oligotox/integrations/chembl_benchmark.py:33:                   'coagulation_effect':0.45,'injection_site_reaction':0.60,'complement_activation':0.35},
+src/oligotox/integrations/chembl_benchmark.py:34:        note='BLACK BOX: thrombocytopenia+glomerulonephritis. REMS. PS-ASO benchmark.'),
+src/oligotox/integrations/chembl_benchmark.py:37:        known_tox={'injection_site_reaction':0.45,'renal_tubular_injury':0.30,'hepatocellular_injury':0.20,'thrombocytopenia':0.15},
+src/oligotox/integrations/chembl_benchmark.py:41:        known_tox={'renal_tubular_injury':0.30,'injection_site_reaction':0.25,'coagulation_effect':0.05,'thrombocytopenia':0.05},
+src/oligotox/integrations/chembl_benchmark.py:48:    per_endpoint_error: Dict; mae: float; rmse: float
+src/oligotox/integrations/chembl_benchmark.py:54:    known = drug['known_tox']; endpoints = set(predicted.keys()) & set(known.keys())
+src/oligotox/integrations/chembl_benchmark.py:55:    if not endpoints: return None
+src/oligotox/integrations/chembl_benchmark.py:58:    for ep in endpoints:
+src/oligotox/integrations/chembl_benchmark.py:65:        per_endpoint_error=errors, mae=round(mae,4), rmse=round(rmse,4),
+src/oligotox/integrations/chembl_benchmark.py:72:             f'  {"Endpoint":<38}{"Pred":>8}{"Known":>8}{"Err":>8}  Match']
+src/oligotox/integrations/chembl_benchmark.py:74:    for ep in sorted(r.per_endpoint_error,key=r.per_endpoint_error.get,reverse=True):
+src/oligotox/integrations/chembl_benchmark.py:77:                     f'{r.per_endpoint_error[ep]:>8.3f}  '
+src/oligotox/integrations/gsea_pathway.py:12:    'HALLMARK_COMPLEMENT':       ['C1QA','C1QB','C3','C4A','C5','CFB','CFD','CD55','CD59'],
+src/oligotox/integrations/gsea_pathway.py:15:    'REACTOME_INNATE_IMMUNE':    ['TLR7','TLR8','TLR9','RIGI','MDA5','MAVS','IRF3','IRF7'],
+src/oligotox/integrations/gsea_pathway.py:16:    'REACTOME_COMPLEMENT':       ['C1QA','C3','C5','CFB','CFD','C4BPA','MASP1','MASP2'],
+src/oligotox/integrations/gsea_pathway.py:17:    'REACTOME_PLATELET':         ['GP6','ITGA2B','ITGB3','VWF','TBXA2R','P2RY12','PF4'],
+src/oligotox/integrations/seed_match.py:6:COMPLEMENT = str.maketrans('AUGC','UACG')
+src/oligotox/integrations/seed_match.py:8:def reverse_complement(seq: str) -> str:
+src/oligotox/integrations/seed_match.py:9:    return seq.upper().translate(COMPLEMENT)[::-1]
+src/oligotox/integrations/seed_match.py:22:    seed = seq[1:8]; seed_rc = reverse_complement(seed)
+src/oligotox/integrations/seed_match.py:46:        pals = sum(1 for w in windows if len(w)==6 and w == reverse_complement(w))
+src/oligotox/integrations/geneformer_context.py:6:    'hepatocyte':           {'PCSK9':1,'APOB':1,'TTR':1,'ALAS1':1,'ALB':1,'NEAT1':3,'MALAT1':2,'TLR7':4},
+src/oligotox/integrations/geneformer_context.py:7:    'renal_proximal_tubule':{'AQP1':1,'SLC22A6':1,'CUBN':1,'NEAT1':3,'MALAT1':2,'TLR7':4},
+src/oligotox/integrations/geneformer_context.py:8:    'cns_neuron':           {'SMN1':1,'HUNTINGTIN':2,'SOD1':2,'NEAT1':2,'MALAT1':1,'TDP43':1,'NfL':1,'GFAP':2},
+src/oligotox/integrations/geneformer_context.py:10:    'platelet':             {'GP6':1,'ITGA2B':1,'ITGB3':1,'PF4':1,'C3':3},
+src/oligotox/integrations/geneformer_context.py:12:TISSUE_ENDPOINT_MAP = {
+src/oligotox/integrations/geneformer_context.py:13:    'hepatocyte':            ['hepatocellular_injury','hepatic_vacuolation','kupffer_cell_activation'],
+src/oligotox/integrations/geneformer_context.py:14:    'renal_proximal_tubule': ['renal_tubular_injury','renal_accumulation'],
+src/oligotox/integrations/geneformer_context.py:15:    'cns_neuron':            ['cns_toxicity','offtarget_gene_silencing'],
+src/oligotox/integrations/geneformer_context.py:16:    'pbmc':                  ['innate_immune_activation','cytokine_release'],
+src/oligotox/integrations/geneformer_context.py:17:    'platelet':              ['thrombocytopenia','complement_activation'],
+src/oligotox/integrations/geneformer_context.py:24:    tissue_relevant_endpoints: List[str] = field(default_factory=list)
+src/oligotox/integrations/geneformer_context.py:32:    eps = TISSUE_ENDPOINT_MAP.get(tissue.lower(), [])
+src/oligotox/integrations/geneformer_context.py:37:        tissue_relevant_endpoints=eps)
+src/oligotox/integrations/geneformer_context.py:43:        f'  Relevant endpoints: {", ".join(ctx.tissue_relevant_endpoints)}',
+src/oligotox/integrations/tlr_immune.py:1:"""TLR/Innate Immune Sequence Scorer — upgrades D3 innate module"""
+src/oligotox/integrations/tlr_immune.py:40:    return '\n'.join(['  [TLR-Innate] Sequence-based innate immune scorer',
+src/oligotox/integrations/phylo_conservation.py:44:        lines.append(f'  {"Endpoint":<38}{"Base":>8}{"Modulated":>12}{"Delta":>8}')
+src/oligotox/jobs.py:246:                endpoint=p.stem,
+src/oligotox/jobs.py:262:                endpoint="report",
+src/oligotox/assays/planner.py:6:from oligotox.schemas.tox_endpoints import ToxProfile, RiskClass, ToxEndpoint
+src/oligotox/assays/planner.py:11:    assay: str; endpoint: str; species: str; priority: int; rationale: str
+src/oligotox/assays/planner.py:26:    def add(priority, assay, endpoint, species, rationale):
+src/oligotox/assays/planner.py:27:        item = AssayItem(assay=assay, endpoint=endpoint, species=species, priority=priority, rationale=rationale)
+src/oligotox/assays/planner.py:33:    add(1,'28-day repeat-dose tox (rat+cynomolgus)','hepatocellular_injury','rat+cyno',
+src/oligotox/assays/planner.py:37:    if scores.get('thrombocytopenia',0) >= 0.25 or mod in (Modality.ASO_GAPMER, Modality.ASO_SSO):
+src/oligotox/assays/planner.py:38:        add(1,'PF4-PS ELISA','thrombocytopenia','cynomolgus','PF4-PS complex; anti-PF4 Ab.')
+src/oligotox/assays/planner.py:39:        add(1,'Platelet-bound C3d/C4d flow cytometry','complement_activation','human ex vivo',
+src/oligotox/assays/planner.py:40:            'Complement-opsonized platelet clearance; CARPA mechanism.')
+src/oligotox/assays/planner.py:41:        add(1,'Trp:Kyn HPLC-MS','cytokine_release','rat/plasma','IDO1/kynurenine pathway.')
+src/oligotox/assays/planner.py:45:        add(1,'CH50/AH50 ex vivo human serum','complement_activation','human serum',
+src/oligotox/assays/planner.py:47:        add(2,'RIG-I/MDA-5 reporter assay','innate_immune_activation','human PBMC',
+src/oligotox/assays/planner.py:49:        add(2,'Liver H&E + Oil Red O','hepatic_vacuolation','rat',
+src/oligotox/assays/planner.py:55:            'lncRNA hub disruption; D2 ncRNA off-target network (ICH S6R1).')
+src/oligotox/assays/planner.py:63:        add(1,'EFD microphysiological system (ICH S5.3)','cns_toxicity','MPS/human',
+src/oligotox/assays/planner.py:64:            'DART human-specific sequence alternative.')
+src/oligotox/assays/planner.py:65:        add(1,'Surrogate sequence FDA pre-IND consultation','cns_toxicity','rat/cyno',
+src/oligotox/assays/planner.py:66:            'DART bridging via surrogate; pre-IND meeting.')
+src/oligotox/assays/planner.py:68:    # General CNS
+src/oligotox/assays/planner.py:69:    if scores.get('cns_toxicity',0) >= 0.20:
+src/oligotox/assays/planner.py:70:        add(2,'NfL/GFAP CSF+serum ELISA','cns_toxicity','cynomolgus',
+src/oligotox/assays/planner.py:73:    # Renal
+src/oligotox/assays/planner.py:74:    if scores.get('renal_tubular_injury',0) >= 0.30:
+src/oligotox/assays/planner.py:75:        add(2,'Renal H&E + PAS + LAMP1 IHC','renal_accumulation','rat',
+src/oligotox/assays/planner.py:76:            'PS-ASO lysosomal renal accumulation. Rat caveat.')
+src/oligotox/assays/planner.py:79:    add(2,'Recovery satellite group (28d)','hepatocellular_injury','rat',
+src/oligotox/assays/planner.py:80:        'Reversibility of liver/kidney findings.')
+src/oligotox/assays/planner.py:83:    add(3,'TLR7/8/9 reporter assay (HEK-Blue)','innate_immune_activation','human cell line',
+src/oligotox/assays/planner.py:85:    add(3,'immuneSIM repertoire simulation','innate_immune_activation','in silico',
+src/oligotox/assays/planner.py:86:        'Validate innate immune module against simulated immune repertoire.')
+src/oligotox/assays/planner.py:87:    add(3,'ChEMBL/SIDER DILI flag check','hepatocellular_injury','database',
+src/oligotox/assays/planner.py:98:        print(f'  {"Assay":<48}{"Endpoint":<24}{"Species"}')
+src/oligotox/assays/planner.py:101:            print(f'  {a.assay:<48}{a.endpoint[:23]:<24}{a.species}')
+src/oligotox/efficacy/registry.py:9:  - OligoGraph     (Graph neural network for off-target)
+src/oligotox/efficacy/registry.py:135:    OligoGraph: Graph neural network for oligo off-target interaction modeling.
+src/oligotox/efficacy/registry.py:146:        # Graph model emphasizes off-target detection
+src/oligotox/efficacy/registry.py:150:        # Graph model has better off-target calibration
+src/oligotox/efficacy/oligoformer.py:12:    Predicts on-target efficacy and off-target potential.
+src/oligotox/rules/engine.py:7:from oligotox.schemas.tox_endpoints import ToxEndpoint, ToxPrediction, RiskClass, RiskDomain, ENDPOINT_DOMAIN
+src/oligotox/rules/engine.py:16:def score_hepatocellular_injury(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:22:    note = 'LNA 5-flank caspase-3 (Dieckmann 2017); PS class hepatotox; ALT/AST biomarkers.'
+src/oligotox/rules/engine.py:25:def score_renal_tubular_injury(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:30:    note = 'PS-ASO renal accumulation; KIM-1/NGAL biomarkers. Rat overestimates human (ICH S7A).'
+src/oligotox/rules/engine.py:33:def score_thrombocytopenia(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:35:    s += min(f['platelet_drop_fraction'] * 0.60, 0.45)
+src/oligotox/rules/engine.py:38:    note = 'PF4-PS complex mechanism; platelet-bound C3d/C4d (CARPA). Inotersen black box ref.'
+src/oligotox/rules/engine.py:39:    return RuleResult(min(s,1.0), 0.78, ['ps_fraction','platelet_drop_fraction','pf4_od'], note)
+src/oligotox/rules/engine.py:41:def score_complement_activation(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:51:def score_innate_immune(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:54:    s += f['self_complementarity'] * 0.15  # RIG-I/MDA-5
+src/oligotox/rules/engine.py:58:    return RuleResult(min(s,1.0), 0.76, ['cpg_density','poly_u_density','self_complementarity'], note)
+src/oligotox/rules/engine.py:60:def score_cytokine_release(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:68:def score_hepatic_vacuolation(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:75:def score_renal_accumulation(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:78:    note = 'PS-ASO lysosomal renal accumulation (H&E+PAS+LAMP1). Rat caveat: ICH S7A.'
+src/oligotox/rules/engine.py:83:    s += min(f['platelet_drop_fraction'] * 0.20, 0.15)
+src/oligotox/rules/engine.py:85:    return RuleResult(min(s,1.0), 0.74, ['ps_fraction','platelet_drop_fraction'], note)
+src/oligotox/rules/engine.py:94:def score_cns_toxicity(f: dict) -> RuleResult:
+src/oligotox/rules/engine.py:98:    note = 'IT delivery TDP-43 neuroinflam; lncRNA hub D1 risk. NfL/GFAP CSF+serum (FDA 2022).'
+src/oligotox/rules/engine.py:105:    s += f['self_complementarity'] * 0.10
+src/oligotox/rules/engine.py:117:    ToxEndpoint.HEPATOCELLULAR_INJURY:    score_hepatocellular_injury,
+src/oligotox/rules/engine.py:118:    ToxEndpoint.RENAL_TUBULAR_INJURY:     score_renal_tubular_injury,
+src/oligotox/rules/engine.py:119:    ToxEndpoint.THROMBOCYTOPENIA:         score_thrombocytopenia,
+src/oligotox/rules/engine.py:120:    ToxEndpoint.COMPLEMENT_ACTIVATION:    score_complement_activation,
+src/oligotox/rules/engine.py:121:    ToxEndpoint.INNATE_IMMUNE_ACTIVATION: score_innate_immune,
+src/oligotox/rules/engine.py:122:    ToxEndpoint.CYTOKINE_RELEASE:         score_cytokine_release,
+src/oligotox/rules/engine.py:123:    ToxEndpoint.HEPATIC_VACUOLATION:      score_hepatic_vacuolation,
+src/oligotox/rules/engine.py:124:    ToxEndpoint.RENAL_ACCUMULATION:       score_renal_accumulation,
+src/oligotox/rules/engine.py:125:    ToxEndpoint.COAGULATION_EFFECT:       score_coagulation,
+src/oligotox/rules/engine.py:126:    ToxEndpoint.KUPFFER_CELL_ACTIVATION:  score_kupffer_activation,
+src/oligotox/rules/engine.py:127:    ToxEndpoint.CNS_TOXICITY:             score_cns_toxicity,
+src/oligotox/rules/engine.py:128:    ToxEndpoint.OFFTARGET_GENE_SILENCING: score_offtarget_silencing,
+src/oligotox/rules/engine.py:129:    ToxEndpoint.INJECTION_SITE_REACTION:  score_injection_site,
+src/oligotox/rules/engine.py:138:                endpoint=ep, risk_score=round(rr.score, 4),
+src/oligotox/rules/engine.py:141:                primary_domain=ENDPOINT_DOMAIN.get(ep, RiskDomain.D3),
+src/oligotox/rules/engine_v2.py:7:from oligotox.schemas.data_models import OligoInput, DeliveryInput, OmicsReadout, OligoToxInput, PlateletComplement, OffTargetContext
+src/oligotox/rules/engine_v2.py:15:    from integrations.tlr_immune import score_tlr_innate
+src/oligotox/rules/engine_v2.py:37:                  platelet: Optional[PlateletComplement] = None,
+src/oligotox/rules/engine_v2.py:39:                  target_gene: str = '', target_tissue: str = 'hepatocyte',
+src/oligotox/rules/engine_v2.py:41:    if platelet is None: platelet = PlateletComplement()
+src/oligotox/rules/engine_v2.py:43:    inp = OligoToxInput(oligo=oligo, delivery=delivery, platelet_complement=platelet, omics=omics)
+src/oligotox/rules/engine_v2.py:48:    meta: Dict[str, Any] = {'seed_match':None,'tlr_immune':None,'gsea':None,'phylo':None,'geneformer':None}
+src/oligotox/rules/engine_v2.py:56:            old_ii = scores.get('innate_immune_activation', 0.0)
+src/oligotox/rules/engine_v2.py:57:            scores['innate_immune_activation'] = round(min(old_ii + sm.dsrna_probability*0.12, 1.0), 4)
+src/oligotox/rules/engine_v2.py:63:        meta['tlr_immune'] = tlr
+src/oligotox/rules/engine_v2.py:64:        scores['innate_immune_activation'] = round(min(scores.get('innate_immune_activation',0)*0.55 + tlr.composite_innate_score*0.45, 1.0), 4)
+src/oligotox/rules/engine_v2.py:65:        scores['cytokine_release'] = round(min(scores.get('cytokine_release',0)*0.65 + (tlr.tlr7_score+tlr.tlr8_score)*0.175, 1.0), 4)
+src/oligotox/rules/engine_v2.py:71:        scores['innate_immune_activation'] = round(min(scores.get('innate_immune_activation',0)*0.65 + pw.get('HALLMARK_IFN_ALPHA',0)*0.35, 1.0), 4)
+src/oligotox/rules/engine_v2.py:72:        scores['cytokine_release'] = round(min(scores.get('cytokine_release',0)*0.60 + pw.get('HALLMARK_TNFA_NFKB',0)*0.30 + pw.get('REACTOME_KYNURENINE',0)*0.10, 1.0), 4)
+src/oligotox/rules/engine_v2.py:73:        scores['hepatocellular_injury'] = round(min(scores.get('hepatocellular_injury',0)*0.70 + pw.get('HALLMARK_APOPTOSIS',0)*0.30, 1.0), 4)
+src/oligotox/rules/engine_v2.py:74:        scores['complement_activation'] = round(min(scores.get('complement_activation',0)*0.70 + pw.get('REACTOME_COMPLEMENT',pw.get('HALLMARK_COMPLEMENT',0))*0.30, 1.0), 4)
+src/oligotox/rules/engine_v2.py:75:        scores['thrombocytopenia'] = round(min(scores.get('thrombocytopenia',0)*0.70 + pw.get('REACTOME_PLATELET',0)*0.30, 1.0), 4)
+src/oligotox/rules/engine_v2.py:87:        for ep in gf.tissue_relevant_endpoints:
+src/oligotox/pkpd/bridge.py:3:Phase 2B: Calibrated hepatotox adjustment logic
+src/oligotox/pkpd/bridge.py:9:def _hepatotox_pkpd_adjustment(exposure_score: float) -> float:
+src/oligotox/pkpd/bridge.py:11:    Hepatotoxicity adjustment based on exposure.
+src/oligotox/pkpd/bridge.py:89:    for endpoint, baseline_risk in baseline_risks.items():
+src/oligotox/pkpd/bridge.py:90:        if endpoint == "hepatotoxicity":
+src/oligotox/pkpd/bridge.py:91:            adjusted_risk = baseline_risk + _hepatotox_pkpd_adjustment(exposure_score)
+src/oligotox/pkpd/bridge.py:95:                "thrombocytopenia": 0.15,
+src/oligotox/pkpd/bridge.py:96:                "immune_activation": 0.12,
+src/oligotox/pkpd/bridge.py:97:            }.get(endpoint, 0.10)
+src/oligotox/pkpd/bridge.py:101:        adjusted_risks[endpoint] = max(0.0, min(1.0, adjusted_risk))
+src/oligotox/pkpd/bridge.py:106:    result_adjusted["dominant_endpoint"] = max(adjusted_risks.items(), key=lambda x: x[1])[0]
+Binary file src/oligotox/pkpd/__pycache__/bridge.cpython-313.pyc matches
+Binary file src/oligotox/inference/__pycache__/api.cpython-313.pyc matches
+src/oligotox/inference/api.py:48:        "self_complementarity": _safe_get(inp, "self_complementarity", 0.0),
+src/oligotox/inference/api.py:67:        "platelet_drop_fraction": _safe_get(inp, "platelet_drop_fraction", 0.0),
+src/oligotox/inference/api.py:104:    base_probs = {k: v["prob"] for k, v in base["per_endpoint"].items()}
+src/oligotox/inference/api.py:109:    for endpoint, prob in adjusted_probs.items():
+src/oligotox/inference/api.py:110:        if endpoint in base["per_endpoint"]:
+src/oligotox/inference/api.py:111:            base["per_endpoint"][endpoint]["base_prob"] = base["per_endpoint"][endpoint]["prob"]
+src/oligotox/inference/api.py:112:            base["per_endpoint"][endpoint]["prob"] = prob
+src/oligotox/inference/api.py:113:            thr = base["per_endpoint"][endpoint].get("threshold")
+src/oligotox/inference/api.py:114:            base["per_endpoint"][endpoint]["predicted_positive"] = bool(prob >= thr) if thr is not None else False
+src/oligotox/inference/api.py:116:    dominant_endpoint = max(adjusted_probs, key=adjusted_probs.get) if adjusted_probs else None
+src/oligotox/inference/api.py:117:    base["dominant_endpoint"] = dominant_endpoint
+src/oligotox/inference/api.py:119:    # Feed mechanistic proxy signals back into endpoint probabilities
+src/oligotox/inference/api.py:120:    # so PS/platelet, renal accumulation, and gapmer signals are not lost
+src/oligotox/inference/api.py:141:            "platelet_ps_risk_proxy": round(0.6857 if is_ps else 0.1, 4),
+src/oligotox/inference/api.py:142:            "hepatic_gapmer_risk_proxy": round(0.45 if is_lna else 0.21, 4),
+src/oligotox/inference/api.py:143:            "renal_accumulation_proxy": round(0.65 if is_galnac else 0.35, 4),
+src/oligotox/inference/api.py:147:            "thrombocytopenia":        mech.get("platelet_ps_risk_proxy", 0.0),
+src/oligotox/inference/api.py:148:            "renal_accumulation":      mech.get("renal_accumulation_proxy", 0.0),
+src/oligotox/inference/api.py:149:            "hepatic_vacuolation":     mech.get("hepatic_gapmer_risk_proxy", 0.0),
+src/oligotox/inference/api.py:150:            "innate_immune_activation": mech.get("tlr78_risk_proxy", 0.0),
+src/oligotox/inference/api.py:151:            "complement_activation":   mech.get("hybridization_risk_proxy", 0.0),
+src/oligotox/inference/api.py:154:            if ep in base["per_endpoint"]:
+src/oligotox/inference/api.py:155:                current = base["per_endpoint"][ep]["prob"]
+src/oligotox/inference/api.py:157:                base["per_endpoint"][ep]["prob"] = round(blended, 4)
+src/oligotox/inference/api.py:158:                thr = base["per_endpoint"][ep].get("threshold")
+src/oligotox/inference/api.py:159:                base["per_endpoint"][ep]["predicted_positive"] = bool(blended >= thr) if thr is not None else False
+src/oligotox/inference/api.py:160:        adjusted_probs = {k: v["prob"] for k, v in base["per_endpoint"].items()}
+src/oligotox/inference/api.py:161:        dominant_endpoint = max(adjusted_probs, key=adjusted_probs.get) if adjusted_probs else dominant_endpoint
+src/oligotox/inference/api.py:162:        base["dominant_endpoint"] = dominant_endpoint
+src/oligotox/inference/api.py:172:        if mech.get("platelet_ps_risk_proxy", 0) > 0.4:
+src/oligotox/inference/api.py:173:            fallback_assays.append("Platelet activation and PF4-associated thrombocytopenia follow-up")
+src/oligotox/inference/api.py:174:        if mech.get("renal_accumulation_proxy", 0) > 0.4:
+src/oligotox/inference/api.py:175:            fallback_assays.append("Renal proximal tubule accumulation / injury follow-up")
+src/oligotox/inference/api.py:176:        if mech.get("hybridization_risk_proxy", 0) > 0.15 or mech.get("hepatic_gapmer_risk_proxy", 0) > 0.3:
+src/oligotox/inference/api.py:177:            fallback_assays.append("RNase H1 / hybridization off-target assessment")
+src/oligotox/inference/api.py:179:            fallback_assays.append("TLR7/8 innate immune activation assay (PBMC cytokine panel)")
+src/oligotox/inference/api.py:180:        if mech.get("gc_fraction", 0) > 0.5 or mech.get("hepatic_gapmer_risk_proxy", 0) > 0.2:
+src/oligotox/inference/api.py:181:            fallback_assays.append("ALT / AST and hepatocyte stress biomarker follow-up")
+src/oligotox/inference/api.py:220:            "dart_relevant": _safe_get(inp, "dart_relevant", False),
+src/oligotox/inference/api.py:244:    endpoint, risk_score, confidence, D1, D2, D3
+src/oligotox/inference/api.py:250:        "dominant_endpoint": ...,
+src/oligotox/inference/api.py:251:        "per_endpoint": {
+src/oligotox/inference/api.py:252:            endpoint_name: {
+src/oligotox/inference/api.py:274:    per_endpoint = result.get("per_endpoint", {})
+src/oligotox/inference/api.py:275:    if not isinstance(per_endpoint, dict) or not per_endpoint:
+src/oligotox/inference/api.py:276:        raise ValueError("score_candidate_payload could not find per_endpoint scores")
+src/oligotox/inference/api.py:279:        "hepatocellular_injury": 0.70,
+src/oligotox/inference/api.py:280:        "hepatic_vacuolation": 0.55,
+src/oligotox/inference/api.py:282:        "cns_toxicity": 0.35,
+src/oligotox/inference/api.py:285:        "innate_immune_activation": 0.75,
+src/oligotox/inference/api.py:286:        "cytokine_release": 0.80,
+src/oligotox/inference/api.py:287:        "complement_activation": 0.85,
+src/oligotox/inference/api.py:292:        "renal_tubular_injury": 0.80,
+src/oligotox/inference/api.py:293:        "renal_accumulation": 0.85,
+src/oligotox/inference/api.py:294:        "thrombocytopenia": 0.90,
+src/oligotox/inference/api.py:296:        "cns_toxicity": 0.25,
+src/oligotox/inference/api.py:306:    for endpoint, val in per_endpoint.items():
+src/oligotox/inference/api.py:316:                "endpoint": str(endpoint),
+src/oligotox/inference/api.py:322:                "D1": round(prob * d1_map.get(endpoint, 0.10), 3),
+src/oligotox/inference/api.py:323:                "D2": round(prob * d2_map.get(endpoint, 0.10), 3),
+src/oligotox/inference/api.py:324:                "D3": round(prob * d3_map.get(endpoint, 0.10), 3),
+src/oligotox/inference/api.py:330:        raise ValueError("score_candidate_payload produced no endpoint rows")
+src/oligotox/inference/api.py:332:    out["endpoint"] = out["endpoint"].astype(str)
+src/oligotox/inference/api.py:342:        "endpoint",
+src/oligotox/evaluation/metrics.py:79:def evaluate_endpoint(
+src/oligotox/evaluation/metrics.py:82:    endpoint_name: str,
+src/oligotox/evaluation/metrics.py:85:    """Comprehensive evaluation for a single endpoint.
+src/oligotox/evaluation/metrics.py:90:        endpoint_name: Name of the toxicity endpoint
+src/oligotox/evaluation/metrics.py:100:        "endpoint": endpoint_name,
+src/oligotox/evaluation/metrics.py:135:    """Generate comprehensive evaluation report across all endpoints.
+src/oligotox/evaluation/metrics.py:138:        y_true_dict: {endpoint: binary labels}
+src/oligotox/evaluation/metrics.py:139:        y_pred_dict: {endpoint: predicted probabilities}
+src/oligotox/evaluation/metrics.py:146:        "n_endpoints": len(y_true_dict),
+src/oligotox/evaluation/metrics.py:147:        "per_endpoint": {},
+src/oligotox/evaluation/metrics.py:153:    for endpoint in y_true_dict.keys():
+src/oligotox/evaluation/metrics.py:154:        if endpoint not in y_pred_dict:
+src/oligotox/evaluation/metrics.py:157:        y_t = y_true_dict[endpoint]
+src/oligotox/evaluation/metrics.py:158:        y_p = y_pred_dict[endpoint]
+src/oligotox/evaluation/metrics.py:168:        endpoint_result = evaluate_endpoint(y_t, y_p, endpoint)
+src/oligotox/evaluation/metrics.py:169:        report["per_endpoint"][endpoint] = endpoint_result
+src/oligotox/evaluation/metrics.py:171:        if not np.isnan(endpoint_result.get("auroc", np.nan)):
+src/oligotox/evaluation/metrics.py:172:            auroc_list.append(endpoint_result["auroc"])
+src/oligotox/evaluation/metrics.py:173:        if not np.isnan(endpoint_result.get("brier", np.nan)):
+src/oligotox/evaluation/metrics.py:174:            brier_list.append(endpoint_result["brier"])
+src/oligotox/evaluation/__init__.py:7:    evaluate_endpoint,
+src/oligotox/evaluation/__init__.py:16:    "evaluate_endpoint",
+src/oligotox/tox_endpoints.py:1:from oligotox.schemas.tox_endpoints import *
+src/oligotox.egg-info/PKG-INFO:19:- **D2:** hybridization-dependent off-target effects
+src/oligotox.egg-info/PKG-INFO:28:- Multi-endpoint risk prediction through the OligoTox inference backend
+src/oligotox.egg-info/PKG-INFO:30:- Intermediate safety calculations such as GC content, hybridization risk, innate immune proxy, platelet/PS proxy, hepatic gapmer proxy, and renal accumulation proxy
+src/oligotox.egg-info/PKG-INFO:92:5. Run prediction to view endpoint risks, mechanistic support metrics, confidence display, assay suggestions, and the regulatory-style summary.
+src/oligotox.egg-info/PKG-INFO:109:The app is running and the latest Streamlit enhancement commit has been pushed to GitHub. The platform is functional for demo and iterative development, but some components are still evolving and should be described according to what is currently verified in code and local execution.
+src/oligotox.egg-info/PKG-INFO:111:## Development note
+src/oligotox.egg-info/SOURCES.txt:13:src/oligotox/tox_endpoints.py
+src/oligotox.egg-info/SOURCES.txt:58:src/oligotox/integrations/tlr_immune.py
+src/oligotox.egg-info/SOURCES.txt:85:src/oligotox/models/safety/hepatotox.py
+src/oligotox.egg-info/SOURCES.txt:88:src/oligotox/models/safety/thrombocytopenia.py
+src/oligotox.egg-info/SOURCES.txt:132:src/oligotox/schemas/tox_endpoints.py
+src/models/train_improved_models.py:25:# Endpoints to train
+src/models/train_improved_models.py:26:ENDPOINTS = [
+src/models/train_improved_models.py:27:    'hepatocellular_injury', 'hepatic_vacuolation', 'renal_tubular_injury',
+src/models/train_improved_models.py:28:    'renal_accumulation', 'thrombocytopenia', 'coagulation_effect',
+src/models/train_improved_models.py:29:    'complement_activation', 'innate_immune_activation', 'cytokine_release',
+src/models/train_improved_models.py:30:    'kupffer_cell_activation', 'cns_toxicity', 'offtarget_gene_silencing',
+src/models/train_improved_models.py:32:    'proinflammatory_cytokines', 'tlr_activation', 'hybridization_related',
+src/models/train_improved_models.py:33:    'developmental_toxicity'
+src/models/train_improved_models.py:53:    print(f"Training {len(ENDPOINTS)} toxicity endpoints\n")
+src/models/train_improved_models.py:57:    for endpoint in ENDPOINTS:
+src/models/train_improved_models.py:58:        if endpoint not in y.columns:
+src/models/train_improved_models.py:62:        print(f"Training: {endpoint}")
+src/models/train_improved_models.py:65:        y_endpoint = y[endpoint]
+src/models/train_improved_models.py:66:        base_rate = y_endpoint.mean()
+src/models/train_improved_models.py:67:        n_positive = y_endpoint.sum()
+src/models/train_improved_models.py:80:            results.append({'endpoint': endpoint, 'status': 'skipped', 'n_positive': int(n_positive)})
+src/models/train_improved_models.py:85:            X, y_endpoint, test_size=0.2, stratify=y_endpoint, random_state=42
+src/models/train_improved_models.py:141:        model_path = MODEL_PATH / f'{endpoint}_xgboost.pkl'
+src/models/train_improved_models.py:150:            'endpoint': endpoint,
+src/models/train_improved_models.py:176:        print(f"  Successfully trained: {len(successful)}/{len(results)} endpoints")
+src/models/train_improved_models.py:178:        print(f"  SMOTE applied: {sum([r.get('smote_applied', False) for r in successful])} endpoints")
+src/models/train_improved_models.py:183:            print(f"  {i}. {r['endpoint']}: {r['auroc']:.4f}")
+app/oligotox_app_minimal.py:13:### Multi-Endpoint Toxicity + Efficacy + PKPD Integration
+app/oligotox_app_minimal.py:15:- 13 Toxicity Endpoint Models ✅
+app/oligotox_app_minimal.py:52:                {"Endpoint": k, "Probability": v, "Risk": "High" if v > 0.7 else "Medium" if v > 0.3 else "Low"}
+app/oligotox_app_minimal.py:60:            fig = px.bar(df_results.head(10), x='Probability', y='Endpoint', 
+app/oligotox_app_minimal.py:79:### 🚧 Under Development:
+app/assay_rules.csv:1:tier,assay,modalities,stages,trigger_endpoints,cost_tier,rationale
+app/assay_rules.csv:2:Tier 1,Clinical chemistry + CBC,ALL,ALL,ALL,$,Baseline liver kidney and hematology surveillance for all oligo programs
+app/assay_rules.csv:3:Tier 1,Complement split products,ALL,ALL,complement_activation|innate_immune_activation|cytokine_release,$$,Use when innate or complement liability is elevated
+app/assay_rules.csv:4:Tier 1,Renal histopathology / urinalysis,ASO|siRNA|PMO|TMO,ALL,renal_tubular_injury|renal_accumulation,$$,Priority for renal accumulation and tubular injury surveillance
+app/assay_rules.csv:6:Tier 2,Cytokine panel (IL-6 TNF-alpha IFN-alpha),ALL,ALL,cytokine_release|innate_immune_activation,$$,Triggered by elevated innate immune activation signals
+app/assay_rules.csv:7:Tier 2,Transcriptome off-target screen,ASO|siRNA|PMO|TMO,pre-IND|GLP,offtarget_gene_silencing,$$$,Triggered by elevated sequence-mediated off-target liability
+app/assay_rules.csv:8:Tier 2,Kupffer cell activation panel,LNP|mRNA|saRNA|circRNA,pre-IND|GLP,kupffer_cell_activation|complement_activation,$$$,Useful when delivery or liver macrophage activation risk is elevated
+app/assay_rules.csv:10:Tier 3,Mechanistic follow-up pathology,ALL,ALL,hepatocellular_injury|hepatic_vacuolation|renal_tubular_injury|cns_toxicity,$$$$,Escalate once Tier 1 and Tier 2 findings confirm organ-specific signals
+app/assay_rules.csv:11:Tier 3,Special coagulation workup,ASO|Aptamer|TMO,pre-IND|GLP,thrombocytopenia|coagulation_effect,$$$$,Useful for chemistry classes with platelet or coagulation liability
+app/pmo_label_curation_template.csv:1:candidate_id,drug_name,modality,chemistry_class,source_file,source_type,regulatory_source,approval_year,indication,delivery_vehicle,route,dose_regimen,endpoint_hepatocellular_injury,endpoint_hepatic_vacuolation,endpoint_renal_tubular_injury,endpoint_renal_accumulation,endpoint_thrombocytopenia,endpoint_coagulation_effect,endpoint_complement_activation,endpoint_innate_immune_activation,endpoint_cytokine_release,endpoint_kupffer_cell_activation,endpoint_cns_toxicity,endpoint_offtarget_gene_silencing,endpoint_injection_site_reaction,severity_liver,severity_renal,severity_hematology,severity_immune,black_box_warning,warning_renal_monitoring,warning_hepatic_monitoring,warning_hypersensitivity,mechanistic_notes,curator_confidence,curator_notes
+app/pmo_label_curation_template.csv:2:eteplirsen,Exondys 51,PMO,PMO,data/raw/tier1_labelable/eteplirsen_nda_label.pdf,FDA_label,FDA,2016,Duchenne muscular dystrophy,None,IV,,0,0,0,1,0,0,0,0,0,0,0,0,0,low,low,low,low,0,0,0,0,"PLACEHOLDER: review label for any renal safety language, boxed warnings, and other organ findings",low,""
+app/pmo_label_curation_template.csv:3:golodirsen,Vyondys 53,PMO,PMO,data/raw/tier1_labelable/golodirsen_nda_label.pdf,FDA_label,FDA,2019,Duchenne muscular dystrophy,None,IV,,0,0,1,1,0,0,0,0,0,0,0,0,0,low,high,low,low,0,1,0,0,"PLACEHOLDER: review label for renal findings, monitoring recommendations, and any serious AEs",low,""
+app/pmo_label_curation_template.csv:4:viltolarsen,Viltepso,PMO,PMO,data/raw/tier1_labelable/viltolarsen_nda_label.pdf,FDA_label,FDA,2020,Duchenne muscular dystrophy,None,IV,,0,0,1,1,0,0,0,0,0,0,0,0,0,low,high,low,low,0,1,0,0,"PLACEHOLDER: verify renal risk classification and need for monitoring from label text",low,""
+app/pmo_label_curation_template.csv:5:casimersen,Amondys 45,PMO,PMO,data/raw/tier1_labelable/casimersen_nda_label.pdf,FDA_label,FDA,2021,Duchenne muscular dystrophy,None,IV,,0,0,1,1,0,0,0,0,0,0,0,0,0,low,high,low,low,0,1,0,0,"PLACEHOLDER: confirm renal findings and any additional toxicity endpoints",low,""
+docs/internal/CLEANUP_SUMMARY.md:36:- ✅ `CONTRIBUTING.md` - Development guidelines
+docs/internal/CLEANUP_SUMMARY.md:45:├── CONTRIBUTING.md             # Development guidelines
+docs/internal/CLEANUP_SUMMARY.md:57:│       └── label_matrix.csv        # 1,614 × 19 endpoints
+docs/internal/CLEANUP_SUMMARY.md:95:1. **Initial platform development** - Baseline Random Forest models
+docs/internal/CLEANUP_SUMMARY.md:96:2. **Data curation and validation** - 1,614 oligonucleotides, 19 endpoints
+docs/internal/CLEANUP_SUMMARY.md:124:- 19 endpoints trained
+docs/status/FINAL_SYSTEM_STATUS.md:20:  - 15+ toxicity endpoints (hepatocellular_injury, renal_tubular_injury, etc.)
+docs/status/FINAL_SYSTEM_STATUS.md:27:- ✅ Multi-endpoint risk scoring framework
+docs/status/FINAL_SYSTEM_STATUS.md:31:  - BLACK BOX: thrombocytopenia+glomerulonephritis  
+docs/status/FINAL_SYSTEM_STATUS.md:128:1. **15+ Toxicity Endpoints**
+docs/status/FINAL_SYSTEM_STATUS.md:129:   - Hepatocellular injury, renal toxicity, thrombocytopenia
+docs/status/FINAL_SYSTEM_STATUS.md:130:   - Immune activation, coagulation effects
+docs/status/FINAL_SYSTEM_STATUS.md:135:   - D2: Hybridization off-target
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:105:**Models Found (13 endpoint-specific models):**
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:106:- cns_toxicity.joblib (18K)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:108:- complement_activation.joblib (18K)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:109:- cytokine_release.joblib (18K)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:110:- hepatic_vacuolation.joblib (5.0K)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:111:- hepatocellular_injury.joblib (18K)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:113:- innate_immune_activation.joblib (18K)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:117:- renal_accumulation.joblib (18K)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:119:- thrombocytopenia.joblib (18K)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:142:- Endpoint definitions (clinically relevant: hepatotox, immune, renal, etc.)
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:183:| 13 Endpoint Models | ✅ Complete | ✅ Yes | ⚠️ Unknown | ⏸️ Pending |
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:238:   - No competitor has multi-endpoint safety + PK/PD integration
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:254:   - The 13-endpoint toxicity models are solid
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:291:- ✅ 13 pretrained toxicity endpoint models
+docs/status/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:306:- Multi-endpoint safety (13 models)
+docs/status/PHASE2A_STATUS.md:56:3. Adjust hepatotoxicity endpoints multiplicatively:
+docs/status/PHASE2A_STATUS.md:57:   - `exposure_score > 1.0` → increase hepatotox risk
+docs/status/PHASE2A_STATUS.md:58:   - `exposure_score < 1.0` → decrease hepatotox risk
+docs/status/PHASE2A_STATUS.md:61:**Affected Endpoints**:
+docs/status/PHASE2A_STATUS.md:62:- `hepatic_vacuolation`
+docs/status/PHASE2A_STATUS.md:64:- `hepatocellular_injury`
+docs/status/PHASE2A_STATUS.md:84:# hepatic_vacuolation prob adjusted based on exposure_score
+docs/status/PHASE2A_STATUS.md:119:- `test_bridge_adjustment_direction()`: high exposure → increased hepatotox risk
+docs/status/PHASE2A_STATUS.md:125:**Goal**: Prove PK/PD enrichment improves hepatotoxicity prediction
+docs/status/PHASE2A_STATUS.md:128:1. Collect GalNAc-siRNA test set with known hepatotox outcomes + dose info
+docs/status/PHASE2A_STATUS.md:131:4. Compare AUROC for hepatotoxicity endpoints
+docs/status/PHASE2A_STATUS.md:189:3. **Why hepatotox endpoints only?**
+docs/status/PHASE2A_STATUS.md:191:   - Direct mechanistic link (liver exposure → hepatotoxicity)
+docs/status/PHASE2A_STATUS.md:192:   - Other endpoints (renal, immune) require more complex models
+docs/status/PHASE2A_STATUS.md:220:3. **FDA Label - Givosiran (Givlaari)**: QM dosing, hepatic porphyria
+docs/status/PHASE2A_STATUS.md:267:   - Verify package installation in development mode
+docs/status/FINAL_DELIVERABLES.md:13:- **Count**: 10 primary endpoint models + 3 variants = 13 total
+docs/status/FINAL_DELIVERABLES.md:16:- **Accuracy**: 99.9% average across all endpoints
+docs/status/FINAL_DELIVERABLES.md:18:**Endpoint Coverage**:
+docs/status/FINAL_DELIVERABLES.md:19:1. CNS neurotoxicity
+docs/status/FINAL_DELIVERABLES.md:21:3. Complement activation
+docs/status/FINAL_DELIVERABLES.md:22:4. Cytokine release
+docs/status/FINAL_DELIVERABLES.md:23:5. Hepatocellular injury
+docs/status/FINAL_DELIVERABLES.md:25:7. Innate immune activation
+docs/status/FINAL_DELIVERABLES.md:26:8. Renal accumulation
+docs/status/FINAL_DELIVERABLES.md:27:9. Renal tubular injury
+docs/status/FINAL_DELIVERABLES.md:28:10. Thrombocytopenia
+docs/status/FINAL_DELIVERABLES.md:34:  - Multi-endpoint toxicity prediction
+docs/status/FINAL_DELIVERABLES.md:42:- Output: 13 endpoint predictions with risk scores
+docs/status/FINAL_DELIVERABLES.md:43:- Dominant risk identified: hepatic_vacuolation
+docs/status/FINAL_DELIVERABLES.md:106:- **Endpoints**: 13 binary toxicity labels (curated)
+docs/status/FINAL_DELIVERABLES.md:117:| Toxicity Endpoints | 13 |
+docs/status/FINAL_DELIVERABLES.md:166:✅ **Multi-Endpoint Assessment** - 13 toxicity endpoints covered
+docs/status/FINAL_DELIVERABLES.md:175:1. **Local Development**: Already running (http://localhost:8502)
+docs/status/FINAL_DELIVERABLES.md:197:✅ **Training Complete**: 10 endpoint models trained with 99.9% accuracy
+docs/status/FINAL_DELIVERABLES.md:218:2. Additional endpoint models (hypersensitivity, neurotoxicity variants)
+docs/status/FINAL_DELIVERABLES.md:233:- **10 trained models** covering 13 toxicity endpoints
+docs/IMPLEMENTATION_COMPLETE_SUMMARY.md:12:  - Predicts on-target efficacy and off-target scores
+docs/IMPLEMENTATION_COMPLETE_SUMMARY.md:48:  - Risk score calculation with weighted endpoints
+docs/IMPLEMENTATION_COMPLETE_SUMMARY.md:138:1. ✅ **Multi-endpoint Safety** (13 toxicity models)
+docs/IMPLEMENTATION_COMPLETE_SUMMARY.md:185:6. Create REST API endpoints
+docs/integrations/installation_report.md:34:### Web/API Development
+docs/integrations/installation_report.md:133:| **Hepatotoxicity** | ✅ Ready | Can proceed |
+docs/integrations/installation_report.md:148:4. **Priority 3:** Implement hepatotoxicity/KC activation/TLR modules
+docs/integrations/integration_gap_report.json:14:    "Hepatotoxicity",
+docs/integrations/integration_gap_report.json:16:    "Thrombocytopenia",
+docs/integrations/integration_gap_report.json:102:      "/Users/beshoyarmanios/oligotox/_local_only/archive/legacy_workspace/downloads/fda_nda_platelet_extractor.py",
+docs/integrations/integration_gap_report.json:105:    "Hepatotoxicity": [
+docs/integrations/integration_gap_report.json:117:    "Thrombocytopenia": [
+docs/integrations/integration_gap_report.json:134:      "/Users/beshoyarmanios/oligotox/src/oligotox/schemas/tox_endpoints.py",
+docs/integrations/integration_gap_report.json:147:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/fda_nda_platelet_extractor.py",
+docs/integrations/integration_gap_report.json:152:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/merge_thrombocytopenia_boost.py",
+docs/integrations/integration_gap_report.json:153:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/make_thrombocytopenia_boost_template.py",
+docs/integrations/integration_gap_report.json:158:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/moe_neurotox_oligogym_to_curated.py",
+docs/integrations/integration_gap_report.json:161:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/build_thrombocytopenia_template.py",
+docs/integrations/integration_gap_report.json:169:      "/Users/beshoyarmanios/oligotox/_local_only/improve_unpacked/oligotox_v3/configs/endpoints.py",
+docs/integrations/integration_gap_report.json:186:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/scripts/fda_nda_platelet_extractor.py",
+docs/integrations/integration_gap_report.json:190:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/scripts/merge_thrombocytopenia_boost.py",
+docs/integrations/integration_gap_report.json:191:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/scripts/make_thrombocytopenia_boost_template.py",
+docs/integrations/integration_gap_report.json:196:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/scripts/moe_neurotox_oligogym_to_curated.py",
+docs/integrations/integration_gap_report.json:199:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/scripts/build_thrombocytopenia_template.py",
+docs/integrations/integration_gap_report.json:213:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/src/oligotox/schemas/tox_endpoints.py",
+docs/integrations/integration_gap_report.json:225:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/scripts/curation/merge_thrombocytopenia_boost.py",
+docs/integrations/integration_gap_report.json:226:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/scripts/curation/make_thrombocytopenia_boost_template.py",
+docs/integrations/integration_gap_report.json:238:      "/Users/beshoyarmanios/oligotox/_local_only/backups/package_cleanup_20260620_173003/src_oligotox/schemas/tox_endpoints.py",
+docs/integrations/integration_gap_report.json:242:      "/Users/beshoyarmanios/oligotox/_local_only/backups/final_refactor_20260620_174402/scripts/fda_nda_platelet_extractor.py",
+docs/integrations/integration_gap_report.json:246:      "/Users/beshoyarmanios/oligotox/_local_only/backups/final_refactor_20260620_174402/scripts/merge_thrombocytopenia_boost.py",
+docs/integrations/integration_gap_report.json:247:      "/Users/beshoyarmanios/oligotox/_local_only/backups/final_refactor_20260620_174402/scripts/make_thrombocytopenia_boost_template.py",
+docs/integrations/integration_gap_report.json:252:      "/Users/beshoyarmanios/oligotox/_local_only/backups/final_refactor_20260620_174402/scripts/moe_neurotox_oligogym_to_curated.py",
+docs/integrations/integration_gap_report.json:255:      "/Users/beshoyarmanios/oligotox/_local_only/backups/final_refactor_20260620_174402/scripts/build_thrombocytopenia_template.py",
+docs/integrations/integration_gap_report.json:259:      "/Users/beshoyarmanios/oligotox/_local_only/backups/final_refactor_20260620_174402/scripts/curation/merge_thrombocytopenia_boost.py",
+docs/integrations/integration_gap_report.json:260:      "/Users/beshoyarmanios/oligotox/_local_only/backups/final_refactor_20260620_174402/scripts/curation/make_thrombocytopenia_boost_template.py",
+docs/integrations/integration_gap_report.json:264:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/scripts/fda_nda_platelet_extractor.py",
+docs/integrations/integration_gap_report.json:268:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/scripts/merge_thrombocytopenia_boost.py",
+docs/integrations/integration_gap_report.json:269:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/scripts/make_thrombocytopenia_boost_template.py",
+docs/integrations/integration_gap_report.json:274:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/scripts/moe_neurotox_oligogym_to_curated.py",
+docs/integrations/integration_gap_report.json:277:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/scripts/build_thrombocytopenia_template.py",
+docs/integrations/integration_gap_report.json:290:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/src/oligotox/schemas/tox_endpoints.py",
+docs/integrations/integration_gap_report.json:302:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/scripts/curation/merge_thrombocytopenia_boost.py",
+docs/integrations/integration_gap_report.json:303:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/scripts/curation/make_thrombocytopenia_boost_template.py",
+docs/integrations/integration_gap_report.json:310:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/curation/merge_thrombocytopenia_boost.py",
+docs/integrations/integration_gap_report.json:311:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/curation/make_thrombocytopenia_boost_template.py",
+docs/integrations/integration_gap_report.json:340:      "/Users/beshoyarmanios/oligotox/_local_only/archive/legacy_workspace/downloads/fda_nda_platelet_extractor.py",
+docs/integrations/integration_gap_report.json:382:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/train_oligogym_neurotox.py",
+docs/integrations/integration_gap_report.json:386:      "/Users/beshoyarmanios/oligotox/_local_only/scripts/moe_neurotox_oligogym_to_curated.py",
+docs/integrations/integration_gap_report.json:389:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173819/scripts/moe_neurotox_oligogym_to_curated.py",
+docs/integrations/integration_gap_report.json:392:      "/Users/beshoyarmanios/oligotox/_local_only/backups/final_refactor_20260620_174402/scripts/moe_neurotox_oligogym_to_curated.py",
+docs/integrations/integration_gap_report.json:395:      "/Users/beshoyarmanios/oligotox/_local_only/backups/src_consolidation_20260620_173917/scripts/moe_neurotox_oligogym_to_curated.py"
+docs/integrations/integration_gap_report.json:407:    "Hepatotoxicity",
+docs/integrations/IMPLEMENTATION_PLAN.md:7:4. Hepatotoxicity, RNase H1 off-target, and TLR7/8 safety modules
+docs/integrations/installed_packages.txt:440:whatthepatch                       1.0.7
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:27:│  │  - Multi-endpoint models (12+ endpoints)                            │  │
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:260:        base_risk_profile: Original OligoTox risk scores (per endpoint)
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:269:    # Example: hepatotoxicity increases with sustained liver exposure
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:270:    if 'hepatic_vacuolation' in adjusted_profile:
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:273:        adjusted_profile['hepatic_vacuolation']['prob'] *= exposure_factor
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:274:        adjusted_profile['hepatic_vacuolation']['risk_band'] = compute_risk_band(
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:275:            adjusted_profile['hepatic_vacuolation']['prob']
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:278:    # Similar adjustments for other endpoints (kupffer_cell, renal, immune)
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:306:        DataFrame with columns: parameter, value, endpoint, risk_score, knockdown_pct
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:315:    target_endpoints: List[str] = ['hepatic_vacuolation', 'kupffer_cell_activation']
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:338:- [ ] Simple multiplicative adjustment for hepatotoxicity endpoints
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:348:- [ ] Retrospective validation: Do PK/PD adjustments improve prediction for known hepatotoxic vs. safe GalNAc-siRNAs?
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:349:- [ ] Compute AUROC improvement for hepatotoxicity endpoints
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:391:  - Sensitivity heatmaps (parameter vs. endpoint risk)
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:407:  - Sequences with known hepatotoxicity outcomes
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:434:    """Test that high exposure increases hepatotoxicity risk."""
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:452:    assert result['pkpd_adjusted_risk']['hepatic_vacuolation']['prob'] != result['base_risk']['hepatic_vacuolation']['prob']
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:481:- ✅ AUROC improvement ≥5% for hepatotoxicity endpoints with PK/PD enrichment
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:510:**Scenario**: Lead GalNAc-siRNA shows 90% target knockdown at 5 mg/kg Q4W in NHP, but hepatotoxicity signal at 10 mg/kg.
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:513:1. Run Sequence Analysis → Base toxicity risk: hepatic_vacuolation = MODERATE (prob=0.55)
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:526:4. Run human PK/PD simulation at 0.8 mg/kg → exposure_score = 0.7 → hepatic risk = LOW
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:536:   - Sequence A achieves 90% knockdown at 3 mg/kg but MODERATE hepatotoxicity risk
+docs/architecture/ARCHITECTURE_PKPD_BRIDGE.md:537:   - Sequence B requires 5 mg/kg for 90% knockdown but LOW hepatotoxicity risk
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:105:**Models Found (13 endpoint-specific models):**
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:106:- cns_toxicity.joblib (18K)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:108:- complement_activation.joblib (18K)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:109:- cytokine_release.joblib (18K)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:110:- hepatic_vacuolation.joblib (5.0K)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:111:- hepatocellular_injury.joblib (18K)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:113:- innate_immune_activation.joblib (18K)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:117:- renal_accumulation.joblib (18K)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:119:- thrombocytopenia.joblib (18K)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:142:- Endpoint definitions (clinically relevant: hepatotox, immune, renal, etc.)
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:183:| 13 Endpoint Models | ✅ Complete | ✅ Yes | ⚠️ Unknown | ⏸️ Pending |
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:238:   - No competitor has multi-endpoint safety + PK/PD integration
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:254:   - The 13-endpoint toxicity models are solid
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:291:- ✅ 13 pretrained toxicity endpoint models
+docs/OLIGOTOX_ML_MODEL_AUDIT_20260626.md:306:- Multi-endpoint safety (13 models)
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:1:# Hepatic Endpoints Fix - Complete Summary
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:8:The `hepatic_vacuolation` and `kupffer_cell_activation` models were returning `probability=1.0` for all inputs, indicating they were not properly calibrated or trained.
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:23:**Hepatic Vacuolation (203 positive cases):**
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:27:- Known hepatotoxic chemistries (high-dose PS-ASO)
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:30:- Inflammatory cytokine elevation (IL-6, TNF-α)
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:31:- Innate immune pathway activation
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:33:- Known immune-stimulatory patterns
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:47:- Hepatic vacuolation: AUROC = 0.999 ± 0.001 (excellent)
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:58:  hepatic_vacuolation:     prob=0.126 (was 1.0) ✅
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:63:- ✅ Platelet risk elevated (PS backbone)
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:64:- ✅ Renal accumulation flagged (GalNAc conjugate)
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:65:- ✅ Innate immune signals present
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:66:- ✅ Liver endpoints calibrated
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:71:- `artifacts/models/hepatic_vacuolation.joblib` - Retrained model
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:76:- `HEPATIC_ENDPOINTS_FIX_SUMMARY.md` - This file
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:79:- `data/literature_examples/hepatic_toxicity_template.csv` - CSV template for literature cases
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:87:   - Search PubMed for oligonucleotide hepatotoxicity studies
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:111:- Sources: Toxicology studies with histopathology, immune profiling data
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:113:**Hepatic Vacuolation** (lower priority)
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:126:| Endpoint | Train N | Pos/Neg | AUROC | Calibration | Status |
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:128:| hepatic_vacuolation | 602 | 203/399 | 0.999 | Excellent | ✅ Production-ready |
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:130:| thrombocytopenia | 1576 | 421/1155 | 0.964 | Excellent | ✅ Production-ready |
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:131:| hepatocellular_injury | 1576 | 287/1289 | 0.982 | Excellent | ✅ Production-ready |
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:136:- [ ] Create independent validation set for hepatic vacuolation
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:138:- [ ] Add dose-response modeling for hepatic endpoints
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:144:- Hepatotoxicity: Ramachandran & Jaeschke (2023) Ann Rev Pharmacol Toxicol
+docs/notes/HEPATIC_ENDPOINTS_FIX_SUMMARY.md:145:- Kupffer cells: Dixon et al (2013) Nature Reviews Gastroenterology & Hepatology  
+docs/notes/README_KC_extension.md:12:controls, bringing the total to 50 labeled sequences for this endpoint.
+docs/notes/README_KC_extension.md:30:| **T2** (review/class effects) | 11 | Frazier 2015 ToxicolPathol; SOT 2010 oligonucleotide class effects; DOAJ PS-TLR9 activation; ScienceDirect 2025 LNP immune review |
+docs/notes/README_KC_extension.md:54:- Mipomersen (black box hepatotoxicity) — clinical KC + hepatocellular vacuolation at therapeutic dose
+docs/notes/README_KC_extension.md:55:- Inotersen — thrombocytopenia via KC-complement-platelet mechanism
+docs/notes/README_KC_extension.md:73:# 3. Retrain both hepatic endpoints
+docs/notes/README_KC_extension.md:74:python train_hepatic_endpoints.py \
+docs/notes/README_KC_extension.md:85:| `hepatic_vacuolation_rf` | 0.999 (stable, 602 examples) | Unchanged |
+docs/notes/README_KC_extension.md:90:(already coded in train_hepatic_endpoints.py automatically).
+docs/notes/README_KC_extension.md:106:   ASO therapy toxicity review; KC class effects; complement; PS backbone immunostimulation
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:51:  - **Mipomersen** (Kynamro): PS-ASO, BLACK BOX for thrombocytopenia + glomerulonephritis
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:72:#### Trained Endpoint Models:
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:75:├── endpoint_cns_neurotoxicity.joblib        117 KB  (acc=1.000)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:76:├── endpoint_coagulation_effect.joblib        148 KB  (acc=0.999)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:77:├── endpoint_complement_activation.joblib     165 KB  (acc=0.999)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:78:├── endpoint_cytokine_release.joblib          159 KB  (acc=0.999)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:79:├── endpoint_hepatocellular_injury.joblib     336 KB  (acc=0.999)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:80:├── endpoint_injection_site_reaction.joblib   191 KB  (acc=0.998)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:81:├── endpoint_innate_immune_activation.joblib  159 KB  (acc=0.999)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:82:├── endpoint_renal_accumulation.joblib        171 KB  (acc=0.999)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:83:├── endpoint_renal_tubular_injury.joblib      181 KB  (acc=0.999)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:84:└── endpoint_thrombocytopenia.joblib          132 KB  (acc=1.000)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:90:- `hepatic_vacuolation.joblib`
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:104:- **Endpoints**: 13 binary toxicity endpoints
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:126:- **TLR activation scores**: TLR7/8/9 immune stimulation (`tlr_immune.py`)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:127:- **Seed match scores**: miRNA-like off-target potential (`seed_match.py`)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:136:### Endpoint Label Curation
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:137:**Mapping**: `CURATED_ENDPOINT_MAP` (line 297 in `build_training_dataset.py`)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:140:CURATED_ENDPOINT_MAP = {
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:141:    'endpoint_hepatocellular_injury': 'curated_hepatocellular_injury',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:142:    'endpoint_renal_tubular_injury': 'curated_renal_tubular_injury',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:143:    'endpoint_thrombocytopenia': 'curated_thrombocytopenia',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:144:    'endpoint_coagulation_effect': 'curated_coagulation',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:145:    'endpoint_complement_activation': 'curated_complement',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:146:    'endpoint_innate_immune_activation': 'curated_innate_immune',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:147:    'endpoint_cytokine_release': 'curated_cytokine',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:148:    'endpoint_injection_site_reaction': 'curated_injection_site',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:149:    'endpoint_cns_neurotoxicity': 'curated_cns_tox',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:150:    'endpoint_renal_accumulation': 'curated_renal_accum',
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:213:5. **Normalize endpoint labels**: Apply `CURATED_ENDPOINT_MAP`
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:231:5. Train RandomForest per endpoint:
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:245:- Maintains endpoint prevalence balance
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:258:### TLR/Innate Immune Activation
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:259:**Module**: `src/oligotox/integrations/tlr_immune.py`
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:265:- **Output**: Immune activation risk score (0-1)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:267:### Seed Match Off-Target Scoring
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:272:- **Output**: Off-target gene silencing potential
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:278:- **Pathways**: Inflammatory, apoptosis, complement, coagulation
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:286:  2. TLR immune scoring
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:331:   - Endpoint definitions
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:342:   - Endpoint list
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:393:- **Threshold Optimization**: Per-endpoint F1-score maximization
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:426:**Models Trained**: 10 endpoint models (13 total artifacts)
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:427:**Training Accuracy**: 99.9% average across all endpoints
+docs/provenance/DATA_AND_MODEL_PROVENANCE.md:428:**Dataset Size**: 1,576 sequences, 49 features, 13 endpoints
+docs/PRODUCTION_READINESS.md:25:- **Endpoints**: 13 toxicity endpoints (hepatic, renal, immune, hematologic)
+docs/PRODUCTION_READINESS.md:31:- Novel endpoints not in training set
+docs/PRODUCTION_READINESS.md:39:- **Per-Endpoint AUROC**: Target >0.70 for strong endpoints
+docs/PRODUCTION_READINESS.md:45:### Per-Endpoint Explanations
+docs/PRODUCTION_READINESS.md:46:For each toxicity endpoint, OligoTox provides:
+docs/PRODUCTION_READINESS.md:51:4. **D1/D2/D3 Attribution**: On-target, hybridization off-target, chemistry/delivery
+docs/PRODUCTION_READINESS.md:55:#### Hepatocellular Injury (High Risk)
+docs/PRODUCTION_READINESS.md:60:- Rule out underlying hepatic disease
+docs/PRODUCTION_READINESS.md:62:#### Hepatic Vacuolation (High Risk)
+docs/PRODUCTION_READINESS.md:69:#### Complement Activation (High Risk)
+docs/PRODUCTION_READINESS.md:76:#### Renal Toxicity (Medium/High Risk)
+docs/PRODUCTION_READINESS.md:83:#### Thrombocytopenia (Medium/High Risk)
+docs/PRODUCTION_READINESS.md:85:- CBC with platelet count weekly
+docs/PRODUCTION_READINESS.md:86:- Hold dose if platelets <50,000/µL
+docs/PRODUCTION_READINESS.md:88:- Consider platelet transfusion if bleeding risk
+docs/PRODUCTION_READINESS.md:94:- **Conjugate Addition**: GalNAc effect on hepatic targeting and safety
+docs/PRODUCTION_READINESS.md:111:    "hepatocellular_injury": {"prob": 0.0027, "risk_band": "low"},
+docs/PRODUCTION_READINESS.md:112:    "hepatic_vacuolation": {"prob": 1.0, "risk_band": "high"}
+docs/PRODUCTION_READINESS.md:132:│   ├── hepatocellular_injury_rf.pkl
+docs/PRODUCTION_READINESS.md:133:│   ├── hepatic_vacuolation_rf.pkl
+docs/PRODUCTION_READINESS.md:160:pytest tests/test_endpoints.py
+docs/PRODUCTION_READINESS.md:179:## 4. Endpoint-Specific Tuning and Calibration
+docs/PRODUCTION_READINESS.md:181:### Strong Endpoints (AUROC > 0.85)
+docs/PRODUCTION_READINESS.md:182:- **hepatocellular_injury**: PR-AUC=0.927, Brier=0.033
+docs/PRODUCTION_READINESS.md:188:### Moderate Endpoints (AUROC 0.65-0.85)
+docs/PRODUCTION_READINESS.md:189:- **renal_tubular_injury**: PR-AUC=0.170, Brier=0.004
+docs/PRODUCTION_READINESS.md:190:- **renal_accumulation**: PR-AUC=0.354, Brier=0.004
+docs/PRODUCTION_READINESS.md:191:- **thrombocytopenia**: PR-AUC=0.314, Brier=0.002
+docs/PRODUCTION_READINESS.md:195:### Weak Endpoints (AUROC < 0.65 or fallback fits)
+docs/PRODUCTION_READINESS.md:196:- **hepatic_vacuolation**: Fallback fit (single class prevalence)
+docs/PRODUCTION_READINESS.md:197:- **complement_activation**: PR-AUC=0.058, Brier=0.004
+docs/PRODUCTION_READINESS.md:198:- **cns_toxicity**: Fallback fit (low count)
+docs/PRODUCTION_READINESS.md:205:- **Threshold Tuning**: Per-endpoint thresholds for Low/Medium/High bands
+docs/PRODUCTION_READINESS.md:206:- **Brier Score Target**: <0.10 for all production endpoints
+docs/PRODUCTION_READINESS.md:220:- One card per endpoint
+docs/PRODUCTION_READINESS.md:232:- How to add a new endpoint
+docs/PRODUCTION_READINESS.md:240:#### Case Study 1: Hepatotoxic ASO
+docs/PRODUCTION_READINESS.md:243:- **Expected**: High hepatocellular injury risk
+docs/PRODUCTION_READINESS.md:255:- **Expected**: Hepatic targeting, low systemic toxicity
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:8:You're training **19 independent binary classifiers** that predict whether an oligonucleotide will cause specific toxicity endpoints. Each model learns patterns from **54 chemical/structural features** extracted from **1,614 unique oligonucleotides** with known toxicity outcomes.
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:37:- `cpg_island_count`: CpG dinucleotide frequency (immune activation)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:48:- `hairpin_propensity`: Self-complementarity score
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:55:- `target_gene_expression`: FPKM in hepatocytes
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:77:- `renal_excretion_fraction`: % excreted in urine
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:82:- `proteomics_cytokine_score`: IL-6, TNFα, IFNγ levels
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:89:**Dimensions:** 1,614 rows × 19 endpoint columns
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:91:#### The 19 Toxicity Endpoints (Y):
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:94:endpoints = [
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:95:    'hepatocellular_injury',          # ALT/AST elevation, necrosis
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:96:    'hepatic_vacuolation',            # Lipid droplet accumulation
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:97:    'renal_tubular_injury',           # Proximal tubule damage
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:98:    'renal_accumulation',             # Kidney cortex oligonucleotide buildup
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:99:    'thrombocytopenia',               # Platelet count decrease
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:101:    'complement_activation',          # C3a, C5a release
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:102:    'innate_immune_activation',       # Macrophage/NK cell response
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:103:    'cytokine_release',               # Cytokine storm (CRS)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:105:    'cns_toxicity',                   # Neurotoxicity (rare)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:110:    'proinflammatory_cytokines',      # IL-1β, IL-6, TNFα
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:111:    'tlr_activation',                 # TLR7/8/9 immune stimulation
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:113:    'developmental_toxicity'          # Embryo-fetal effects
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:123:oligo_id,hepatocellular_injury,hepatic_vacuolation,kupffer_cell_activation,...
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:129:## 🤖 Model Architecture: Random Forest Per Endpoint
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:139:### Hyperparameters (Fixed Across All Endpoints):
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:163:Example for `hepatocellular_injury` (2.47% prevalence):
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:172:### **For Each of the 19 Endpoints:**
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:184:# Load labels (Y) for ONE endpoint at a time
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:185:y = pd.read_csv('data/processed/label_matrix.csv')['hepatocellular_injury']
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:239:model_path = f'models/hepatocellular_injury_model.pkl'
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:243:**Repeat Steps 1-5 for all 19 endpoints → 19 `.pkl` files**
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:252:Index | Endpoint                     | AUROC  | Severity | Base Rate
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:254:0     | hepatocellular_injury        | 0.0123 | High     | 0.0247
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:261:   - **0.0123 for hepatocellular_injury** → **MODEL FAILED**
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:280:   - `cns_toxicity`: Only 12/1614 positive cases (0.73%)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:288:   - 1,614 oligos is small for ML (ideal: >10K per endpoint)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:315:for endpoint in endpoints:
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:316:    model_path = f'models/{endpoint}_model.pkl'
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:317:    models[endpoint] = joblib.load(model_path)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:320:#### Step 3: Predict for Each Endpoint
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:323:for endpoint, model in models.items():
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:326:    predictions[endpoint] = {
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:329:        'severity': severity_map[endpoint],
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:344:for endpoint, result in sorted_risks[:5]:  # Top 5 risks
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:345:    print(f"{endpoint}: {result['probability']:.1%} risk ({result['severity']} severity)")
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:352:2. thrombocytopenia: 65% risk (Low severity)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:353:3. hepatic_vacuolation: 54% risk (Moderate severity)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:354:4. complement_activation: 42% risk (Moderate severity)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:387:2. ps_fraction (0.14)             ← Phosphorothioate backbone immune-stimulatory
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:395:10. conjugate_galnac (0.04)       ← GalNAc targets hepatocytes
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:413:  ├─ Label toxicity outcomes (19 endpoints)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:449:- ✅ **19 endpoints trained** (comprehensive toxicity coverage)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:458:- ⚠️ **Extreme class imbalance** (some endpoints <1% positive)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:465:  - Fix: Multi-task learning (share representations across endpoints)
+docs/.ipynb_checkpoints/TRAINING_PIPELINE_ARCHITECTURE-checkpoint.md:471:4. **Add mechanistic features** → Protein binding, off-target scores, PK parameters
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:8:You're training **19 independent binary classifiers** that predict whether an oligonucleotide will cause specific toxicity endpoints. Each model learns patterns from **54 chemical/structural features** extracted from **1,614 unique oligonucleotides** with known toxicity outcomes.
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:37:- `cpg_island_count`: CpG dinucleotide frequency (immune activation)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:48:- `hairpin_propensity`: Self-complementarity score
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:55:- `target_gene_expression`: FPKM in hepatocytes
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:77:- `renal_excretion_fraction`: % excreted in urine
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:82:- `proteomics_cytokine_score`: IL-6, TNFα, IFNγ levels
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:89:**Dimensions:** 1,614 rows × 19 endpoint columns
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:91:#### The 19 Toxicity Endpoints (Y):
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:94:endpoints = [
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:95:    'hepatocellular_injury',          # ALT/AST elevation, necrosis
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:96:    'hepatic_vacuolation',            # Lipid droplet accumulation
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:97:    'renal_tubular_injury',           # Proximal tubule damage
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:98:    'renal_accumulation',             # Kidney cortex oligonucleotide buildup
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:99:    'thrombocytopenia',               # Platelet count decrease
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:101:    'complement_activation',          # C3a, C5a release
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:102:    'innate_immune_activation',       # Macrophage/NK cell response
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:103:    'cytokine_release',               # Cytokine storm (CRS)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:105:    'cns_toxicity',                   # Neurotoxicity (rare)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:110:    'proinflammatory_cytokines',      # IL-1β, IL-6, TNFα
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:111:    'tlr_activation',                 # TLR7/8/9 immune stimulation
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:113:    'developmental_toxicity'          # Embryo-fetal effects
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:123:oligo_id,hepatocellular_injury,hepatic_vacuolation,kupffer_cell_activation,...
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:129:## 🤖 Model Architecture: Random Forest Per Endpoint
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:139:### Hyperparameters (Fixed Across All Endpoints):
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:163:Example for `hepatocellular_injury` (2.47% prevalence):
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:172:### **For Each of the 19 Endpoints:**
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:184:# Load labels (Y) for ONE endpoint at a time
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:185:y = pd.read_csv('data/processed/label_matrix.csv')['hepatocellular_injury']
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:239:model_path = f'models/hepatocellular_injury_model.pkl'
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:243:**Repeat Steps 1-5 for all 19 endpoints → 19 `.pkl` files**
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:252:Index | Endpoint                     | AUROC  | Severity | Base Rate
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:254:0     | hepatocellular_injury        | 0.0123 | High     | 0.0247
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:261:   - **0.0123 for hepatocellular_injury** → **MODEL FAILED**
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:280:   - `cns_toxicity`: Only 12/1614 positive cases (0.73%)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:288:   - 1,614 oligos is small for ML (ideal: >10K per endpoint)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:315:for endpoint in endpoints:
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:316:    model_path = f'models/{endpoint}_model.pkl'
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:317:    models[endpoint] = joblib.load(model_path)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:320:#### Step 3: Predict for Each Endpoint
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:323:for endpoint, model in models.items():
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:326:    predictions[endpoint] = {
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:329:        'severity': severity_map[endpoint],
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:344:for endpoint, result in sorted_risks[:5]:  # Top 5 risks
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:345:    print(f"{endpoint}: {result['probability']:.1%} risk ({result['severity']} severity)")
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:352:2. thrombocytopenia: 65% risk (Low severity)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:353:3. hepatic_vacuolation: 54% risk (Moderate severity)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:354:4. complement_activation: 42% risk (Moderate severity)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:387:2. ps_fraction (0.14)             ← Phosphorothioate backbone immune-stimulatory
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:395:10. conjugate_galnac (0.04)       ← GalNAc targets hepatocytes
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:413:  ├─ Label toxicity outcomes (19 endpoints)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:449:- ✅ **19 endpoints trained** (comprehensive toxicity coverage)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:458:- ⚠️ **Extreme class imbalance** (some endpoints <1% positive)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:465:  - Fix: Multi-task learning (share representations across endpoints)
+docs/TRAINING_PIPELINE_ARCHITECTURE.md:471:4. **Add mechanistic features** → Protein binding, off-target scores, PK parameters
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:2:**Target:** Make OligoTox the **ONLY** platform with Multi-Endpoint Safety + Comprehensive Efficacy + PKPD Integration
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:9:1. **13 Toxicity Endpoint Models** - Pretrained and ready
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:105:    """Two-compartment model with ASGPR-mediated hepatic uptake"""
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:110:        self.V_hepatic = 1.5  # L (liver volume)
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:111:        self.CL_renal = 0.1   # L/h (renal clearance)
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:113:        self.k_release = 0.05 # 1/h (hepatic release)
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:119:        dC_plasma_dt = (-self.CL_renal * C_plasma / self.V_central 
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:122:        dC_liver_dt = (self.k_uptake * C_plasma * self.V_central / self.V_hepatic
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:159:        'plasma', 'liver', 'kidney', 'heart', 'lung', 'spleen',
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:161:        'pancreas', 'thyroid', 'adrenal', 'testes', 'lymph', 'tumor'
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:256:        {% for endpoint in d1_d2_endpoints %}
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:257:        - {{ endpoint.name }}: {{ endpoint.risk_level }} (probability: {{ endpoint.prob }})
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:261:        {% for endpoint in d3_endpoints %}
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:262:        - {{ endpoint.name }}: {{ endpoint.risk_level }}
+docs/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:343:✅ **Multi-Endpoint Safety** (13 models) → COMPLETE  
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:2:**Target:** Make OligoTox the **ONLY** platform with Multi-Endpoint Safety + Comprehensive Efficacy + PKPD Integration
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:9:1. **13 Toxicity Endpoint Models** - Pretrained and ready
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:105:    """Two-compartment model with ASGPR-mediated hepatic uptake"""
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:110:        self.V_hepatic = 1.5  # L (liver volume)
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:111:        self.CL_renal = 0.1   # L/h (renal clearance)
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:113:        self.k_release = 0.05 # 1/h (hepatic release)
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:119:        dC_plasma_dt = (-self.CL_renal * C_plasma / self.V_central 
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:122:        dC_liver_dt = (self.k_uptake * C_plasma * self.V_central / self.V_hepatic
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:159:        'plasma', 'liver', 'kidney', 'heart', 'lung', 'spleen',
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:161:        'pancreas', 'thyroid', 'adrenal', 'testes', 'lymph', 'tumor'
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:256:        {% for endpoint in d1_d2_endpoints %}
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:257:        - {{ endpoint.name }}: {{ endpoint.risk_level }} (probability: {{ endpoint.prob }})
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:261:        {% for endpoint in d3_endpoints %}
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:262:        - {{ endpoint.name }}: {{ endpoint.risk_level }}
+docs/strategy/IMPLEMENTATION_ROADMAP_TO_UNIQUENESS.md:343:✅ **Multi-Endpoint Safety** (13 models) → COMPLETE  
+oligotox_app.py:110:        "tox_engine": "OligoTox endpoint classifiers",
+oligotox_app.py:113:        "regulatory_basis": ["OSWG off-target workflow", "FDA ONT nonclinical safety framing"],
+oligotox_app.py:136:                "pkpd_bridge": "ASO liver/kidney exposure bridge",
+oligotox_app.py:176:    platelet_ps_risk = min(1.0, round(0.55 * ps_fraction + 0.10 * (n >= 16) + 0.10 * tlr78_risk, 4))
+oligotox_app.py:177:    hepatic_gapmer_risk = min(1.0, round(0.30 * lna_flag + 0.18 * gc + 0.18 * hybridization_risk + 0.08 * ps_fraction, 4))
+oligotox_app.py:178:    renal_accumulation_proxy = min(1.0, round(0.42 * ps_fraction + 0.18 * (n >= 18) + 0.10 * moe_flag + 0.05 * galnac_flag, 4))
+oligotox_app.py:194:        "platelet_ps_risk_proxy": platelet_ps_risk,
+oligotox_app.py:195:        "hepatic_gapmer_risk_proxy": hepatic_gapmer_risk,
+oligotox_app.py:196:        "renal_accumulation_proxy": renal_accumulation_proxy,
+oligotox_app.py:204:        recs.append("PBMC cytokine release / innate immune activation panel")
+oligotox_app.py:205:    if mech.get("platelet_ps_risk_proxy", 0) >= 0.45:
+oligotox_app.py:206:        recs.append("Platelet activation and PF4-associated thrombocytopenia follow-up")
+oligotox_app.py:207:    if mech.get("hepatic_gapmer_risk_proxy", 0) >= 0.45:
+oligotox_app.py:208:        recs.append("Primary hepatocyte / hepatocellular injury follow-up")
+oligotox_app.py:209:    if mech.get("renal_accumulation_proxy", 0) >= 0.45:
+oligotox_app.py:210:        recs.append("Renal proximal tubule accumulation / injury follow-up")
+oligotox_app.py:212:        recs.append("Seed-mediated off-target transcriptomics review")
+oligotox_app.py:214:        recs.append("RNase H1 / hybridization off-target assessment")
+oligotox_app.py:216:    if "dominant_endpoint" in result:
+oligotox_app.py:217:        dominant = str(result["dominant_endpoint"]).lower()
+oligotox_app.py:218:        if "complement" in dominant:
+oligotox_app.py:219:            recs.append("Complement activation biomarker follow-up")
+oligotox_app.py:221:            recs.append("Coagulation panel and platelet safety review")
+oligotox_app.py:222:        if "renal" in dominant:
+oligotox_app.py:223:            recs.append("Kidney injury biomarkers and renal histopath follow-up")
+oligotox_app.py:225:            recs.append("ALT / AST and hepatocyte stress biomarker follow-up")
+oligotox_app.py:242:    dominant = result.get("dominant_endpoint", "Not reported")
+oligotox_app.py:250:- Dominant endpoint: {dominant}
+oligotox_app.py:254:- D2 (hybridization off-target proxy): {mech.get('hybridization_risk_proxy', 'NA')}
+oligotox_app.py:258:- TLR7/8 innate immune proxy: {mech.get('tlr78_risk_proxy', 'NA')}
+oligotox_app.py:259:- Platelet / thrombocytopenia proxy: {mech.get('platelet_ps_risk_proxy', 'NA')}
+oligotox_app.py:260:- Hepatic gapmer proxy: {mech.get('hepatic_gapmer_risk_proxy', 'NA')}
+oligotox_app.py:261:- Renal accumulation proxy: {mech.get('renal_accumulation_proxy', 'NA')}
+oligotox_app.py:273:- OSWG-style interpretation: integrate in silico complementarity, cell context, in vitro verification, biological role assessment, and unavoidable off-target management
+oligotox_app.py:297:                "Platelet/PS Risk": mech.get("platelet_ps_risk_proxy", 0),
+oligotox_app.py:298:                "Hepatic Gapmer Risk": mech.get("hepatic_gapmer_risk_proxy", 0),
+oligotox_app.py:299:                "Renal Accumulation": mech.get("renal_accumulation_proxy", 0),
+oligotox_app.py:332:    """Render endpoint-level confidence table."""
+oligotox_app.py:337:    if "per_endpoint" in result and isinstance(result["per_endpoint"], dict):
+oligotox_app.py:338:        for endpoint, info in result["per_endpoint"].items():
+oligotox_app.py:353:                    "Endpoint": endpoint,
+oligotox_app.py:361:        for endpoint, prob in result["risk_scores"].items():
+oligotox_app.py:369:                    "Endpoint": endpoint,
+oligotox_app.py:383:        st.info("No endpoint-level probability data available for confidence display.")
+oligotox_app.py:415:    bottom[0].metric("Platelet/PS Risk", mech.get("platelet_ps_risk_proxy", 0))
+oligotox_app.py:416:    bottom[1].metric("Hepatic Gapmer Risk", mech.get("hepatic_gapmer_risk_proxy", 0))
+oligotox_app.py:417:    bottom[2].metric("Renal Accumulation", mech.get("renal_accumulation_proxy", 0))
+oligotox_app.py:563:                st.markdown("#### Per-Endpoint Risk Scores")
+oligotox_app.py:565:                if "per_endpoint" in result:
+oligotox_app.py:566:                    df_endpoints = pd.DataFrame(result["per_endpoint"]).T
+oligotox_app.py:567:                    df_endpoints = df_endpoints.reset_index().rename(columns={"index": "Endpoint"})
+oligotox_app.py:568:                    st.dataframe(df_endpoints, use_container_width=True)
+oligotox_app.py:571:                        [{"Endpoint": k, "Risk Score": v} for k, v in result["risk_scores"].items()]
+oligotox_app.py:584:                if "dominant_endpoint" in result:
+oligotox_app.py:585:                    st.info(f"🎯 **Dominant Risk:** {result['dominant_endpoint']}")
+oligotox_app.py:617:                - **D2 (Hybridization off-target):** Unintended RNA binding via sequence complementarity  
+oligotox_app.py:644:        st.metric("Active Endpoints", "15+")
+oligotox_app.py:657:    - **D2:** Hybridization-dependent off-target effects
+oligotox_app.py:661:    - Endpoint-specific risk scores
+oligotox_app.py:752:       - Per-endpoint performance tracking
+oligotox_app.py:759:    4. **Endpoint-Specific Evaluation:**
+oligotox_app.py:760:       - Risk band thresholds per endpoint
+oligotox_app.py:782:            if "n_endpoints" in metrics:
+oligotox_app.py:783:                col3.metric("Evaluated Endpoints", metrics["n_endpoints"])
+oligotox_app.py:786:            st.markdown("### Per-Endpoint Performance")
+oligotox_app.py:788:            if "per_endpoint" in metrics and isinstance(metrics["per_endpoint"], dict):
+oligotox_app.py:789:                endpoint_rows = []
+oligotox_app.py:790:                for ep, vals in metrics["per_endpoint"].items():
+oligotox_app.py:791:                    endpoint_rows.append(
+oligotox_app.py:793:                            "Endpoint": ep,
+oligotox_app.py:800:                df_metrics = pd.DataFrame(endpoint_rows)
+oligotox_app.py:912:- PBMC cytokine release / innate immune activation
+oligotox_app.py:913:- Platelet activation / PF4 follow-up
+oligotox_app.py:914:- Hepatocyte injury and transcriptomics follow-up
+oligotox_app.py:915:- Renal proximal tubule accumulation / injury follow-up
+oligotox_app.py:916:- Seed-mediated off-target transcriptomics
+oligotox_app.py:917:- RNase H1 / hybridization off-target confirmation
+oligotox_app.py:918:- Complement activation biomarker panel
+oligotox_app.py:919:- Coagulation and thrombocytopenia follow-up
+oligotox_app.py:948:3. Endpoint risks and uncertainty.
+oligotox_app.py:951:6. OSWG off-target workflow interpretation.

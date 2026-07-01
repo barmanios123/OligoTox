@@ -29,7 +29,7 @@ from oligotox.config.risk_config import (
 from oligotox.pipelines.build_training_dataset import run as build_training_dataset
 from oligotox.pipelines.thresholds import batch_select_thresholds
 
-from src.oligotox.integrations_v03.datasail_splits import (
+from oligotox.integrations_v03.datasail_splits import (
     scaffold_sequence_split,
     datasail_split,
     check_leakage,

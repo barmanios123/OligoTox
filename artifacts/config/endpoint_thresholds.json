@@ -1,19 +1,19 @@
 {
   "hepatocellular_injury": {
-    "threshold": 0.36000000000000004,
-    "precision": 0.8846153846153846,
-    "recall": 0.9064039408866995,
-    "f1": 0.8953771289537713,
+    "threshold": 0.39,
+    "precision": 0.8737864077669902,
+    "recall": 0.8866995073891626,
+    "f1": 0.8801955990220048,
     "support": 203,
     "method": "f1"
   },
   "hepatic_vacuolation": {
-    "threshold": 0.5,
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1": 0.0,
-    "support": 0,
-    "method": "f1_fallback"
+    "threshold": 0.4600000000000001,
+    "precision": 0.6428571428571429,
+    "recall": 0.75,
+    "f1": 0.6923076923076923,
+    "support": 12,
+    "method": "f1"
   },
   "renal_tubular_injury": {
     "threshold": 0.5,
@@ -24,10 +24,10 @@
     "method": "f1"
   },
   "renal_accumulation": {
-    "threshold": 0.23,
-    "precision": 1.0,
+    "threshold": 0.2,
+    "precision": 0.5,
     "recall": 0.14285714285714285,
-    "f1": 0.25,
+    "f1": 0.2222222222222222,
     "support": 7,
     "method": "f1"
   },
@@ -40,18 +40,18 @@
     "method": "f1"
   },
   "coagulation_effect": {
-    "threshold": 0.5,
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1": 0.0,
+    "threshold": 0.32000000000000006,
+    "precision": 0.5,
+    "recall": 0.2,
+    "f1": 0.2857142857142857,
     "support": 5,
     "method": "f1"
   },
   "complement_activation": {
-    "threshold": 0.36000000000000004,
-    "precision": 0.3333333333333333,
-    "recall": 0.16666666666666666,
-    "f1": 0.2222222222222222,
+    "threshold": 0.5,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
     "support": 6,
     "method": "f1"
   },
@@ -73,11 +73,11 @@
   },
   "kupffer_cell_activation": {
     "threshold": 0.5,
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1": 0.0,
-    "support": 0,
-    "method": "f1_fallback"
+    "precision": 0.8947368421052632,
+    "recall": 1.0,
+    "f1": 0.9444444444444444,
+    "support": 34,
+    "method": "f1"
   },
   "cns_toxicity": {
     "threshold": 0.5,
@@ -88,18 +88,18 @@
     "method": "f1"
   },
   "offtarget_gene_silencing": {
-    "threshold": 0.34,
-    "precision": 0.6428571428571429,
-    "recall": 0.7941176470588235,
-    "f1": 0.7105263157894737,
+    "threshold": 0.21000000000000002,
+    "precision": 0.5169491525423728,
+    "recall": 0.8970588235294118,
+    "f1": 0.6559139784946236,
     "support": 68,
     "method": "f1"
   },
   "injection_site_reaction": {
-    "threshold": 0.23,
-    "precision": 0.45454545454545453,
-    "recall": 0.4166666666666667,
-    "f1": 0.43478260869565216,
+    "threshold": 0.44000000000000006,
+    "precision": 1.0,
+    "recall": 0.25,
+    "f1": 0.4,
     "support": 12,
     "method": "f1"
   }
