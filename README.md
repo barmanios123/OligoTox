@@ -2,15 +2,17 @@
 
 OligoTox is a mechanism-aware safety, translational interpretation, and candidate triage platform for oligonucleotide therapeutics. It combines multi-endpoint toxicity scoring, efficacy model integration, PK/PD context, and regulatory-style reporting in a Streamlit-based operator workflow.
 
-## Overview
+## Why this repository exists
 
-OligoTox is designed to evaluate oligonucleotide candidates across the major preclinical liability classes relevant to translational decision-making. Its scientific framing is organized around three broad mechanistic domains:
+Oligonucleotide programs can fail for very different reasons: exaggerated on-target pharmacology, hybridization-dependent off-target effects, and liabilities introduced by chemistry, formulation, conjugates, or delivery strategy. OligoTox is organized around those risk classes to support earlier, more structured candidate review.
 
-- **D1:** exaggerated on-target pharmacology
-- **D2:** hybridization-dependent off-target effects
-- **D3:** chemistry, formulation, conjugate, and delivery-related liabilities
+The repository is designed to present a clean package + app + docs story:
 
-The platform is intended to support candidate review for modalities such as ASOs, gapmers, siRNAs, and related oligonucleotide formats.
+- `src/oligotox/` contains the core package code
+- `oligotox_app.py` is the primary Streamlit operator console entrypoint
+- `validate_platform.py` is the primary end-to-end validation command
+- `docs/` contains setup, architecture, and supporting documentation
+- `scripts/` contains health checks and launch helpers
 
 ## Current capabilities
 
@@ -29,16 +31,60 @@ The current platform supports the following verified capabilities:
 
 ## Repository structure
 
-Key areas in the repository include:
+### Core runtime
 
 - `oligotox_app.py` — primary Streamlit operator console entrypoint
+- `validate_platform.py` — primary end-to-end validation entrypoint
 - `src/oligotox/` — core package code for inference, training, efficacy, PK/PD, and reporting
-- `scripts/` — launchers, health checks, and utility scripts
-- `docs/` — architecture, notes, integrations, and supporting documentation
+
+### Project support
+
+- `scripts/` — launchers, health checks, and utilities
+- `docs/` — architecture, setup, notes, and integration guidance
 - `configs/` — configuration and integration files
 - `benchmarks/` — benchmarking utilities
-- `data/` — local data assets used in the workflow
 - `reports/` — generated and development-stage reports
+
+### Data and artifacts
+
+- `data/` — local data assets used by the workflow
+- `artifacts/` — local runtime artifacts such as model outputs, configs, and run products
+
+Some local-only, generated, archival, or environment-specific content may exist in the working tree without being intended as part of the clean public repo surface. The public repository should be interpreted primarily through the package code, app entrypoint, validation entrypoint, scripts, and docs.
+
+## One obvious app entrypoint
+
+Launch the app with:
+
+```bash
+bash scripts/run_app.sh
+```
+
+This wrapper runs the canonical Streamlit entrypoint:
+
+```bash
+streamlit run oligotox_app.py --server.port 8502
+```
+
+Then open:
+
+```text
+http://localhost:8502
+```
+
+## One obvious validation command
+
+Validate the platform with:
+
+```bash
+python validate_platform.py
+```
+
+For a broader operational check, run:
+
+```bash
+bash scripts/project_health.sh
+```
 
 ## Quickstart
 
@@ -83,13 +129,7 @@ bash scripts/project_health.sh
 ### 5. Launch the app
 
 ```bash
-streamlit run oligotox_app.py --server.port 8502
-```
-
-Open:
-
-```text
-http://localhost:8502
+bash scripts/run_app.sh
 ```
 
 ## Typical usage flow
@@ -119,13 +159,14 @@ bash scripts/project_health.sh
 
 ## Documentation
 
-For detailed setup and operating instructions, see:
+Start here:
 
-- `docs/RUNNING_OLIGOTOX.md`
+- `docs/RUNNING_OLIGOTOX.md` — step-by-step local setup and execution guide
+- `docs/REPOSITORY_CONVENTIONS.md` — what is source code vs local/generated material
 
 ## Status
 
-The repository currently contains a working Streamlit app entrypoint, validated backend components, health-check scripts, and a cleaned public-facing repository structure. The platform is suitable for internal review, demo workflows, and iterative client-facing refinement.
+The repository contains a working Streamlit app entrypoint, validated backend components, health-check scripts, and a cleaner public-facing structure. The platform is suitable for internal review, demo workflows, and iterative client-facing refinement.
 
 ## License
 
