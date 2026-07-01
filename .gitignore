@@ -90,3 +90,5 @@ Thumbs.db
 *.bak
 _backups/
 _local_only/
+
+reports/today_build/
