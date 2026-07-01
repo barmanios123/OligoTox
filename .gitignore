@@ -96,3 +96,30 @@ _local_only/
 *.log
 __pycache__/
 .ipynb_checkpoints/
+
+# Local environments
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
+
+# Local-only / archives
+_local_only/
+app_backups/
+
+# Generated runtime outputs
+artifacts/runs/
+reports/cleanup_logs/
+output/
+
+# Large/generated data + model outputs kept local unless explicitly curated
+artifacts/models/
+artifacts/metrics/
+artifacts/eval/
+artifacts/registry/
+data/processed/
+external/
+
+# Notebook noise
+notebooks/.ipynb_checkpoints/

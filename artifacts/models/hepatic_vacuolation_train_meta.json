@@ -1,8 +1,0 @@
-{
-  "model_name": "hepatic_vacuolation",
-  "n_pos": 203,
-  "n_neg": 399,
-  "cv_auroc_mean": 0.9991,
-  "n_features": 187,
-  "note": "Proxy-derived labels. Replace with curated in vivo labels when available."
-}

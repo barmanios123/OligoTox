@@ -1,8 +1,0 @@
-{
-  "model_name": "kupffer_cell_activation",
-  "n_pos": 3,
-  "n_neg": 14,
-  "cv_auroc_mean": 0.75,
-  "n_features": 187,
-  "note": "Proxy-derived labels. Replace with curated in vivo labels when available."
-}
