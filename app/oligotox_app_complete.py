@@ -90,7 +90,7 @@ elif page == "Efficacy Models":
             
             for model_name in model_choice:
                 try:
-                    model = EfficacyModelRegistry.get_model(model_name)
+                    model = registry.get_model(model_name)
                     result = model.predict(sequence, modality, chemistry)
                     
                     with st.expander(f"📊 {model_name} - Activity: {result.predicted_activity:.2%}"):

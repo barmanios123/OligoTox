@@ -1,0 +1,11 @@
+oligograph:
+  enabled: true
+  mode: stub
+  repo_path: ./external/OligoGraph
+  weights_path: null
+
+geneformer:
+  enabled: false
+  mode: optional
+  repo_path: ./external/Geneformer
+  weights_path: null

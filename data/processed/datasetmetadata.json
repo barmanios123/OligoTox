@@ -1,0 +1,15 @@
+{
+  "status": "bootstrap-placeholder",
+  "purpose": "satisfy canonical train.py path until full ETL is wired",
+  "trainingdataset_path": "data/processed/trainingdataset.csv",
+  "selected_source": "data/processed/unified/openASO_gr_All+RBP+UTR+MFE+BpProbs+PhyloP.tsv",
+  "candidate_sources": [
+    "data/processed/unified/openASO_gr_All+RBP+UTR+MFE+BpProbs+PhyloP.tsv",
+    "data/processed/unified/openASO_gr_All+RBP+UTR+MFE+BpProbs.tsv",
+    "data/processed/unified/openASO_gr_All+RBP+UTR+MFE.tsv",
+    "data/processed/unified/openASO_gr_All+RBP+UTR.tsv",
+    "data/processed/unified/openASO_gr_All+RBP+UTR_clean.tsv",
+    "data/processed/unified/openASO_gr_All+RBP.tsv",
+    "data/processed/unified/openASO_gr_All.tsv"
+  ]
+}

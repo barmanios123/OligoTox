@@ -105,3 +105,66 @@ def adjust_toxicity_risk_with_pkpd(
     result_adjusted["pkpd_metrics"] = pkpd_features
     result_adjusted["dominant_endpoint"] = max(adjusted_risks.items(), key=lambda x: x[1])[0]
     return result_adjusted
+
+class PKPDBridge:
+    """Bridge between PKPD simulation and toxicity prediction."""
+    
+    def __init__(self):
+        """Initialize PKPD bridge."""
+        self.compartments = [
+            "plasma",
+            "liver",
+            "kidney",
+            "spleen",
+            "lung",
+            "heart",
+            "brain",
+            "muscle",
+            "adipose",
+            "bone",
+            "skin",
+            "gi_tract",
+            "reproductive",
+            "endocrine",
+            "lymph",
+            "csf",
+            "bile",
+            "urine"
+        ]
+    
+    def get_compartments(self) -> list:
+        """Return list of available compartments."""
+        return self.compartments
+    
+    def compute_tissue_exposure(self,
+                               dose_mg_kg: float,
+                               schedule: str,
+                               body_weight_kg: float = 70.0) -> dict:
+        """Compute tissue-specific exposure metrics.
+        
+        Args:
+            dose_mg_kg: Dose in mg/kg
+            schedule: Dosing schedule (e.g., 'Q4W')
+            body_weight_kg: Body weight
+        
+        Returns:
+            Dictionary of tissue exposures
+        """
+        from .simulator import GalNAcPKPDSimulator
+        
+        sim = GalNAcPKPDSimulator()
+        result = sim.simulate(
+            dose_mg=dose_mg_kg * body_weight_kg,
+            interval_hours=672 if 'Q4W' in schedule else 168,
+            n_doses=3
+        )
+        
+        # Compute AUC and Cmax for each tissue
+        exposures = {}
+        for comp in self.compartments:
+            if comp in result:
+                exposures[f"{comp}_auc"] = np.trapz(result[comp], result['time'])
+                exposures[f"{comp}_cmax"] = max(result[comp])
+        
+        return exposures
+

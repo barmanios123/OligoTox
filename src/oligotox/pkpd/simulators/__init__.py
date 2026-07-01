@@ -1,4 +1,4 @@
-"""PKPD simulators."""
-from .galnac_pkpd import GalNacPKPD
+"""PKPD simulators for oligonucleotide pharmacokinetics."""
+from .galnac_pkpd import GalNAcPKPDSimulator
 
-__all__ = ["GalNacPKPD"]
+__all__ = ['GalNAcPKPDSimulator']

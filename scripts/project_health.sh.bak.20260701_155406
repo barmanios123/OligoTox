@@ -1,0 +1,116 @@
+set -Eeuo pipefail
+
+pass() { echo "[PASS] $*"; }
+warn() { echo "[WARN] $*"; }
+fail() { echo "[FAIL] $*"; }
+section() { echo; echo "## $*"; }
+
+echo "== OligoTox project health =="
+echo "[INFO] root: $(pwd)"
+
+section "1) core repo layout"
+for p in pyproject.toml README.md src data artifacts configs validate_platform.py; do
+  if [[ -e "$p" ]]; then
+    pass "$p exists"
+  else
+    warn "$p missing"
+  fi
+done
+
+section "2) python environment"
+python -V || fail "python not available"
+which python || true
+python - <<'PY'
+mods = ["pandas","numpy","sklearn","joblib"]
+for m in mods:
+    try:
+        __import__(m)
+        print(f"[PASS] import {m}")
+    except Exception as e:
+        print(f"[FAIL] import {m}: {e}")
+PY
+
+section "3) package import smoke test"
+python - <<'PY'
+import sys, os
+sys.path.insert(0, os.path.abspath("src"))
+for t in ["oligotox", "oligotox.training.train"]:
+    try:
+        __import__(t)
+        print(f"[PASS] imported {t}")
+    except Exception as e:
+        print(f"[WARN] import {t} failed: {e}")
+PY
+
+section "4) training input smoke test"
+python - <<'PY'
+from pathlib import Path
+for p in [
+    "data/processed/unified",
+    "data/processed/trainingdataset.csv",
+    "data/processed/datasetmetadata.json",
+    "artifacts/config/composite_config.json",
+    "artifacts/config/endpoint_thresholds.json",
+]:
+    pp = Path(p)
+    print(f"[CHECK] {p} exists: {pp.exists()}")
+PY
+
+section "5) model artifacts"
+find artifacts -type f \( -iname "*.joblib" -o -iname "*.json" \) 2>/dev/null | sort | head -n 200
+
+section "6) validate_platform.py"
+if [[ -f validate_platform.py ]]; then
+  python validate_platform.py || warn "validate_platform.py returned non-zero"
+else
+  warn "validate_platform.py not found"
+fi
+
+section "7) inference smoke test"
+python - <<'PY'
+import os, sys, importlib, traceback
+sys.path.insert(0, os.path.abspath("src"))
+
+def locate_runner():
+    for mod_name in ["oligotox", "oligotox.inference", "oligotox.app"]:
+        try:
+            mod = importlib.import_module(mod_name)
+            fn = getattr(mod, "run_oligotox", None)
+            if fn:
+                return fn
+        except Exception:
+            pass
+    return None
+
+runner = locate_runner()
+if runner is None:
+    print("[WARN] run_oligotox not found")
+    raise SystemExit(0)
+
+try:
+    try:
+        out = runner({"sequence":"ACGTACGTACGTACGTACGT","chemistry":"PS","length":20})
+    except TypeError:
+        out = runner(sequence="ACGTACGTACGTACGTACGT", chemistry="PS", length=20)
+
+    if isinstance(out, dict):
+        print("[OK] top-level keys:", sorted(out.keys()))
+        print("[OK] composite_score:", out.get("composite_score"))
+        print("[OK] composite_band:", out.get("composite_band"))
+        print("[OK] dominant_endpoint:", out.get("dominant_endpoint"))
+        pe = out.get("per_endpoint", {})
+        if isinstance(pe, dict):
+            print("[OK] endpoint_count:", len(pe))
+            for i, item in enumerate(pe.items()):
+                if i >= 10:
+                    break
+                print(item)
+    else:
+        print("[WARN] unexpected inference output type:", type(out))
+except Exception as e:
+    print(f"[WARN] inference call failed: {e}")
+    traceback.print_exc()
+PY
+
+echo
+echo "== project health done =="

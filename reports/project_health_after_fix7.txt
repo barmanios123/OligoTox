@@ -1,0 +1,170 @@
+== OligoTox project health ==
+[INFO] root: /Users/beshoyarmanios/oligotox
+
+## 1) core repo layout
+[PASS] pyproject.toml exists
+[PASS] README.md exists
+[PASS] src exists
+[PASS] data exists
+[PASS] artifacts exists
+[PASS] configs exists
+[PASS] validate_platform.py exists
+
+## 2) python environment
+Python 3.13.9
+/opt/anaconda3/bin/python
+[PASS] import pandas
+[PASS] import numpy
+[PASS] import sklearn
+[PASS] import joblib
+
+## 3) package import smoke test
+[PASS] imported oligotox
+[PASS] imported oligotox.training.train
+
+## 4) training input smoke test
+[CHECK] data/processed/unified exists: True
+[CHECK] data/processed/trainingdataset.csv exists: True
+[CHECK] data/processed/datasetmetadata.json exists: True
+[CHECK] artifacts/config/composite_config.json exists: True
+[CHECK] artifacts/config/endpoint_thresholds.json exists: True
+
+## 5) model artifacts
+artifacts/config/composite_config.json
+artifacts/config/endpoint_reliability.json
+artifacts/config/endpoint_thresholds.json
+artifacts/eval/train_eval_summary.json
+artifacts/metrics/build_info.json
+artifacts/metrics/datasail_split_diagnostic.json
+artifacts/metrics/training_summary.json
+artifacts/models/cns_toxicity.joblib
+artifacts/models/coagulation_effect.joblib
+artifacts/models/complement_activation.joblib
+artifacts/models/cytokine_release.joblib
+artifacts/models/hepatic_vacuolation.joblib
+artifacts/models/hepatic_vacuolation_train_meta.json
+artifacts/models/hepatocellular_injury.joblib
+artifacts/models/injection_site_reaction.joblib
+artifacts/models/innate_immune_activation.joblib
+artifacts/models/kupffer_cell_activation.joblib
+artifacts/models/kupffer_cell_activation_train_meta.json
+artifacts/models/latest_train_baseline/cns_toxicity.joblib
+artifacts/models/latest_train_baseline/coagulation_effect.joblib
+artifacts/models/latest_train_baseline/complement_activation.joblib
+artifacts/models/latest_train_baseline/cytokine_release.joblib
+artifacts/models/latest_train_baseline/hepatocellular_injury.joblib
+artifacts/models/latest_train_baseline/injection_site_reaction.joblib
+artifacts/models/latest_train_baseline/innate_immune_activation.joblib
+artifacts/models/latest_train_baseline/model_manifest.json
+artifacts/models/latest_train_baseline/offtarget_gene_silencing.joblib
+artifacts/models/latest_train_baseline/renal_accumulation.joblib
+artifacts/models/latest_train_baseline/renal_tubular_injury.joblib
+artifacts/models/latest_train_baseline/thrombocytopenia.joblib
+artifacts/models/latest_train_baseline/train_metadata.json
+artifacts/models/offtarget_gene_silencing.joblib
+artifacts/models/renal_accumulation.joblib
+artifacts/models/renal_tubular_injury.joblib
+artifacts/models/thrombocytopenia.joblib
+artifacts/models/v03_expanded/hepatocellular_injury_partner_enhanced_rf.joblib
+artifacts/models/v03_expanded/hepatocellular_injury_rf.joblib
+artifacts/models/v03_expanded/hypersensitivity_rf.joblib
+artifacts/models/v03_expanded/injection_site_reaction_rf.joblib
+artifacts/models/v03_expanded/offtarget_gene_silencing_rf.joblib
+artifacts/models/v03_expanded/renal_tubular_injury_partner_enhanced_rf.joblib
+artifacts/registry/models_index.json
+artifacts/registry/runs_index.json
+
+## 6) validate_platform.py
+================================================================================
+OligoTox Platform - End-to-End Validation
+================================================================================
+
+================================================================================
+Testing: 1. Module Imports
+================================================================================
+✅ PASS: Efficacy models imported
+✅ PASS: PKPD simulator imported
+✅ PASS: FDA reporting imported
+✅ PASS: Toxicity model loaders imported
+✅ PASS: Toxicity scoring pipeline imported
+
+================================================================================
+Testing: 2. Data Loading & Model Artifacts
+================================================================================
+✅ PASS: Data directory exists
+✅ PASS: Found 13 trained models
+✅ PASS: Config directory exists
+
+================================================================================
+Testing: 3. Efficacy Models End-to-End
+================================================================================
+✅ PASS: Model registry loaded: 6 models
+   Available: OligoFormer, ENsiRNA, siDPT, PFRED, ASOptimizer, siRNADiscovery
+✅ PASS: OligoFormer: activity=0.57, confidence=0.50
+❌ FAIL: ENsiRNA prediction
+   Error: 
+❌ FAIL: siDPT prediction
+   Error: 
+✅ PASS: PFRED: activity=0.70, confidence=0.50
+✅ PASS: ASOptimizer: activity=0.67, confidence=0.50
+✅ PASS: siRNADiscovery: activity=0.74, confidence=0.50
+
+================================================================================
+Testing: 4. PKPD Simulator End-to-End
+================================================================================
+✅ PASS: PKPD simulation completed
+   Liver AUC: 169516 pmol·g⁻¹·h
+   Cmax: 14000 pmol/g
+   Half-life: 48.0 h
+   Exposure score: 4.84
+
+================================================================================
+Testing: 5. FDA/OSWG Safety Reporting
+================================================================================
+✅ PASS: FDA report generation completed
+   Risk score: 0.306
+   Classification: MODERATE_RISK
+
+================================================================================
+Testing: 6. Toxicity Prediction Pipeline
+================================================================================
+✅ PASS: Toxicity prediction completed
+   Composite score: 0.203
+   Dominant endpoint: injection_site_reaction
+   Endpoints analyzed: 13
+
+================================================================================
+Testing: 7. Data Leakage Prevention Validation
+================================================================================
+✅ PASS: Protocol documented: Temporal validation strategy
+✅ PASS: Protocol documented: Feature engineering isolation
+✅ PASS: Protocol documented: No target leakage in features
+✅ PASS: Protocol documented: Nested cross-validation
+✅ PASS: Protocol documented: Contamination detection
+✅ PASS: Protocol documented: Deployment-realistic evaluation
+✅ PASS: No prohibited post-hoc features in pipeline
+
+================================================================================
+Testing: 8. Streamlit App Validation
+================================================================================
+✅ PASS: App file exists: app/oligotox_app_minimal.py
+✅ PASS: App file exists: app/oligotox_app_complete.py
+✅ PASS: Streamlit installed (v1.51.0)
+
+================================================================================
+VALIDATION SUMMARY
+================================================================================
+
+✅ Passed:   26
+⚠️  Warnings: 0
+❌ Failed:   2
+
+📊 Success Rate: 92.9%
+
+⚠️  2 critical test(s) failed - review errors above
+[WARN] validate_platform.py returned non-zero
+
+## 7) inference smoke test
+[WARN] no inference entrypoint found
+
+== project health done ==

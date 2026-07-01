@@ -43,3 +43,7 @@ class OligoGymBenchmark:
             'efficacy': np.random.uniform(0.3, 0.95, n),
             'toxicity': np.random.uniform(0.05, 0.3, n)
         })
+
+    def get_available_tasks(self):
+        """Get list of available benchmark tasks."""
+        return ['efficacy', 'toxicity', 'delivery']

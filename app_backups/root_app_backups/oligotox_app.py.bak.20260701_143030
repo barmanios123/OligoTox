@@ -1,0 +1,723 @@
+from __future__ import annotations
+
+import json
+import math
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
+import pandas as pd
+import streamlit as st
+
+from oligotox.inference.api import run_oligotox
+from oligotox.ui_state import get_runs, log_run
+
+APP_TITLE = "🧬 OligoTox"
+APP_CAPTION = "Mechanism-aware safety assessment for therapeutic oligonucleotides."
+
+ROOT = Path(__file__).resolve().parent
+ARTIFACTS_DIR = ROOT / "artifacts"
+MODEL_ARTIFACTS_DIR = ARTIFACTS_DIR / "models"
+METRICS_ARTIFACTS_DIR = ARTIFACTS_DIR / "metrics"
+PROCESSED_DATA_DIR = ROOT / "data" / "processed"
+APP_DIR = ROOT / "app"
+
+USER_TABS = ["Analyze", "Compare", "Exposure", "Follow-Up Assays", "Report"]
+ADMIN_TABS = ["Overview", "Evaluation", "Models", "Predictions", "Runs", "Curation"]
+
+ENDPOINT_LABELS = {
+    "hepatotoxicity": "Hepatotoxicity",
+    "nephrotoxicity": "Nephrotoxicity",
+    "thrombocytopenia": "Thrombocytopenia",
+    "immune_activation": "Immune Activation",
+    "complement_activation": "Complement Activation",
+    "carpa": "CARPA",
+    "injection_site_reaction": "Injection Site Reaction",
+    "coagulation_liability": "Coagulation Liability",
+    "hematology_signal": "Hematology Signal",
+    "innate_sensing": "Innate Sensing",
+    "off_target_risk": "Off-Target Risk",
+    "renal_accumulation_risk": "Renal Accumulation Risk",
+    "cytokine_release": "Cytokine Release",
+    "kupffer_cell_activation": "Kupffer Cell Activation",
+}
+
+CONFIDENCE_BANDS = [
+    (0.80, "High"),
+    (0.60, "Moderate"),
+    (0.40, "Low"),
+    (0.00, "Exploratory"),
+]
+
+st.set_page_config(
+    page_title="OligoTox",
+    page_icon="🧬",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+st.markdown("""
+<style>
+.block-container {padding-top: 1.25rem; padding-bottom: 2rem;}
+div[data-testid="stMetric"] {
+    background: #fafafa;
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 0.8rem 1rem;
+    border-radius: 14px;
+}
+.ox-card {
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
+    margin-bottom: 0.8rem;
+}
+.ox-muted {color:#667085;font-size:0.95rem;}
+.ox-title {font-size:1.05rem;font-weight:700;margin-bottom:0.15rem;}
+.ox-chiprow {display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.25rem 0 0.5rem 0;}
+.ox-chip {
+    display:inline-block;
+    padding:0.3rem 0.65rem;
+    border-radius:999px;
+    background:#f2f4f7;
+    border:1px solid rgba(0,0,0,0.06);
+    font-size:0.82rem;
+    font-weight:600;
+}
+footer {visibility:hidden;}
+</style>
+""", unsafe_allow_html=True)
+
+
+def normalize_sequence(seq: str) -> str:
+    if not seq:
+        return ""
+    seq = seq.upper().replace(" ", "").replace("\n", "").replace("\r", "").replace("\t", "")
+    return seq.replace("T", "U")
+
+
+def validate_sequence(seq: str) -> Tuple[bool, str]:
+    if not seq:
+        return False, "Please enter a sequence."
+    allowed = set("ACGUN")
+    bad = sorted(set(seq) - allowed)
+    if bad:
+        return False, f"Invalid characters: {', '.join(bad)}. Allowed: A, C, G, U, N."
+    if len(seq) < 8:
+        return False, "Please enter at least 8 nt."
+    if len(seq) > 200:
+        return False, "Please keep input at 200 nt or fewer."
+    return True, ""
+
+
+def gc_fraction(seq: str) -> float:
+    return ((seq.count("G") + seq.count("C")) / len(seq)) if seq else 0.0
+
+
+def cpg_count(seq: str) -> int:
+    return sum(1 for i in range(len(seq) - 1) if seq[i:i+2] == "CG")
+
+
+def confidence_label(v: float) -> str:
+    for threshold, label in CONFIDENCE_BANDS:
+        if v >= threshold:
+            return label
+    return "Exploratory"
+
+
+def safe_float(v: Any, default: float = 0.0) -> float:
+    try:
+        if v is None:
+            return default
+        return float(v)
+    except Exception:
+        return default
+
+
+def build_payload(
+    sequence: str,
+    modality: str,
+    chemistry: str,
+    conjugate: str,
+    route: str,
+    delivery_vehicle: str,
+    dose_mg_kg: float,
+    repeat_dose: bool,
+    schedule: str,
+) -> Dict[str, Any]:
+    return {
+        "sequence": normalize_sequence(sequence),
+        "modality": modality,
+        "chemistry": chemistry,
+        "conjugate": conjugate,
+        "route": route,
+        "delivery_vehicle": delivery_vehicle,
+        "dose_mg_kg": dose_mg_kg if dose_mg_kg > 0 else None,
+        "repeat_dose": repeat_dose,
+        "schedule": schedule or None,
+    }
+
+
+def normalize_per_endpoint(result: Dict[str, Any]) -> pd.DataFrame:
+    per = result.get("per_endpoint", {})
+    rows = []
+    if isinstance(per, dict):
+        for k, v in per.items():
+            if isinstance(v, dict):
+                score = safe_float(v.get("score", v.get("probability", v.get("risk", 0.0))))
+                mech = v.get("mechanism", "")
+                notes = v.get("notes", "")
+            else:
+                score = safe_float(v)
+                mech = ""
+                notes = ""
+            rows.append(
+                {
+                    "Endpoint": ENDPOINT_LABELS.get(k, k.replace("_", " ").title()),
+                    "Score": round(score, 4),
+                    "Risk %": round(score * 100, 1),
+                    "Confidence": confidence_label(score),
+                    "Mechanism": mech,
+                    "Notes": notes,
+                }
+            )
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        df = df.sort_values("Score", ascending=False).reset_index(drop=True)
+    return df
+
+
+def summarize_mechanistic_proxies(result: Dict[str, Any]) -> pd.DataFrame:
+    prox = result.get("mechanistic_proxies", {})
+    if not isinstance(prox, dict):
+        return pd.DataFrame(columns=["Proxy", "Value"])
+    return pd.DataFrame([{"Proxy": k.replace("_", " ").title(), "Value": v} for k, v in prox.items()])
+
+
+def summarize_omics(result: Dict[str, Any]) -> pd.DataFrame:
+    omics = result.get("omics", {})
+    if not isinstance(omics, dict):
+        return pd.DataFrame(columns=["Signal", "Value"])
+    return pd.DataFrame([{"Signal": k.replace("_", " ").title(), "Value": v} for k, v in omics.items()])
+
+
+def assay_recommendations(per_df: pd.DataFrame) -> pd.DataFrame:
+    rules = {
+        "Hepatotoxicity": "Primary human hepatocytes, ALT/AST release, mitochondrial stress panel.",
+        "Nephrotoxicity": "Renal proximal tubule assay, KIM-1/NGAL biomarkers, uptake studies.",
+        "Thrombocytopenia": "Platelet count monitoring, coagulation panel, hematology follow-up.",
+        "Immune Activation": "PBMC cytokine panel, TLR reporter assays, innate immune profiling.",
+        "Complement Activation": "C3a/C5a, CH50/AH50, complement follow-up.",
+        "CARPA": "Serum complement panel and infusion reaction risk screen.",
+        "Injection Site Reaction": "Local tolerance and inflammatory marker follow-up.",
+        "Coagulation Liability": "PT/aPTT and thrombin generation studies.",
+        "Innate Sensing": "TLR/RIG-I/MDA5 reporter panel.",
+        "Off-Target Risk": "Transcriptome-wide off-target screen and mismatch sensitivity profiling.",
+        "Renal Accumulation Risk": "Kidney exposure modeling and tissue distribution studies.",
+        "Cytokine Release": "PBMC cytokine release assay and multiplex inflammatory panel.",
+        "Hematology Signal": "CBC with differential and reticulocyte follow-up.",
+        "Kupffer Cell Activation": "Liver macrophage activation follow-up and hepatic cytokine panel.",
+    }
+    if per_df.empty:
+        return pd.DataFrame(columns=["Priority", "Endpoint", "Recommended Assays"])
+    rows = []
+    for i, (_, row) in enumerate(per_df.head(5).iterrows(), start=1):
+        rows.append(
+            {
+                "Priority": i,
+                "Endpoint": row["Endpoint"],
+                "Recommended Assays": rules.get(row["Endpoint"], "General confirmatory nonclinical follow-up panel."),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def default_report_markdown(payload: Dict[str, Any], result: Dict[str, Any], per_df: pd.DataFrame) -> str:
+    dominant = result.get("dominant_endpoint", "n/a")
+    composite = result.get("composite_score", "n/a")
+    band = result.get("composite_band", "n/a")
+    top_lines = []
+    if not per_df.empty:
+        for _, row in per_df.head(5).iterrows():
+            top_lines.append(f"- {row['Endpoint']}: {row['Risk %']}% ({row['Confidence']})")
+    return f"""# OligoTox Summary
+
+## Candidate
+- Sequence: `{payload.get('sequence', '')}`
+- Modality: {payload.get('modality', 'n/a')}
+- Chemistry: {payload.get('chemistry', 'n/a')}
+- Conjugate: {payload.get('conjugate', 'n/a')}
+- Route: {payload.get('route', 'n/a')}
+- Dose (mg/kg): {payload.get('dose_mg_kg', 'n/a')}
+- Schedule: {payload.get('schedule', 'n/a')}
+
+## Composite Assessment
+- Composite score: {composite}
+- Composite band: {band}
+- Dominant endpoint: {dominant}
+
+## Highest Priority Signals
+{chr(10).join(top_lines) if top_lines else "- No endpoint outputs available"}
+
+## Interpretation
+Use this as a mechanism-aware screening summary for internal nonclinical prioritization.
+"""
+
+
+def compare_candidates(candidates: List[Dict[str, Any]]) -> pd.DataFrame:
+    rows = []
+    for cand in candidates:
+        try:
+            out = run_oligotox(cand)
+            rows.append(
+                {
+                    "Candidate": cand.get("name", "Unnamed"),
+                    "Sequence": cand.get("sequence", ""),
+                    "Modality": cand.get("modality", ""),
+                    "Chemistry": cand.get("chemistry", ""),
+                    "Conjugate": cand.get("conjugate", ""),
+                    "Composite Score": safe_float(out.get("composite_score", 0.0)),
+                    "Composite Band": out.get("composite_band", ""),
+                    "Dominant Endpoint": out.get("dominant_endpoint", ""),
+                }
+            )
+        except Exception as e:
+            rows.append(
+                {
+                    "Candidate": cand.get("name", "Unnamed"),
+                    "Sequence": cand.get("sequence", ""),
+                    "Modality": cand.get("modality", ""),
+                    "Chemistry": cand.get("chemistry", ""),
+                    "Conjugate": cand.get("conjugate", ""),
+                    "Composite Score": math.nan,
+                    "Composite Band": f"ERROR: {e}",
+                    "Dominant Endpoint": "",
+                }
+            )
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        df = df.sort_values("Composite Score", ascending=True, na_position="last").reset_index(drop=True)
+    return df
+
+
+def list_model_artifacts() -> pd.DataFrame:
+    rows = []
+    if MODEL_ARTIFACTS_DIR.exists():
+        for p in sorted(MODEL_ARTIFACTS_DIR.rglob("*")):
+            if p.is_file():
+                rows.append(
+                    {
+                        "Artifact": p.name,
+                        "Size (KB)": round(p.stat().st_size / 1024, 2),
+                        "Modified": datetime.fromtimestamp(p.stat().st_mtime).isoformat(timespec="seconds"),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def list_metric_artifacts() -> pd.DataFrame:
+    rows = []
+    if METRICS_ARTIFACTS_DIR.exists():
+        for p in sorted(METRICS_ARTIFACTS_DIR.rglob("*")):
+            if p.is_file():
+                rows.append(
+                    {
+                        "Artifact": p.name,
+                        "Size (KB)": round(p.stat().st_size / 1024, 2),
+                        "Modified": datetime.fromtimestamp(p.stat().st_mtime).isoformat(timespec="seconds"),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def metrics_summary() -> Dict[str, Any]:
+    metrics_file = METRICS_ARTIFACTS_DIR / "training_summary.json"
+    out: Dict[str, Any] = {"exists": metrics_file.exists()}
+    if metrics_file.exists():
+        try:
+            out["payload"] = json.loads(metrics_file.read_text())
+        except Exception as e:
+            out["error"] = str(e)
+    return out
+
+
+def render_sidebar() -> str:
+    with st.sidebar:
+        st.markdown("### Workspace")
+        view_mode = st.radio("", ["Customer", "Admin"], index=0, label_visibility="collapsed")
+        st.markdown("### Status")
+        st.markdown('<div class="ox-chiprow"><span class="ox-chip">Inference ready</span><span class="ox-chip">Models available</span><span class="ox-chip">PK/PD enabled</span></div>', unsafe_allow_html=True)
+        st.caption("Customer mode for analysis and reports. Admin mode for models, runs, and curation.")
+    return view_mode
+
+
+if "last_payload" not in st.session_state:
+    st.session_state["last_payload"] = None
+if "last_result" not in st.session_state:
+    st.session_state["last_result"] = None
+if "last_per_df" not in st.session_state:
+    st.session_state["last_per_df"] = pd.DataFrame()
+if "last_regulatory_md" not in st.session_state:
+    st.session_state["last_regulatory_md"] = None
+
+st.title(APP_TITLE)
+st.caption(APP_CAPTION)
+
+view_mode = render_sidebar()
+
+if view_mode == "Customer":
+    tabs = st.tabs(USER_TABS)
+
+    with tabs[0]:
+        st.markdown('<div class="ox-card"><div class="ox-title">Analyze a candidate</div><div class="ox-muted">Paste a sequence and generate endpoint-level toxicity outputs.</div></div>', unsafe_allow_html=True)
+
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            seq_input = st.text_area(
+                "Sequence",
+                height=130,
+                placeholder="e.g., AUGCUAGCUAGCUAGCUAGC",
+                help="RNA/DNA accepted. DNA T is normalized to U.",
+            )
+
+        with col2:
+            modality = st.selectbox("Modality", ["ASO", "siRNA", "lncRNA-targeting", "gapmer", "other"], index=0)
+            chemistry = st.selectbox("Chemistry", ["PS", "PO", "2'-OMe", "2'-MOE", "LNA", "Mixed"], index=0)
+            conjugate = st.selectbox("Conjugate", ["None", "GalNAc", "Cholesterol", "Other"], index=0)
+
+        st.markdown("#### Exposure context")
+        p1, p2, p3, p4 = st.columns(4)
+        with p1:
+            route = st.selectbox("Route", ["SC", "IV", "IT", "PO", "Other"], index=0)
+        with p2:
+            delivery_vehicle = st.selectbox("Delivery", ["none", "galnac", "lipid", "nanoparticle", "other"], index=0)
+        with p3:
+            dose_mg_kg_input = st.number_input("Dose (mg/kg)", min_value=0.0, value=0.0, step=0.1)
+        with p4:
+            schedule_input = st.selectbox("Schedule", ["", "QD", "QW", "Q2W", "Q4W", "Q8W", "Q12W"], index=0)
+
+        repeat_dose = st.checkbox("Repeat dose", value=False)
+
+        with st.expander("Preview inputs", expanded=False):
+            seq_norm_preview = normalize_sequence(seq_input) if seq_input else ""
+            st.write(
+                {
+                    "normalized_sequence": seq_norm_preview,
+                    "length_nt": len(seq_norm_preview),
+                    "gc_fraction": round(gc_fraction(seq_norm_preview), 3) if seq_norm_preview else 0.0,
+                    "cpg_count": cpg_count(seq_norm_preview) if seq_norm_preview else 0,
+                    "modality": modality,
+                    "chemistry": chemistry,
+                    "conjugate": conjugate,
+                    "route": route,
+                    "dose_mg_kg": dose_mg_kg_input,
+                    "schedule": schedule_input,
+                }
+            )
+
+        run_btn = st.button("Run analysis", type="primary", width="stretch")
+
+        if run_btn:
+            seq_clean = normalize_sequence(seq_input)
+            is_valid, err = validate_sequence(seq_clean)
+            if not is_valid:
+                st.error(err)
+            else:
+                payload = build_payload(
+                    sequence=seq_clean,
+                    modality=modality,
+                    chemistry=chemistry,
+                    conjugate=conjugate,
+                    route=route,
+                    delivery_vehicle=delivery_vehicle,
+                    dose_mg_kg=dose_mg_kg_input,
+                    repeat_dose=repeat_dose,
+                    schedule=schedule_input,
+                )
+                try:
+                    with st.spinner("Running OligoTox inference..."):
+                        result = run_oligotox(payload, omics_payload=None)
+
+                    per_df = normalize_per_endpoint(result)
+                    regulatory_md = default_report_markdown(payload, result, per_df)
+
+                    st.session_state["last_payload"] = payload
+                    st.session_state["last_result"] = result
+                    st.session_state["last_per_df"] = per_df
+                    st.session_state["last_regulatory_md"] = regulatory_md
+
+                    log_run(
+                        st,
+                        sequence=payload["sequence"],
+                        modality=payload["modality"],
+                        chemistry=payload["chemistry"],
+                        conjugate=payload["conjugate"],
+                        inputs={
+                            "sequence": payload["sequence"],
+                            "route": payload["route"],
+                            "delivery_vehicle": payload["delivery_vehicle"],
+                            "dose_mg_kg": payload["dose_mg_kg"],
+                            "repeat_dose": payload["repeat_dose"],
+                            "schedule": payload["schedule"],
+                        },
+                        result=result,
+                        regulatory_md=regulatory_md,
+                    )
+
+                    m1, m2, m3, m4 = st.columns(4)
+                    with m1:
+                        st.metric("Composite Score", round(safe_float(result.get("composite_score", 0.0)), 3))
+                    with m2:
+                        st.metric("Band", str(result.get("composite_band", "n/a")).title())
+                    with m3:
+                        st.metric("Top Signal", ENDPOINT_LABELS.get(str(result.get("dominant_endpoint", "n/a")), str(result.get("dominant_endpoint", "n/a")).replace("_", " ").title()))
+                    with m4:
+                        st.metric("Endpoints", len(per_df))
+
+                    st.markdown("#### Endpoint risk profile")
+                    st.dataframe(per_df, width="stretch", hide_index=True)
+
+                    with st.expander("Mechanistic proxies", expanded=False):
+                        st.dataframe(summarize_mechanistic_proxies(result), width="stretch", hide_index=True)
+
+                    with st.expander("Omics / translational signals", expanded=False):
+                        st.dataframe(summarize_omics(result), width="stretch", hide_index=True)
+
+                    st.success("Analysis complete.")
+                except Exception as e:
+                    st.exception(e)
+
+    with tabs[1]:
+        st.markdown('<div class="ox-card"><div class="ox-title">Compare candidates</div><div class="ox-muted">Score multiple oligos side by side using the same backend path.</div></div>', unsafe_allow_html=True)
+        comparator_template = """candidate_name,sequence,modality,chemistry,conjugate,route,dose_mg_kg,schedule
+Lead_A,AUGCUAGCUAGCUAGCUAGC,ASO,PS,None,SC,5.0,QW
+Lead_B,AUGGUGGCUACGUACGUACC,siRNA,2'-OMe,GalNAc,SC,3.0,Q4W
+"""
+        uploaded = st.file_uploader("Upload comparator CSV", type=["csv"], key="cmp_csv")
+        if uploaded is None:
+            st.download_button(
+                "Download template",
+                data=comparator_template,
+                file_name="comparator_template.csv",
+                mime="text/csv",
+                width="stretch",
+            )
+
+        cmp_df = None
+        if uploaded is not None:
+            cmp_df = pd.read_csv(uploaded)
+            st.dataframe(cmp_df, width="stretch", hide_index=True)
+
+        if st.button("Run comparison", type="primary", width="stretch"):
+            if cmp_df is None or cmp_df.empty:
+                st.warning("Upload a comparator CSV first.")
+            else:
+                candidates = []
+                for _, row in cmp_df.iterrows():
+                    candidates.append(
+                        {
+                            "name": row.get("candidate_name", "Unnamed"),
+                            "sequence": normalize_sequence(str(row.get("sequence", ""))),
+                            "modality": row.get("modality", "ASO"),
+                            "chemistry": row.get("chemistry", "PS"),
+                            "conjugate": row.get("conjugate", "None"),
+                            "route": row.get("route", "SC"),
+                            "delivery_vehicle": "galnac" if str(row.get("conjugate", "")).lower() == "galnac" else "none",
+                            "dose_mg_kg": safe_float(row.get("dose_mg_kg", 0.0), 0.0),
+                            "repeat_dose": True,
+                            "schedule": row.get("schedule", None),
+                        }
+                    )
+                out_df = compare_candidates(candidates)
+                st.dataframe(out_df, width="stretch", hide_index=True)
+                st.download_button(
+                    "Download results CSV",
+                    data=out_df.to_csv(index=False).encode("utf-8"),
+                    file_name="oligotox_comparator_results.csv",
+                    mime="text/csv",
+                    width="stretch",
+                )
+
+    with tabs[2]:
+        st.markdown('<div class="ox-card"><div class="ox-title">Exposure bridge</div><div class="ox-muted">Interpret risk in the context of route, schedule, and dose assumptions.</div></div>', unsafe_allow_html=True)
+        payload = st.session_state.get("last_payload")
+        result = st.session_state.get("last_result")
+
+        if not payload or not result:
+            st.info("Run an analysis first.")
+        else:
+            dose = safe_float(payload.get("dose_mg_kg"), 0.0)
+            route = payload.get("route", "SC")
+            schedule = payload.get("schedule", "n/a")
+            conjugate = payload.get("conjugate", "n/a")
+
+            exposure_factor = 1.0
+            if route == "IV":
+                exposure_factor *= 1.2
+            elif route == "IT":
+                exposure_factor *= 0.85
+            if schedule in {"QD", "QW"}:
+                exposure_factor *= 1.15
+            elif schedule in {"Q8W", "Q12W"}:
+                exposure_factor *= 0.85
+            if str(conjugate).lower() == "galnac":
+                exposure_factor *= 1.10
+
+            estimated_exposure_index = round(max(dose, 0.1) * exposure_factor, 3)
+            adjusted_composite = round(safe_float(result.get("composite_score", 0.0)) * exposure_factor, 3)
+
+            e1, e2, e3, e4 = st.columns(4)
+            with e1:
+                st.metric("Dose", dose)
+            with e2:
+                st.metric("Exposure Index", estimated_exposure_index)
+            with e3:
+                st.metric("Adjusted Score", adjusted_composite)
+            with e4:
+                st.metric("Schedule", schedule if schedule else "n/a")
+
+            st.markdown("#### Interpretation")
+            st.write(
+                {
+                    "route": route,
+                    "conjugate": conjugate,
+                    "schedule": schedule,
+                    "exposure_factor": exposure_factor,
+                    "note": "Use this as translational context, not a standalone PK model.",
+                }
+            )
+
+    with tabs[3]:
+        st.markdown('<div class="ox-card"><div class="ox-title">Follow-up assays</div><div class="ox-muted">Generate mechanism-linked follow-up recommendations from the top signals.</div></div>', unsafe_allow_html=True)
+        per_df = st.session_state.get("last_per_df", pd.DataFrame())
+        if per_df is None or per_df.empty:
+            st.info("Run an analysis first.")
+        else:
+            assay_df = assay_recommendations(per_df)
+            st.dataframe(assay_df, width="stretch", hide_index=True)
+            st.download_button(
+                "Download assay plan",
+                data=assay_df.to_csv(index=False).encode("utf-8"),
+                file_name="oligotox_assay_plan.csv",
+                mime="text/csv",
+                width="stretch",
+            )
+
+    with tabs[4]:
+        st.markdown('<div class="ox-card"><div class="ox-title">Report</div><div class="ox-muted">Generate a compact regulatory-style summary for internal review.</div></div>', unsafe_allow_html=True)
+        payload = st.session_state.get("last_payload")
+        result = st.session_state.get("last_result")
+        per_df = st.session_state.get("last_per_df", pd.DataFrame())
+
+        if not payload or not result:
+            st.info("Run an analysis first.")
+        else:
+            md = st.session_state.get("last_regulatory_md") or default_report_markdown(payload, result, per_df)
+            st.text_area("Report preview", value=md, height=380)
+            st.download_button(
+                "Download report",
+                data=md.encode("utf-8"),
+                file_name="oligotox_summary.md",
+                mime="text/markdown",
+                width="stretch",
+            )
+
+else:
+    tabs = st.tabs(ADMIN_TABS)
+
+    with tabs[0]:
+        st.markdown("### Overview")
+        a1, a2, a3, a4 = st.columns(4)
+        with a1:
+            st.metric("Processed Data", "Ready" if PROCESSED_DATA_DIR.exists() else "Missing")
+        with a2:
+            st.metric("Models", "Ready" if MODEL_ARTIFACTS_DIR.exists() else "Missing")
+        with a3:
+            st.metric("Metrics", "Ready" if METRICS_ARTIFACTS_DIR.exists() else "Missing")
+        with a4:
+            st.metric("PK/PD", "Enabled")
+
+        st.markdown("#### Metrics summary")
+        st.json(metrics_summary())
+
+        st.markdown("#### Recent runs")
+        runs = get_runs(st)
+        if runs:
+            st.dataframe(pd.DataFrame(runs[::-1]), width="stretch", hide_index=True)
+        else:
+            st.info("No runs logged yet.")
+
+    with tabs[1]:
+        st.markdown("### Evaluation")
+        metrics_df = list_metric_artifacts()
+        if metrics_df.empty:
+            st.info("No metrics artifacts found.")
+        else:
+            st.dataframe(metrics_df, width="stretch", hide_index=True)
+
+        validation_report = ROOT / "VALIDATION_REPORT.md"
+        if validation_report.exists():
+            st.text_area("Validation report preview", validation_report.read_text()[:6000], height=320)
+
+    with tabs[2]:
+        st.markdown("### Models")
+        df = list_model_artifacts()
+        if df.empty:
+            st.warning("No model artifacts found.")
+        else:
+            st.dataframe(df, width="stretch", hide_index=True)
+
+    with tabs[3]:
+        st.markdown("### Predictions")
+        payload = st.session_state.get("last_payload")
+        result = st.session_state.get("last_result")
+        per_df = st.session_state.get("last_per_df", pd.DataFrame())
+
+        left, right = st.columns(2)
+        with left:
+            st.markdown("#### Last payload")
+            st.json(payload if payload else {"status": "No payload yet"})
+        with right:
+            st.markdown("#### Last result")
+            st.json(result if result else {"status": "No result yet"})
+
+        if per_df is not None and not per_df.empty:
+            st.markdown("#### Last endpoint table")
+            st.dataframe(per_df, width="stretch", hide_index=True)
+
+    with tabs[4]:
+        st.markdown("### Runs")
+        runs = get_runs(st)
+        if runs:
+            runs_df = pd.DataFrame(runs[::-1])
+            st.dataframe(runs_df, width="stretch", hide_index=True)
+            st.download_button(
+                "Download run log",
+                data=runs_df.to_csv(index=False).encode("utf-8"),
+                file_name="oligotox_run_log.csv",
+                mime="text/csv",
+                width="stretch",
+            )
+        else:
+            st.info("No runs logged yet.")
+
+    with tabs[5]:
+        st.markdown("### Curation")
+        assay_rules = APP_DIR / "assay_rules.csv"
+        comparator_template = APP_DIR / "comparator_template.csv"
+
+        left, right = st.columns(2)
+        with left:
+            st.markdown("#### Assay rules")
+            if assay_rules.exists():
+                st.dataframe(pd.read_csv(assay_rules), width="stretch", hide_index=True)
+            else:
+                st.warning("app/assay_rules.csv not found.")
+
+        with right:
+            st.markdown("#### Comparator template")
+            if comparator_template.exists():
+                st.dataframe(pd.read_csv(comparator_template), width="stretch", hide_index=True)
+            else:
+                st.warning("app/comparator_template.csv not found.")

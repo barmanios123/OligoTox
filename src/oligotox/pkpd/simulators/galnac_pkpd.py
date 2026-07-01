@@ -1,28 +1,26 @@
-"""GalNAc-conjugated oligonucleotide PKPD simulator"""
+"""GalNAc-conjugated oligonucleotide PKPD simulator."""
 import numpy as np
-from scipy.integrate import odeint
-from typing import Dict, List
+from typing import Dict, List, Optional
 
-class GalNacPKPD:
-    """Physiologically-based PK/PD model for GalNAc-oligonucleotides."""
+class GalNAcPKPDSimulator:
+    """PBPK/PD model for GalNAc-conjugated oligonucleotides."""
     
     def __init__(self):
-        # Default PK parameters for GalNAc-siRNA
-        self.params = {
-            'ka': 0.5,  # absorption rate
-            'CL_plasma': 5.0,  # plasma clearance (L/h)
-            'V_plasma': 3.0,  # plasma volume (L)
-            'k_liver_uptake': 2.0,  # liver uptake rate
-            'k_endosome': 1.5,  # endosomal release
-            'k_risc': 0.8,  # RISC loading
-            'k_deg': 0.05,  # degradation
-            'IC50': 10.0,  # nM
-        }
-    
-    def simulate(self, 
+        # Physiological parameters
+        self.body_weight = 70  # kg
+        self.liver_volume = 1.5  # L
+        self.plasma_volume = 3.0  # L
+        
+        # PK parameters for GalNAc-ASO
+        self.ka = 0.5  # Absorption rate (h^-1)
+        self.ke_plasma = 0.05  # Plasma elimination (h^-1)
+        self.ke_liver = 0.001  # Liver elimination (h^-1)
+        self.liver_uptake_fraction = 0.8
+        
+    def simulate(self,
                  dose_mg: float,
                  duration_hours: float = 168,
-                 dosing_schedule: List[float] = None) -> Dict:
+                 dosing_schedule: Optional[List[float]] = None) -> Dict:
         """Simulate PK/PD over time.
         
         Args:
@@ -31,48 +29,43 @@ class GalNacPKPD:
             dosing_schedule: List of dosing times (hours)
             
         Returns:
-            Dict with time, plasma_conc, liver_conc, target_knockdown
+            Dictionary with 'time', 'plasma', and 'liver' concentration arrays
         """
         if dosing_schedule is None:
-            dosing_schedule = [0]  # Single dose
+            dosing_schedule = [0]  # Single dose at time 0
         
-        # Time points
-        t = np.linspace(0, duration_hours, 1000)
+        # Time grid
+        dt = 0.5  # hours
+        time = np.arange(0, duration_hours + dt, dt)
         
-        # Initial conditions [plasma, liver, endosome, RISC, target]
-        y0 = [0, 0, 0, 0, 100]  # 100% baseline target
+        # Initialize compartments
+        plasma = np.zeros_like(time)
+        liver = np.zeros_like(time)
         
-        # Solve ODE
-        solution = odeint(self._pk_pd_model, y0, t, args=(self.params, dose_mg, dosing_schedule))
+        # Convert dose to concentration
+        dose_per_dose = dose_mg / self.body_weight  # mg/kg
+        
+        # Simulate each dose
+        for dose_time in dosing_schedule:
+            dose_idx = int(dose_time / dt)
+            if dose_idx >= len(time):
+                continue
+                
+            # Simple 2-compartment model
+            for i in range(dose_idx + 1, len(time)):
+                t_since_dose = time[i] - dose_time
+                
+                # Plasma concentration (absorption and elimination)
+                plasma[i] += (dose_per_dose * self.ka * 
+                             np.exp(-self.ke_plasma * t_since_dose) * 
+                             (1 - np.exp(-self.ka * t_since_dose)))
+                
+                # Liver accumulation
+                liver[i] += (dose_per_dose * self.liver_uptake_fraction * 
+                            np.exp(-self.ke_liver * t_since_dose))
         
         return {
-            'time_hours': t,
-            'plasma_conc_nM': solution[:, 0],
-            'liver_conc_nM': solution[:, 1],
-            'risc_loaded_nM': solution[:, 3],
-            'target_knockdown_pct': 100 - solution[:, 4],
-            'auc_plasma': np.trapz(solution[:, 0], t),
-            'max_knockdown': 100 - solution[:, 4].min()
+            'time': time,
+            'plasma': plasma,
+            'liver': liver
         }
-    
-    def _pk_pd_model(self, y, t, params, dose, schedule):
-        """ODE system for GalNAc PK/PD."""
-        plasma, liver, endo, risc, target = y
-        
-        # Dosing function
-        dose_rate = 0
-        for dose_time in schedule:
-            if abs(t - dose_time) < 0.1:
-                dose_rate = dose * 1000 / params['V_plasma']  # mg to nM
-        
-        # ODEs
-        dplasma = dose_rate - params['CL_plasma']*plasma/params['V_plasma'] - params['k_liver_uptake']*plasma
-        dliver = params['k_liver_uptake']*plasma - params['k_endosome']*liver
-        dendo = params['k_endosome']*liver - params['k_risc']*endo
-        drisc = params['k_risc']*endo - params['k_deg']*risc
-        
-        # Target knockdown (mRNA)
-        knockdown_rate = risc / (params['IC50'] + risc)
-        dtarget = -knockdown_rate * target + 0.05 * (100 - target)  # synthesis
-        
-        return [dplasma, dliver, dendo, drisc, dtarget]
