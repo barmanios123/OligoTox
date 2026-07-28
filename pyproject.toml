@@ -8,6 +8,28 @@ version = "0.1.0"
 description = "Oligonucleotide toxicity modeling toolkit"
 readme = "README.md"
 requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "scikit-learn>=1.3",
+    "torch>=2.0",
+    "joblib>=1.3",
+    "streamlit>=1.30",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi>=0.100",
+    "uvicorn>=0.23",
+    "pydantic>=2.0",
+]
+advanced = [
+    "plotly>=5.0",
+    "transformers>=4.30",
+    "gseapy>=1.0",
+    "datasets>=2.0",
+    "pyyaml>=6.0",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
