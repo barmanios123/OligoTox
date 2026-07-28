@@ -60,17 +60,37 @@ class EfficacyModelRegistry:
             raise ValueError(f"Unknown model: {name}. Available: {self.list_models()}")
         return self.models[name]
     
+    # Models with a sequences-list-only interface: predict(self, sequences)
+    _SEQ_LIST_MODELS = {"OligoFormer", "ENsiRNA", "siDPT"}
+
+    def _score_from_seq_list_model(self, name, model, sequence):
+        """Call sequence-list style models and reduce output to a single float score."""
+        output = model.predict([sequence])
+        if isinstance(output, dict):
+            scores = output.get("efficacy_scores")
+            if scores is None:
+                scores = next(iter(output.values()))
+            value = float(np.asarray(scores).reshape(-1)[0])
+            if value <= 1.0:
+                value *= 100.0
+            return value
+        else:
+            value = float(np.asarray(output).reshape(-1)[0])
+            return value
+
     def predict_all(self, sequence: str, modality: str = "siRNA",
-                   chemistry: str = "PS") -> Dict[str, float]:
+                     chemistry: str = "PS") -> Dict[str, float]:
         """Run all compatible models and return results dict."""
         results = {}
         for name, model in self.models.items():
             try:
                 if hasattr(model, 'modalities') and modality not in model.modalities:
                     continue
-                results[name] = model.predict(sequence, modality, chemistry)
+                if name in self._SEQ_LIST_MODELS:
+                    results[name] = self._score_from_seq_list_model(name, model, sequence)
+                else:
+                    results[name] = model.predict(sequence, modality, chemistry)
             except Exception as e:
                 print(f"Warning: {name} failed: {e}")
                 results[name] = 0.5  # Default fallback
         return results
-

@@ -28,7 +28,7 @@ class siDPT(nn.Module):
         self.eval()
         # Simplified feature extraction
         features = [self._featurize(seq) for seq in sequences]
-        x = torch.tensor(features, dtype=torch.float32)
+        x = torch.tensor(np.array(features), dtype=torch.float32)
         with torch.no_grad():
             scores = self(x)
         return scores.cpu().numpy()
