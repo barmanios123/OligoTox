@@ -409,7 +409,6 @@ src/oligotox/training/train.py
 4. `README.md` - User-facing documentation
 
 ### Data Preservation
-- **Legacy Snapshots**: `data/preserved/legacy_snapshot/`
 - **Archives**: `_local_only/archive/`
 - **Backups**: `_local_only/backups/`
 

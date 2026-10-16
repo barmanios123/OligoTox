@@ -6,7 +6,7 @@ OligoTox is a mechanism-aware safety, translational interpretation, and candidat
 
 Oligonucleotide programs can fail for very different reasons: exaggerated on-target pharmacology, hybridization-dependent off-target effects, and liabilities introduced by chemistry, formulation, conjugates, or delivery strategy. OligoTox is organized around those risk classes to support earlier, more structured candidate review.
 
-The repository is designed to present a clean package + app + docs story:
+The repository is organized as a package, an app, and supporting docs:
 
 - `src/oligotox/` contains the core package code
 - `oligotox_app.py` is the primary Streamlit operator console entrypoint
@@ -50,9 +50,7 @@ The current platform supports the following verified capabilities:
 - `data/` — local data assets used by the workflow
 - `artifacts/` — local runtime artifacts such as model outputs, configs, and run products
 
-Some local-only, generated, archival, or environment-specific content may exist in the working tree without being intended as part of the clean public repo surface. The public repository should be interpreted primarily through the package code, app entrypoint, validation entrypoint, scripts, and docs.
-
-## One obvious app entrypoint
+## Run the app
 
 Launch the app with:
 
@@ -60,7 +58,7 @@ Launch the app with:
 bash scripts/run_app.sh
 ```
 
-This wrapper runs the canonical Streamlit entrypoint:
+This wraps the Streamlit entrypoint:
 
 ```bash
 streamlit run oligotox_app.py --server.port 8502
@@ -72,7 +70,7 @@ Then open:
 http://localhost:8502
 ```
 
-## One obvious validation command
+## Validate
 
 Validate the platform with:
 
@@ -166,7 +164,7 @@ Start here:
 
 ## Status
 
-The repository contains a working Streamlit app entrypoint, validated backend components, health-check scripts, and a cleaner public-facing structure. The platform is suitable for internal review, demo workflows, and iterative client-facing refinement.
+Working Streamlit app, validated backend components, and health-check scripts. Suitable for candidate review, demos, and collaboration discussions.
 
 ## License
 

@@ -123,3 +123,8 @@ external/
 
 # Notebook noise
 notebooks/.ipynb_checkpoints/
+
+# Generated status logs and legacy snapshots
+reports/*_after_*.txt
+reports/repo_polish/
+data/preserved/
