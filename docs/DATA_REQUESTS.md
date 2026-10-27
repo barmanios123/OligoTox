@@ -71,8 +71,11 @@ models from 2,838 sequences to a corpus comparable with anything proprietary.
 The siRNA potency model already transfers between independent studies
 (Spearman 0.46 and 0.49), so more data has a clear path to improving it.
 
-**Status:** preprint. Check whether the corpus is released with it before
-asking.
+**Status:** preprint, availability unconfirmed. An automated read of the
+bioRxiv landing page returned HTTP 429, so the data availability statement
+has not been checked. Before writing to the authors, open the preprint and
+look for a Zenodo DOI, GitHub repository or Hugging Face dataset; the
+OligoAI platform they describe may host it directly.
 
 ---
 
