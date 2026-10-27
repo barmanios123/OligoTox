@@ -79,11 +79,15 @@ keep saying it is unfitted rather than acquiring a second unvalidated layer.
 **What:** the six processed datasets in `data/oligogym/`, 1.4 MB, which the
 CNS neurotoxicity and potency validation depend on.
 
-**Why it is open:** they are tracked and public, unlike `data/raw/`, because
-removing them would break the reproducibility this repository claims. They
-are processed derivatives rather than publisher PDFs, which is a different
-position, but their redistribution terms have **not** been verified. That
-should be checked before the project gets more visible.
+**Checked, and resolved for now.** The Hugging Face mirror of OligoGym
+states CC BY 4.0, which permits redistribution with attribution. The
+repository was redistributing the files without attributing them, which is
+now fixed: see `data/oligogym/ATTRIBUTION.md`.
+
+**Residual uncertainty:** the CC BY 4.0 label covers the OligoGym packaging.
+Upstream rights in each underlying study were not independently verified and
+no OligoGym LICENSE file was located. If an upstream owner's terms are
+narrower, replace the files with a fetch script and checksums.
 
 **If the terms do not permit redistribution:** replace the files with a
 fetch script and checksums, so the numbers stay reproducible for anyone who
