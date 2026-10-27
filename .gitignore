@@ -135,3 +135,6 @@ data/preserved/
 !data/processed/label_matrix.csv
 !data/processed/training_dataset.csv
 !data/processed/dataset_metadata.json
+
+# Unsent correspondence and other private working documents.
+drafts/

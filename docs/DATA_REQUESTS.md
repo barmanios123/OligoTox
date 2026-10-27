@@ -19,45 +19,12 @@ every internal check and then scores ROC-AUC 0.40 on an independent screen of
 labelled experiments is roughly a thousandfold increase over the external set
 currently available.
 
-**Status:** not released. Needs an email.
+**Status:** not released. Needs an email to the authors.
 
-### Draft
-
-> Subject: Request for the curated rodent ALT/AST dataset described in the ASOptimizer paper
->
-> Dear Dr [Name],
->
-> I'm a pharmacology/toxicology researcher working on sequence-based
-> prediction of oligonucleotide toxicity. Your ASOptimizer paper mentions a
-> curated set of approximately 6,000 publicly available rodent ALT and AST
-> experiments, listed as a planned update. I'm writing to ask whether that
-> set is available, or whether you'd be open to sharing it.
->
-> The reason I'm asking is specific. I maintain an open evaluation of
-> oligonucleotide toxicity models (github.com/barmanios123/OligoTox, MIT
-> licensed). Its hepatocellular injury endpoint rests on 19 positive
-> sequences from a single curated source. It passes every internal check I
-> can construct — it beats a data-source-only baseline, beats GC and length
-> baselines, and survives a within-source split — and then scores ROC-AUC
-> 0.40 on the independent 149-gapmer screen from Nucleic Acids Research
-> 2022;50(13):7224, ranking the five hepatotoxic sequences at 23, 76, 87,
-> 120 and 139 of 149. Its probabilities are also uncalibrated, with a Brier
-> skill of −0.01 against the base rate.
->
-> I report all of that openly, including the negative results, because I
-> think the field under-reports them. But the conclusion is that the endpoint
-> is limited by labelled data rather than by method, and your curation is the
-> largest I'm aware of.
->
-> I'd be glad to share back anything useful: the evaluation harness is
-> modality-agnostic and already reports source-confounding baselines,
-> sequence-grouped splits, calibration and external transfer per endpoint. If
-> it would be helpful to run it against your models, I'd be happy to.
->
-> Thank you for considering it.
->
-> Best regards,
-> Beshoy Armanios, PhD, MPH
+A drafted request is kept locally at `drafts/asoptimizer_request_email.md`,
+which is gitignored. The points it has to make are the ones above: the
+endpoint passes every internal check, fails externally, and is limited by
+labelled data rather than method.
 
 ---
 
