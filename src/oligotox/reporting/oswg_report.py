@@ -1,6 +1,6 @@
 """OSWG-aligned safety reporting for oligonucleotides"""
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 import json
 
@@ -74,6 +74,7 @@ class OSWGSafetyReport:
                          "which this build cannot justify. Supply evidence_tiers."
                 ),
             },
+            "conclusions": self._conclusions(),
             "pkpd_characteristics": self.pkpd_summary,
             "regulatory_notes": self._generate_regulatory_notes()
         }
@@ -91,6 +92,54 @@ class OSWGSafetyReport:
         'renal_accumulation': 0.15,
         'cytokine_release': 0.20,
     }
+
+
+    # What a reader may and may not take from this report. A safety assessment
+    # that states the limits of its own evidence is more use to a reviewer than
+    # one that scores every endpoint with equal confidence.
+    EVIDENCE_STANDARD = (
+        "An endpoint supports a conclusion only if it has at least 10 positive "
+        "sequences, beats a baseline using only the originating dataset, beats "
+        "single-feature baselines, and retains signal within one source. "
+        "Cross-validation folds are grouped by sequence."
+    )
+
+    def _conclusions(self) -> Dict[str, Any]:
+        supported = self._supported_endpoints()
+        unsupported = [e for e in self.toxicity_predictions if e not in supported]
+        readable = [e.replace("_", " ") for e in supported]
+
+        can = []
+        cannot = []
+        if supported:
+            can.append(
+                "Relative ranking of candidates on " + ", ".join(readable)
+            )
+            can.append(
+                "Comparison of this candidate against others scored by the same models"
+            )
+        else:
+            cannot.append("Any toxicity conclusion: no endpoint met the evidence standard")
+        if unsupported:
+            cannot.append(
+                f"Any conclusion about {len(unsupported)} endpoint(s) whose models did "
+                "not meet the evidence standard, however they scored"
+            )
+        cannot.append("An absolute probability of toxicity in any species")
+        cannot.append("A prediction of clinical outcome, dose selection or margin of safety")
+        cannot.append("Substitution for in vivo toxicology required by regulation")
+
+        return {
+            "evidence_standard": self.EVIDENCE_STANDARD,
+            "supports": can,
+            "does_not_support": cannot,
+            "endpoints_meeting_standard": supported,
+            "endpoints_below_standard": unsupported,
+            "intended_use": (
+                "Design-time triage to deprioritise candidates. Not a safety "
+                "determination and not a substitute for study data."
+            ),
+        }
 
     def _calculate_risk_score(self) -> float:
         """Weighted mean risk over the endpoints the evaluation supports."""

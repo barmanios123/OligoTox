@@ -85,6 +85,7 @@ The practical consequences:
 
 - **The composite score averages one endpoint, not 13,** and the tab says so ("Composite covers 1 of 13 endpoints"). Previously it was a severity-weighted mean over all 13, so eleven unsupported models diluted the one that works. On a test candidate the old composite named *renal tubular injury* — 7 positive sequences, beaten by a length-only baseline — as the dominant endpoint.
 - **Unsupported endpoints never return `predicted_positive`.** They return `null` with an `evidence_tier` and a plain-English `evidence_note` saying which baseline beat them.
+- **The report states what its own evidence supports.** Every JSON report carries a `conclusions` block naming the evidence standard, what the report supports (relative ranking on the endpoints that met it), and what it does not: an absolute probability of toxicity, a clinical outcome or dose, or a substitute for in vivo toxicology. A report with no validated endpoint supports nothing and says so.
 - **The regulatory report raises no recommendation from an unsupported endpoint,** whatever it scores. It used to emit "Immunogenicity assessment required per OSWG guidelines" from a complement-activation model fit on 6 positive sequences. A report with no validated endpoint is classified `UNCLASSIFIED_NO_VALIDATED_ENDPOINT` rather than `LOW_RISK`.
 
 Nothing is hidden: every model output is still shown and still in the downloadable JSON. The tier decides whether it is labelled a prediction.

@@ -133,3 +133,40 @@ def test_report_still_acts_on_a_validated_endpoint():
     # thrombocytopenia at 1.0 must not move the score.
     assert report._calculate_risk_score() == 0.9
     assert report._classify_safety() == "HIGH_RISK"
+
+
+def test_report_states_what_its_evidence_supports():
+    """A safety report should bound its own claims, not just score endpoints."""
+    report = OSWGSafetyReport(
+        compound_id="TEST-CONCL",
+        sequence="AUGC" * 5,
+        assessment_date="2026-10-27",
+        toxicity_predictions={"hepatocellular_injury": 0.3, "thrombocytopenia": 0.9},
+        pkpd_summary={},
+        evidence_tiers={"hepatocellular_injury": "validated",
+                        "thrombocytopenia": "insufficient_data"},
+    )
+    conclusions = json.loads(report.generate_report(format="json"))["conclusions"]
+
+    assert conclusions["endpoints_meeting_standard"] == ["hepatocellular_injury"]
+    assert conclusions["endpoints_below_standard"] == ["thrombocytopenia"]
+    assert any("ranking" in c for c in conclusions["supports"])
+    # The limits a reviewer needs stated explicitly.
+    joined = " ".join(conclusions["does_not_support"]).lower()
+    assert "absolute probability" in joined
+    assert "in vivo" in joined
+    assert conclusions["evidence_standard"]
+
+
+def test_a_report_with_no_validated_endpoint_supports_nothing():
+    report = OSWGSafetyReport(
+        compound_id="TEST-NONE",
+        sequence="AUGC" * 5,
+        assessment_date="2026-10-27",
+        toxicity_predictions={"thrombocytopenia": 0.99},
+        pkpd_summary={},
+        evidence_tiers={"thrombocytopenia": "insufficient_data"},
+    )
+    conclusions = json.loads(report.generate_report(format="json"))["conclusions"]
+    assert conclusions["supports"] == []
+    assert any("no endpoint met" in c.lower() for c in conclusions["does_not_support"])
