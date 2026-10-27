@@ -4,7 +4,37 @@
 **Version**: v1.0 Production Release
 **Maintainer**: Beshoy Armanios, PhD (Pharmacology/Toxicology)
 
+
+> **Correction notice (2026-10-27). The model and metric claims below are
+> superseded and wrong; the citations are not.**
+>
+> This document was written before the label leakage in the training data was
+> found. Specifically, do not rely on these statements:
+>
+> - **"99.9% average accuracy" / per-model `acc=0.999`.** These came from
+>   leaked outcome columns and row-level splits on endpoints whose base rates
+>   are as low as 0.2%, where accuracy is meaningless anyway. The honest
+>   sequence-grouped numbers are PR-AUCs between 0.03 and 0.48, and only one
+>   endpoint of 13 beats its baselines. See the root `README.md`.
+> - **RandomForestClassifier, `n_estimators=100`, `max_depth=10`, ~1.7 MB
+>   models, `endpoint_*.joblib` filenames.** Models are now calibrated
+>   logistic regression (`CalibratedClassifierCV` over `LogisticRegression`),
+>   about 6.8 KB each, named `<endpoint>.joblib`.
+> - **"1,576 sequences, 49 features".** The data is 1,614 rows covering 74
+>   unique sequences, with 55 features.
+> - **`cas_avg` / `kd_avg` ("CAS average", "Kd average") as features.** Both
+>   were removed: they are measured after dosing and don't exist for a new
+>   design.
+> - **DataSAIL as the headline split.** Folds come from
+>   `StratifiedGroupKFold` grouped on the normalized sequence; the DataSAIL
+>   run is kept only as a diagnostic.
+>
+> The primary data sources and citations above are still accurate and are the
+> reason this file is kept. The root `README.md` and `data/README.md` are
+> authoritative for anything about models, features or metrics.
+
 ---
+
 
 ## 📖 PRIMARY DATA SOURCES & CITATIONS
 

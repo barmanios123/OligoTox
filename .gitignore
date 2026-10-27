@@ -117,7 +117,7 @@ output/
 artifacts/metrics/
 artifacts/eval/
 artifacts/registry/
-data/processed/
+data/processed/*
 external/
 
 # Notebook noise
@@ -127,3 +127,11 @@ notebooks/.ipynb_checkpoints/
 reports/*_after_*.txt
 reports/repo_polish/
 data/preserved/
+
+# The four files every published number is computed from, so the evaluation is
+# reproducible from a clone. Everything else in data/processed is an
+# intermediate or a superseded variant and stays out.
+!data/processed/feature_matrix.csv
+!data/processed/label_matrix.csv
+!data/processed/training_dataset.csv
+!data/processed/dataset_metadata.json
