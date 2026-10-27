@@ -13,9 +13,18 @@ data/processed/
 └── dataset_metadata.json   column manifest and training hash
 ```
 
-Everything else under `data/` is a local intermediate or a superseded variant
-and is gitignored: `data/raw/` (160 MB) and the rest of `data/processed/`
-(445 MB) are not distributed.
+Everything else under `data/` stays local. `data/raw/` (160 MB) and the rest
+of `data/processed/` (445 MB) are gitignored and not distributed.
+
+`data/raw/` holds source papers, FDA reviews and third-party datasets
+gathered while building this. It was tracked by mistake for a time: the
+ignore rule was added after those files were already committed, and a
+gitignore rule does not untrack what is already in. They have since been
+removed from the repository. They are not redistributed here, because the
+journal PDFs are publisher copyright and the third-party datasets carry their
+own terms, neither of which this repository's MIT licence can grant. Cite and
+obtain them from their sources, listed in
+`docs/provenance/DATA_AND_MODEL_PROVENANCE.md`.
 
 ## Dataset
 

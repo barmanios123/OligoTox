@@ -265,7 +265,7 @@ The suite checks that leaky columns can't re-enter training, that published metr
 
 ## Reproducing the numbers
 
-The data every published number is computed from is in the repo, so the evaluation is checkable rather than claimed. Four files, 1.2 MB total: `feature_matrix.csv` (1,614 x 39), `label_matrix.csv`, `training_dataset.csv` (sequences, source and curated labels) and `dataset_metadata.json`. Every source in them is public literature, a PMID/PMC paper or an FDA label; the other contents of `data/processed/` are intermediates and stay out.
+The data every published number is computed from is in the repo, so the evaluation is checkable rather than claimed. Four files, 1.2 MB total: `feature_matrix.csv` (1,614 x 39), `label_matrix.csv`, `training_dataset.csv` (sequences, source and curated labels) and `dataset_metadata.json`. Every source in them is public literature, a PMID/PMC paper or an FDA label; the other contents of `data/processed/` are intermediates and stay out, as does `data/raw/`, which holds source papers and third-party datasets this repository has no right to redistribute.
 
 From a fresh clone, training takes about 10 seconds and the baselines about 95 seconds:
 
