@@ -4,7 +4,7 @@
 
 OligoTox scores antisense oligos and siRNAs for 13 preclinical toxicity endpoints from design-time features only: sequence, chemistry and modality. It wraps the models in a Streamlit console that adds a GalNAc-siRNA PK/PD simulation and a regulatory-style safety report.
 
-The main result is in the evaluation. The first version scored PR-AUC 0.93 on hepatocellular injury. Most of that came from label leakage and from splitting replicate rows of the same oligo across train and test. After fixing both, the honest number is 0.27 against a 0.13 base rate. Baselines then showed that the one apparently strong endpoint is mostly dataset recognition, not biology. This README reports the fixed numbers and the baselines that qualify them.
+The main result is in the evaluation. The first version scored PR-AUC 0.93 on hepatocellular injury. Most of that came from label leakage and from splitting replicate rows of the same oligo across train and test. After fixing both, the honest number is 0.27 against a 0.13 base rate. Baselines then showed that the one apparently strong endpoint is mostly dataset recognition, not biology. Of the 13 endpoints, 1 survives that scrutiny, and the app presents only that one as a prediction — the rest run but are labelled unsupported, with the reason attached.
 
 ## Results
 
@@ -60,6 +60,25 @@ All 12 evaluated endpoints are in [`reports/results/baselines.csv`](reports/resu
 - **Endpoints with 4–7 positive sequences** are not reliable estimates, and several are beaten by the length-only baseline. Treat them as placeholders until more labeled data arrives.
 - **Gradient boosting matches or beats the shipped logistic model** on several endpoints, but every CI overlaps. With 74 sequences there is no evidence to prefer either, so the shipped model stays the simpler, calibrated one.
 
+## What the app will and won't tell you
+
+The evaluation above is enforced in the app, not just described here. `scripts/derive_evidence_tiers.py` turns `baselines.csv` into `artifacts/config/endpoint_evidence.json`, which the scoring pipeline and the report read at runtime. Each endpoint lands in one tier:
+
+| Tier | Endpoints | How the app presents it |
+|---|---|---|
+| **Validated** | hepatocellular injury | A prediction. Enters the composite score. |
+| **Weak signal** | injection site reaction, offtarget gene silencing | Model output shown with its CI and the baseline it fails to clear. Not a prediction. |
+| **Source-confounded** | kupffer cell activation | Model output shown, labelled as dataset recognition. Not a prediction. |
+| **Insufficient data** | the remaining 9 | Model output shown with its positive-sequence count. Not a prediction. |
+
+The practical consequences:
+
+- **The composite score averages one endpoint, not 13,** and the tab says so ("Composite covers 1 of 13 endpoints"). Previously it was a severity-weighted mean over all 13, so eleven unsupported models diluted the one that works. On a test candidate the old composite named *renal tubular injury* — 7 positive sequences, beaten by a length-only baseline — as the dominant endpoint.
+- **Unsupported endpoints never return `predicted_positive`.** They return `null` with an `evidence_tier` and a plain-English `evidence_note` saying which baseline beat them.
+- **The regulatory report raises no recommendation from an unsupported endpoint,** whatever it scores. It used to emit "Immunogenicity assessment required per OSWG guidelines" from a complement-activation model fit on 6 positive sequences. A report with no validated endpoint is classified `UNCLASSIFIED_NO_VALIDATED_ENDPOINT` rather than `LOW_RISK`.
+
+Nothing is hidden: every model output is still shown and still in the downloadable JSON. The tier decides whether it is labelled a prediction.
+
 ## Run it
 
 ```bash
@@ -79,7 +98,7 @@ pip install pytest
 pytest -q
 ```
 
-The suite checks that leaky columns can't re-enter training, that published metrics are sequence-grouped, that app-time features match the trained columns, that the baseline results cover every evaluated endpoint with valid CIs, and that the app completes a full run headlessly. CI runs it on every push.
+The suite checks that leaky columns can't re-enter training, that published metrics are sequence-grouped, that app-time features match the trained columns, that the baseline results cover every evaluated endpoint with valid CIs, and that the app completes a full run headlessly. It also re-derives every evidence tier from `baselines.csv` and asserts the shipped config agrees, so the tiers can't drift from the evaluation; that the predictions table lists only validated endpoints; and that an unsupported endpoint scoring 1.0 raises no regulatory recommendation. CI runs it on every push.
 
 ### Retrain and regenerate the figures
 
@@ -91,16 +110,19 @@ cp artifacts/metrics/training_summary.json reports/results/training_summary_afte
 python scripts/make_results_figure.py
 python scripts/evaluate_baselines.py     # writes baselines.csv and within_source.csv
 python scripts/make_baselines_figure.py  # writes baselines.png
+python scripts/derive_evidence_tiers.py  # writes artifacts/config/endpoint_evidence.json
 ```
+
+The last step is what the app reads, so rerun it after any change to the baselines, or the tier test will fail.
 
 ## What's in the app
 
 | Tab | What it does | Status |
 |---|---|---|
 | Candidate Input | Sequence, chemistry, modality and dose entry, with validation | — |
-| Toxicity Results | 13 per-endpoint probabilities, a severity-weighted composite and a risk band | Trained models, validated above |
+| Toxicity Results | Predictions for the validated endpoints, a composite over those only, and the remaining model outputs behind an expander with the reason each is excluded | Gated by evidence tier |
 | PK/PD | Liver AUC, Cmax and half-life from a GalNAc-siRNA compartment simulator | Mechanistic simulator, not fitted to this data |
-| Regulatory Report | OSWG-style JSON safety summary built from the other tabs | Report formatting |
+| Regulatory Report | OSWG-style JSON safety summary, with an evidence block and recommendations raised only from validated endpoints | Report formatting |
 | Saved Runs | Runs kept during the session | — |
 | Build Info | Model versions, feature count and config provenance | — |
 
@@ -109,7 +131,8 @@ An earlier Efficacy tab held untrained model slots and produced no predictions. 
 ## Limitations
 
 - 74 unique sequences is small. Nine of the 13 endpoints have 7 or fewer positive sequences.
-- Only hepatocellular injury has a signal that survives both the data-source baseline and a within-source check. Kupffer cell activation, the highest raw score, does not.
+- **Only 1 of the 13 endpoints is presented as a prediction.** Hepatocellular injury is the one whose signal survives both the data-source baseline and a within-source check; Kupffer cell activation, the highest raw score, does not. The other 12 models ship and run, but the app labels them as unsupported.
+- The one validated endpoint rests on 19 positive sequences, and the within-source confirmation comes from a single dataset. A second independent source is what would settle it.
 - Several endpoints draw all their positives from one source dataset, so source and biology cannot be separated for them with this data.
 - The structure features use a placeholder MFE, and the sequence embedding is a hash, not a learned model.
 - The PK/PD simulator is mechanistic and has not been fitted or validated against measured exposure data.
@@ -119,9 +142,9 @@ An earlier Efficacy tab held untrained model slots and produced no predictions. 
 ```
 oligotox_app.py          Streamlit console
 src/oligotox/            package: features, training, scoring, PK/PD, reporting
-artifacts/models|config  shipped trained models and scoring config
+artifacts/models|config  shipped trained models, scoring config, evidence tiers
 reports/results/         metrics, baselines and the figures
-scripts/                 results figure, baseline evaluation, dev helpers
+scripts/                 results figure, baseline evaluation, tier derivation
 tests/                   pytest suite (run in CI)
 benchmarks/oligogym/     leakage-aware benchmark scripts
 docs/                    architecture and provenance notes

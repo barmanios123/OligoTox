@@ -8,6 +8,7 @@ from oligotox.models.loader import (
     load_dataset_metadata,
     load_feature_template,
     load_endpoint_models,
+    load_endpoint_evidence,
     load_thresholds,
     load_composite_config,
 )
@@ -57,6 +58,7 @@ def score_candidate(
 
     thresholds = load_thresholds(config_dir)
     composite_cfg = load_composite_config(config_dir)
+    evidence = load_endpoint_evidence(config_dir)
 
     # The shipped config carries the trained columns and endpoints, so scoring
     # works from a fresh clone without the processed training data.
@@ -76,6 +78,7 @@ def score_candidate(
         trained_feature_columns=trained_feature_columns,
     )
 
+    endpoint_evidence = evidence["endpoints"]
     endpoint_probs = {}
     per_endpoint = {}
 
@@ -83,23 +86,54 @@ def score_candidate(
         proba = model.predict_proba(X_row); prob = float(proba[0, 1] if proba.shape[1] > 1 else proba[0, 0])
         endpoint_probs[endpoint] = prob
         thr = thresholds.get(endpoint, {}).get("threshold")
-        per_endpoint[endpoint] = summarize_endpoint(
+        summary = summarize_endpoint(
             endpoint=endpoint,
             prob=prob,
             threshold=thr,
             bands=composite_cfg["risk_bands"],
         )
+        # An endpoint the evaluation doesn't support is reported, but never as a
+        # prediction: see scripts/derive_evidence_tiers.py.
+        ev = endpoint_evidence.get(endpoint, {})
+        tier = ev.get("tier", "insufficient_data")
+        summary["evidence_tier"] = tier
+        summary["evidence_note"] = ev.get("reason")
+        summary["cv_pr_auc"] = ev.get("pr_auc")
+        summary["base_rate"] = ev.get("base_rate")
+        summary["positive_sequences"] = ev.get("positive_sequences")
+        if tier != "validated":
+            summary["predicted_positive"] = None
+        per_endpoint[endpoint] = summary
 
-    composite_score = weighted_composite_score(
-        endpoint_probs=endpoint_probs,
-        endpoint_weights=composite_cfg["endpoint_weights"],
+    # The composite only averages endpoints that survived the baselines, so it
+    # can't dilute the one supported endpoint with eleven unsupported ones.
+    basis = [e for e in endpoint_probs if per_endpoint[e]["evidence_tier"] == "validated"]
+    validated_probs = {e: endpoint_probs[e] for e in basis}
+
+    composite_score = (
+        weighted_composite_score(
+            endpoint_probs=validated_probs,
+            endpoint_weights=composite_cfg["endpoint_weights"],
+        )
+        if validated_probs
+        else None
     )
-    dominant = top_risk_endpoint(endpoint_probs)
+    dominant = top_risk_endpoint(validated_probs)
+
+    tiers: Dict[str, list[str]] = {}
+    for endpoint, info in per_endpoint.items():
+        tiers.setdefault(info["evidence_tier"], []).append(endpoint)
 
     return {
         "composite_score": composite_score,
-        "composite_band": probability_to_band(composite_score, composite_cfg["risk_bands"]),
+        "composite_band": (
+            probability_to_band(composite_score, composite_cfg["risk_bands"])
+            if composite_score is not None
+            else None
+        ),
+        "composite_basis": basis,
         "dominant_endpoint": dominant,
         "per_endpoint": per_endpoint,
+        "endpoints_by_tier": {tier: sorted(v) for tier, v in sorted(tiers.items())},
         "feature_columns": trained_feature_columns,
     }

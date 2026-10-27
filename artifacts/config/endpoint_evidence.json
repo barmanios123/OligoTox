@@ -1,0 +1,237 @@
+{
+  "description": "Evidence tier per endpoint, derived from reports/results/baselines.csv by scripts/derive_evidence_tiers.py. Only 'validated' endpoints are presented as predictions and only they enter the composite score.",
+  "min_positive_sequences": 10,
+  "tiers": [
+    "validated",
+    "weak",
+    "source_confounded",
+    "insufficient_data"
+  ],
+  "composite_endpoints": [
+    "hepatocellular_injury"
+  ],
+  "endpoints": {
+    "hepatocellular_injury": {
+      "tier": "validated",
+      "reason": "PR-AUC 0.27 [0.19-0.52] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source",
+      "pr_auc": 0.2723,
+      "ci_low": 0.1927,
+      "ci_high": 0.5154,
+      "base_rate": 0.1258,
+      "positive_sequences": 19,
+      "source_only_pr_auc": 0.2012,
+      "best_simple_baseline_pr_auc": 0.1479,
+      "checks": {
+        "has_enough_sequences": true,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": true,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "injection_site_reaction": {
+      "tier": "weak",
+      "reason": "the model's 95% CI reaches 0.06, below the best simple baseline (0.20), so it is not distinguishable from one crude sequence number",
+      "pr_auc": 0.2627,
+      "ci_low": 0.0633,
+      "ci_high": 0.4897,
+      "base_rate": 0.0074,
+      "positive_sequences": 12,
+      "source_only_pr_auc": 0.0107,
+      "best_simple_baseline_pr_auc": 0.2048,
+      "checks": {
+        "has_enough_sequences": true,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "offtarget_gene_silencing": {
+      "tier": "weak",
+      "reason": "the model's 95% CI reaches 0.05, below the best simple baseline (0.06), so it is not distinguishable from one crude sequence number",
+      "pr_auc": 0.19,
+      "ci_low": 0.0498,
+      "ci_high": 0.5948,
+      "base_rate": 0.0421,
+      "positive_sequences": 12,
+      "source_only_pr_auc": 0.0636,
+      "best_simple_baseline_pr_auc": 0.0589,
+      "checks": {
+        "has_enough_sequences": true,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "kupffer_cell_activation": {
+      "tier": "source_confounded",
+      "reason": "the data-source-only baseline scores 0.69 against the model's 0.48, so the model is recognising the source dataset, not the design",
+      "pr_auc": 0.4774,
+      "ci_low": 0.3191,
+      "ci_high": 0.7041,
+      "base_rate": 0.0211,
+      "positive_sequences": 27,
+      "source_only_pr_auc": 0.6896,
+      "best_simple_baseline_pr_auc": 0.1359,
+      "checks": {
+        "has_enough_sequences": true,
+        "beats_source_baseline": false,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": true,
+        "beats_base_rate_within_source": false
+      }
+    },
+    "cns_toxicity": {
+      "tier": "insufficient_data",
+      "reason": "2 positive sequences; not evaluated",
+      "pr_auc": null,
+      "positive_sequences": 2
+    },
+    "coagulation_effect": {
+      "tier": "insufficient_data",
+      "reason": "5 positive sequences; PR-AUC is not a usable estimate below 10",
+      "pr_auc": 0.0637,
+      "ci_low": 0.0103,
+      "ci_high": 0.2457,
+      "base_rate": 0.0031,
+      "positive_sequences": 5,
+      "source_only_pr_auc": 0.0064,
+      "best_simple_baseline_pr_auc": 0.0834,
+      "checks": {
+        "has_enough_sequences": false,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "complement_activation": {
+      "tier": "insufficient_data",
+      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10",
+      "pr_auc": 0.0863,
+      "ci_low": 0.0158,
+      "ci_high": 0.3237,
+      "base_rate": 0.0037,
+      "positive_sequences": 6,
+      "source_only_pr_auc": 0.0065,
+      "best_simple_baseline_pr_auc": 0.1041,
+      "checks": {
+        "has_enough_sequences": false,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "cytokine_release": {
+      "tier": "insufficient_data",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
+      "pr_auc": 0.0573,
+      "ci_low": 0.021,
+      "ci_high": 0.1772,
+      "base_rate": 0.0043,
+      "positive_sequences": 7,
+      "source_only_pr_auc": 0.0072,
+      "best_simple_baseline_pr_auc": 0.1189,
+      "checks": {
+        "has_enough_sequences": false,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "hepatic_vacuolation": {
+      "tier": "insufficient_data",
+      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10",
+      "pr_auc": 0.1578,
+      "ci_low": 0.0405,
+      "ci_high": 0.3432,
+      "base_rate": 0.0074,
+      "positive_sequences": 6,
+      "source_only_pr_auc": 0.1984,
+      "best_simple_baseline_pr_auc": 0.0156,
+      "checks": {
+        "has_enough_sequences": false,
+        "beats_source_baseline": false,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": true,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "innate_immune_activation": {
+      "tier": "insufficient_data",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
+      "pr_auc": 0.0573,
+      "ci_low": 0.0193,
+      "ci_high": 0.1761,
+      "base_rate": 0.0043,
+      "positive_sequences": 7,
+      "source_only_pr_auc": 0.0072,
+      "best_simple_baseline_pr_auc": 0.1189,
+      "checks": {
+        "has_enough_sequences": false,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "renal_accumulation": {
+      "tier": "insufficient_data",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
+      "pr_auc": 0.0277,
+      "ci_low": 0.0035,
+      "ci_high": 0.1008,
+      "base_rate": 0.0043,
+      "positive_sequences": 7,
+      "source_only_pr_auc": 0.0072,
+      "best_simple_baseline_pr_auc": 0.1183,
+      "checks": {
+        "has_enough_sequences": false,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": false,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "renal_tubular_injury": {
+      "tier": "insufficient_data",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
+      "pr_auc": 0.0627,
+      "ci_low": 0.0042,
+      "ci_high": 0.2757,
+      "base_rate": 0.0043,
+      "positive_sequences": 7,
+      "source_only_pr_auc": 0.0111,
+      "best_simple_baseline_pr_auc": 0.1181,
+      "checks": {
+        "has_enough_sequences": false,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": false,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    },
+    "thrombocytopenia": {
+      "tier": "insufficient_data",
+      "reason": "4 positive sequences; PR-AUC is not a usable estimate below 10",
+      "pr_auc": 0.0284,
+      "ci_low": 0.0026,
+      "ci_high": 0.5219,
+      "base_rate": 0.0025,
+      "positive_sequences": 4,
+      "source_only_pr_auc": 0.0037,
+      "best_simple_baseline_pr_auc": 0.0867,
+      "checks": {
+        "has_enough_sequences": false,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": false,
+        "beats_base_rate_within_source": true
+      }
+    }
+  }
+}

@@ -25,6 +25,15 @@ APP_SUBTITLE = (
     "see the README for per-endpoint validation before trusting any score."
 )
 
+# Endpoints are presented by how well the evaluation supports them, not by how
+# confident the model sounds: see scripts/derive_evidence_tiers.py.
+TIER_LABELS = {
+    "validated": "Validated",
+    "weak": "Weak signal",
+    "source_confounded": "Source-confounded",
+    "insufficient_data": "Insufficient data",
+}
+
 PROCESSED_DIR = ROOT / "data" / "processed"
 MODEL_DIR = ROOT / "artifacts" / "models"
 CONFIG_DIR = ROOT / "artifacts" / "config"
@@ -129,12 +138,19 @@ def _build_report(seq, chemistry, toxicity_result, pkpd_result):
             if isinstance(v, (float, int, str, bool)):
                 pkpd_summary[k] = v
 
+    evidence_tiers = {
+        endpoint: info.get("evidence_tier")
+        for endpoint, info in toxicity_result.get("per_endpoint", {}).items()
+        if isinstance(info, dict)
+    }
+
     report = OSWGSafetyReport(
         compound_id=f"RUN-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
         sequence=seq,
         assessment_date=datetime.utcnow().strftime("%Y-%m-%d"),
         toxicity_predictions=toxicity_predictions,
         pkpd_summary=pkpd_summary,
+        evidence_tiers=evidence_tiers,
     )
 
     report_json = report.generate_report(format="json")
@@ -179,9 +195,11 @@ def _load_saved_runs():
             pass
     return pd.DataFrame(rows)
 
-def _render_endpoint_table(toxicity_result):
+def _render_endpoint_table(toxicity_result, tiers=None):
     rows = []
     for endpoint, info in toxicity_result.get("per_endpoint", {}).items():
+        if tiers is not None and info.get("evidence_tier") not in tiers:
+            continue
         rows.append(
             {
                 "endpoint": endpoint,
@@ -191,8 +209,39 @@ def _render_endpoint_table(toxicity_result):
                 "risk_band": info.get("risk_band") if isinstance(info, dict) else None,
             }
         )
-    df = pd.DataFrame(rows).sort_values("value", ascending=False, na_position="last")
-    return df
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+    return df.sort_values("value", ascending=False, na_position="last")
+
+
+def _render_unsupported_table(toxicity_result):
+    """Endpoints the evaluation doesn't support, with why."""
+    rows = []
+    for endpoint, info in toxicity_result.get("per_endpoint", {}).items():
+        tier = info.get("evidence_tier")
+        if tier == "validated":
+            continue
+        rows.append(
+            {
+                "endpoint": endpoint,
+                "tier": TIER_LABELS.get(tier, tier),
+                "model output": _extract_endpoint_value(info),
+                "held-out PR-AUC": info.get("cv_pr_auc"),
+                "base rate": info.get("base_rate"),
+                "positive sequences": info.get("positive_sequences"),
+                "why it is not a prediction": info.get("evidence_note"),
+            }
+        )
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+    order = {label: i for i, label in enumerate(TIER_LABELS.values())}
+    return df.sort_values(
+        ["tier", "positive sequences"],
+        ascending=[True, False],
+        key=lambda s: s.map(order) if s.name == "tier" else s,
+    )
 
 st.title(APP_TITLE)
 st.caption(APP_SUBTITLE)
@@ -284,13 +333,44 @@ with tabs[1]:
         st.info("Run an analysis to view toxicity outputs.")
     else:
         tox = run["toxicity"]
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Composite score", f"{_safe_float(tox.get('composite_score')):.3f}")
-        c2.metric("Band", str(tox.get("composite_band")))
-        c3.metric("Dominant endpoint", str(tox.get("dominant_endpoint")))
+        basis = tox.get("composite_basis") or []
+        total = len(tox.get("per_endpoint", {}))
 
-        endpoint_df = _render_endpoint_table(tox)
-        st.dataframe(endpoint_df, width="stretch", hide_index=True)
+        if tox.get("composite_score") is None:
+            st.warning(
+                "No endpoint in this build passes the evaluation, so no composite score is "
+                "reported. The per-endpoint outputs below are not predictions."
+            )
+        else:
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Composite score", f"{_safe_float(tox.get('composite_score')):.3f}")
+            c2.metric("Band", str(tox.get("composite_band")))
+            c3.metric("Highest validated endpoint", str(tox.get("dominant_endpoint")))
+            st.caption(
+                f"Composite covers {len(basis)} of {total} endpoints "
+                f"({', '.join(e.replace('_', ' ') for e in basis)}). The other "
+                f"{total - len(basis)} are excluded because the baselines don't support them."
+            )
+
+        st.markdown("**Predictions**")
+        validated_df = _render_endpoint_table(tox, tiers={"validated"})
+        if validated_df.empty:
+            st.info("No validated endpoints in this build.")
+        else:
+            st.dataframe(validated_df, width="stretch", hide_index=True)
+
+        unsupported_df = _render_unsupported_table(tox)
+        if not unsupported_df.empty:
+            with st.expander(
+                f"Not supported by the evaluation ({len(unsupported_df)} endpoints) — "
+                "model output shown, but do not read these as predictions"
+            ):
+                st.caption(
+                    "These models run, but each one either loses to a baseline that sees only "
+                    "the source dataset or one crude sequence number, or rests on fewer than 10 "
+                    "positive sequences. They are excluded from the composite score."
+                )
+                st.dataframe(unsupported_df, width="stretch", hide_index=True)
 
         st.download_button(
             "Download toxicity JSON",

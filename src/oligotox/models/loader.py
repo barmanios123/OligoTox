@@ -41,6 +41,12 @@ def load_composite_config(config_dir: str | Path) -> dict:
     return _read_json(config_dir / "composite_config.json")
 
 
+def load_endpoint_evidence(config_dir: str | Path) -> dict:
+    """Evidence tier per endpoint, from scripts/derive_evidence_tiers.py."""
+    config_dir = Path(config_dir)
+    return _read_json(config_dir / "endpoint_evidence.json")
+
+
 def load_endpoint_models(model_dir: str | Path, endpoints: list[str]) -> dict[str, object]:
     model_dir = Path(model_dir)
     out = {}

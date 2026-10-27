@@ -6,14 +6,31 @@ import json
 
 @dataclass
 class OSWGSafetyReport:
-    """FDA/OSWG-aligned safety assessment report."""
+    """FDA/OSWG-aligned safety assessment report.
+
+    `evidence_tiers` maps each endpoint to its tier from
+    artifacts/config/endpoint_evidence.json. Only endpoints tiered "validated"
+    reach the risk score and the regulatory notes; the rest are listed as
+    unsupported. Passing nothing means no evidence information is available,
+    and the report says so rather than treating every endpoint as sound.
+    """
     compound_id: str
     sequence: str
     assessment_date: str
     toxicity_predictions: Dict[str, float]
     pkpd_summary: Dict
     efficacy_score: Optional[float] = None
-    
+    evidence_tiers: Optional[Dict[str, str]] = None
+
+    def _supported_endpoints(self) -> List[str]:
+        """Endpoints the evaluation backs, so safe to act on."""
+        if self.evidence_tiers is None:
+            return list(self.toxicity_predictions)
+        return [e for e in self.toxicity_predictions if self.evidence_tiers.get(e) == "validated"]
+
+    def _supported_predictions(self) -> Dict[str, float]:
+        return {e: self.toxicity_predictions[e] for e in self._supported_endpoints()}
+
     def generate_report(self, format='json') -> str:
         """Generate formatted safety report.
         
@@ -32,6 +49,7 @@ class OSWGSafetyReport:
     
     def _generate_json(self) -> str:
         """Generate JSON report."""
+        supported = self._supported_endpoints()
         report = {
             "compound_id": self.compound_id,
             "sequence": self.sequence,
@@ -41,6 +59,21 @@ class OSWGSafetyReport:
                 "overall_risk": self._calculate_risk_score(),
                 "classification": self._classify_safety()
             },
+            "evidence": {
+                "endpoints_supporting_assessment": supported,
+                "endpoints_not_supported": [
+                    e for e in self.toxicity_predictions if e not in supported
+                ],
+                "tiers": self.evidence_tiers,
+                "note": (
+                    "Only endpoints validated against source, GC and length baselines "
+                    "contribute to overall_risk, classification and regulatory_notes. "
+                    "toxicity_endpoints lists every model output, including unsupported ones."
+                    if self.evidence_tiers is not None
+                    else "No evidence tiers supplied; every endpoint was treated as scoring, "
+                         "which this build cannot justify. Supply evidence_tiers."
+                ),
+            },
             "pkpd_characteristics": self.pkpd_summary,
             "regulatory_notes": self._generate_regulatory_notes()
         }
@@ -48,20 +81,34 @@ class OSWGSafetyReport:
             report["efficacy"] = {"predicted_score": self.efficacy_score}
         return json.dumps(report, indent=2)
     
+    # Relative severity, used only for the endpoints that reach the score. The
+    # weights are normalised over whatever is actually present, so dropping an
+    # unsupported endpoint doesn't cap the score below its own range.
+    SEVERITY_WEIGHTS = {
+        'hepatocellular_injury': 0.25,
+        'complement_activation': 0.20,
+        'thrombocytopenia': 0.20,
+        'renal_accumulation': 0.15,
+        'cytokine_release': 0.20,
+    }
+
     def _calculate_risk_score(self) -> float:
-        """Calculate overall safety risk score."""
-        weights = {
-            'hepatocellular_injury': 0.25,
-            'complement_activation': 0.20,
-            'thrombocytopenia': 0.20,
-            'renal_accumulation': 0.15,
-            'systemic_inflammation': 0.20
-        }
-        score = sum(self.toxicity_predictions.get(k, 0) * v for k, v in weights.items())
-        return round(score, 3)
-    
+        """Weighted mean risk over the endpoints the evaluation supports."""
+        supported = self._supported_predictions()
+        pairs = [
+            (prob, self.SEVERITY_WEIGHTS[endpoint])
+            for endpoint, prob in supported.items()
+            if endpoint in self.SEVERITY_WEIGHTS
+        ]
+        total_weight = sum(w for _, w in pairs)
+        if not pairs or total_weight <= 0:
+            return 0.0
+        return round(sum(p * w for p, w in pairs) / total_weight, 3)
+
     def _classify_safety(self) -> str:
         """Classify safety profile."""
+        if not self._supported_endpoints():
+            return "UNCLASSIFIED_NO_VALIDATED_ENDPOINT"
         risk = self._calculate_risk_score()
         if risk < 0.2:
             return "LOW_RISK"
@@ -69,23 +116,38 @@ class OSWGSafetyReport:
             return "MODERATE_RISK"
         else:
             return "HIGH_RISK"
-    
+
     def _generate_regulatory_notes(self) -> List[str]:
-        """Generate regulatory recommendations."""
+        """Recommendations, raised only from endpoints the evaluation supports.
+
+        A monitoring recommendation driven by a model fit on a handful of
+        positive sequences is worse than no recommendation, so unsupported
+        endpoints raise nothing here however high they score.
+        """
+        supported = self._supported_predictions()
         notes = []
-        
-        # Check hepatotoxicity
-        if self.toxicity_predictions.get('hepatocellular_injury', 0) > 0.5:
+
+        if supported.get('hepatocellular_injury', 0) > 0.5:
             notes.append("Liver function monitoring recommended in clinical trials")
-        
-        # Check immune activation
-        if self.toxicity_predictions.get('complement_activation', 0) > 0.4:
+
+        if supported.get('complement_activation', 0) > 0.4:
             notes.append("Immunogenicity assessment required per OSWG guidelines")
-        
-        # Check renal
-        if self.toxicity_predictions.get('renal_accumulation', 0) > 0.5:
+
+        if supported.get('renal_accumulation', 0) > 0.5:
             notes.append("Renal function monitoring advised")
-        
+
+        unsupported = [e for e in self.toxicity_predictions if e not in supported]
+        if unsupported:
+            notes.append(
+                f"{len(unsupported)} of {len(self.toxicity_predictions)} endpoint models are not "
+                "supported by the held-out evaluation and raised no recommendation here, whatever "
+                "they scored. See the evidence block."
+            )
+        if not supported:
+            notes.append(
+                "No endpoint passed the evaluation, so this report supports no safety conclusion."
+            )
+
         return notes
     
     def _generate_pdf(self) -> str:
