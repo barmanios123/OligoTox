@@ -108,6 +108,18 @@ The shipped `cns_toxicity` model is trained on all 3,338 sequences and uses sequ
 
 Hagedorn's readout is calcium oscillation, and toxicity shows up as a **reduction** in it, so a low score means toxic. `data/oligogym/oligogym_tox_combined_fixed.csv` has this inverted: it labels high scores as toxic and ends up calling 83% of the compounds neurotoxic. The threshold used here is stated in `scripts/evaluate_cns_external.py` and swept over five values, and the result holds across all of them (MOE 0.81 at every cut-off, Hagedorn 0.90 at the strictest).
 
+### External data ingestion
+
+`scripts/normalize_external_tox.py` is the single entry point for the datasets in `data/oligogym/`. It exists because the pre-existing combined files could not be checked: one has a `y_binary` column holding rounded raw readouts, and the other is binary but has Hagedorn's direction inverted. Neither records a threshold or a direction.
+
+Every readout's direction, threshold and citation is declared in one table in that script, and a dataset missing from it is an error rather than a silent default. It also separates the three potency datasets (McQuisten, Ichihara x2, 6,718 sequences) from the three toxicity ones, because a target-inhibition readout sitting in a file named `tox_combined` is how a potency number ends up trained as a safety label.
+
+```bash
+python scripts/normalize_external_tox.py
+```
+
+Writes `external_tox_normalized.csv`, `external_efficacy_normalized.csv` and a manifest recording every labelling decision. Tests assert the direction of each source and that no efficacy readout carries a toxic label.
+
 ## Run it
 
 ```bash
