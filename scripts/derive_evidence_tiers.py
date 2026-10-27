@@ -207,6 +207,26 @@ def main() -> None:
                         "ranking, not as a percentage chance."
                     )
 
+    # A directional external check, too small to change a tier but not to report.
+    hepatotox = RESULTS / "hepatotox_external.json"
+    if hepatotox.exists():
+        ext = json.loads(hepatotox.read_text())
+        entry = endpoints.get("hepatocellular_injury")
+        if entry:
+            entry["external_check"] = {
+                "source": ext["source"], "sequences": ext["sequences"],
+                "positives": ext["positives"], "roc_auc": ext["roc_auc"],
+                "roc_ci": ext["roc_ci"], "status": ext["status"],
+            }
+            if ext["roc_auc"] < 0.5:
+                entry["reason"] += (
+                    f" On an independent screen of {ext['sequences']} LNA gapmers it ranks "
+                    f"the {ext['positives']} hepatotoxic ones no better than chance "
+                    f"(ROC-AUC {ext['roc_auc']:.2f}, CI {ext['roc_ci'][0]:.2f}-"
+                    f"{ext['roc_ci'][1]:.2f}). Too few positives to be conclusive, but "
+                    "there is no evidence this endpoint transfers off its own source."
+                )
+
     validated = sorted(e for e, v in endpoints.items() if v["tier"] == "validated")
     payload = {
         "description": (

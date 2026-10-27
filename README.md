@@ -189,6 +189,24 @@ Seventeen hand-designed features beat 320 k-mer features in both directions, and
 
 Pretrained RNA language model embeddings are not evaluated, because no weights are available in this environment; downloading them is a prerequisite, not a result. But the k-mer arms test the thing those embeddings are meant to supply, and it is not what is limiting this endpoint. The roadmap's claim that foundation models are integrated remains untrue, and on this evidence acting on it is not the highest-value next step.
 
+### Hepatocellular injury does not transfer
+
+The one public set pairing gapmer sequences with liver enzymes is the hepatotoxicity screen in [NAR 2022;50(13):7224](https://doi.org/10.1093/nar/gkac562), Supplementary Table S1: 149 LNA gapmers, C57BL/6 mice at 20 mg/kg IV, AST/ALT at 96 h. `scripts/evaluate_hepatotox_external.py` parses it and scores every sequence with the shipped model.
+
+| | Value |
+|---|---|
+| Sequences | 149 |
+| Hepatotoxic (ALT > 100 U/L) | 5 |
+| ROC-AUC | **0.40** [0.13-0.70] |
+| PR-AUC | 0.035, against a 0.034 base rate |
+| Rank of the toxic sequences | 23, 76, 87, 120, 139 of 149 |
+
+**The model ranks the known-hepatotoxic gapmers no better than chance, and three of the five sit in the bottom half.** With 5 positives the interval spans almost everything, so this does not prove the model is wrong. What it does mean is that there is no evidence the endpoint transfers off its own source, and that sits alongside its negative Brier skill.
+
+Read together: hepatocellular injury ranks within `papargyri_2020`, does not produce calibrated probabilities, and shows no transfer to an independent screen of a different chemistry. It keeps its tier, because the tier reflects the internal evaluation and 5 positives should not overturn that either way, but the evidence string the app displays now carries this result.
+
+This is also the clearest statement of what the project needs: not more features, but hepatotoxicity data at the scale the CNS endpoint has.
+
 ## Run it
 
 ```bash
