@@ -8,9 +8,24 @@
     "insufficient_data"
   ],
   "composite_endpoints": [
+    "cns_toxicity",
     "hepatocellular_injury"
   ],
   "endpoints": {
+    "cns_toxicity": {
+      "tier": "validated",
+      "reason": "trained on 3338 sequences from 2 independent assays and validated by training on one and testing on the other, with no shared sequences (ROC-AUC 0.78-0.83, CI low 0.76). It does not improve on the published G-count rule, which scores the same or better, so treat it as that rule rather than a new finding.",
+      "pr_auc": 0.7447049209024169,
+      "ci_low": 0.7605859259283799,
+      "ci_high": 0.8474438138548569,
+      "base_rate": 0.3895946763460375,
+      "positive_sequences": 1375,
+      "validation": "cross-assay external",
+      "checks": {
+        "external_transfer_above_chance": true,
+        "beats_published_rule": false
+      }
+    },
     "hepatocellular_injury": {
       "tier": "validated",
       "reason": "PR-AUC 0.27 [0.19-0.52] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source",
@@ -82,12 +97,6 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": false
       }
-    },
-    "cns_toxicity": {
-      "tier": "insufficient_data",
-      "reason": "2 positive sequences; not evaluated",
-      "pr_auc": null,
-      "positive_sequences": 2
     },
     "coagulation_effect": {
       "tier": "insufficient_data",

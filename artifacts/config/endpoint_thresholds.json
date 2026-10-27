@@ -80,12 +80,8 @@
     "method": "f1"
   },
   "cns_toxicity": {
-    "threshold": 0.34,
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1": 1.0,
-    "support": 2,
-    "method": "f1"
+    "threshold": 0.3499999999999999,
+    "source": "external CNS assays, F1 on pooled OOF"
   },
   "offtarget_gene_silencing": {
     "threshold": 0.35000000000000003,

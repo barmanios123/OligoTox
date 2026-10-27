@@ -129,6 +129,46 @@ def main() -> None:
             "checks": checks,
         }
 
+    # Endpoints validated against an independent external assay instead of the
+    # internal baselines. A tier here needs the transfer CI to clear chance.
+    external = RESULTS / "cns_external.json"
+    if external.exists():
+        ext = json.loads(external.read_text())
+        transfers = [r for r in ext["results"]
+                     if r["evaluation"] == "cross-assay transfer"
+                     and r["features"].startswith("All")]
+        if transfers and all(r["ci_low"] > 0.5 for r in transfers):
+            worst = min(transfers, key=lambda r: r["roc_auc"])
+            best = max(transfers, key=lambda r: r["roc_auc"])
+            total = sum(d["sequences"] for d in ext["datasets"].values())
+            rule = [r for r in ext["results"]
+                    if r["evaluation"] == "cross-assay transfer" and r["features"].startswith("G ")]
+            beats_rule = all(
+                t["roc_auc"] > g["roc_auc"]
+                for t, g in zip(sorted(transfers, key=lambda r: r["assay"]),
+                                sorted(rule, key=lambda r: r["assay"]))
+            ) if rule else True
+            caveat = ("" if beats_rule else
+                      " It does not improve on the published G-count rule, which scores the same "
+                      "or better, so treat it as that rule rather than a new finding.")
+            endpoints["cns_toxicity"] = {
+                "tier": "validated",
+                "reason": (
+                    f"trained on {total} sequences from 2 independent assays and validated by "
+                    f"training on one and testing on the other, with no shared sequences "
+                    f"(ROC-AUC {worst['roc_auc']:.2f}-{best['roc_auc']:.2f}, "
+                    f"CI low {worst['ci_low']:.2f})." + caveat
+                ),
+                "pr_auc": float(best["pr_auc"]),
+                "ci_low": float(worst["ci_low"]),
+                "ci_high": float(best["ci_high"]),
+                "base_rate": float(best["base_rate"]),
+                "positive_sequences": int(sum(d["positives"] for d in ext["datasets"].values())),
+                "validation": "cross-assay external",
+                "checks": {"external_transfer_above_chance": True,
+                           "beats_published_rule": bool(beats_rule)},
+            }
+
     # Endpoints the training run could not evaluate never reach baselines.csv.
     for endpoint, stats in summary.items():
         if endpoint in endpoints:

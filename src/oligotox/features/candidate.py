@@ -81,6 +81,8 @@ def candidate_features(
         "lna_fraction": lna_fraction,
         "dose_mg_kg": dose_mg_kg,
         **sequence_features(seq, ps_fraction, lna_fraction),
+        # Used by cns_toxicity, which has its own sequence-only feature list.
+        **g_motif_features(seq),
     }
     for block in (
         build_aso_rich_features(row),
@@ -88,4 +90,42 @@ def candidate_features(
         build_embedding_features(row, cache_path=None),
     ):
         feats.update(block.iloc[0].to_dict())
+    return feats
+
+def g_motif_features(sequence: str) -> Dict[str, float]:
+    """G-content features for CNS neurotoxicity.
+
+    Hagedorn et al. (Nucleic Acid Ther. 2022) report that the number of G
+    nucleotides and the distance from the 3' end to the nearest G both
+    influence acute neurotoxicity. Training and scoring both call this, so the
+    two stay in step.
+    """
+    seq = sequence.strip().upper().replace("U", "T")
+    n = len(seq)
+    g_count = seq.count("G")
+    nearest = next((i for i, ch in enumerate(reversed(seq)) if ch == "G"), n)
+    runs = "".join(c if c == "G" else " " for c in seq).split()
+    return {
+        "g_count": float(g_count),
+        "g_fraction": g_count / n if n else 0.0,
+        "dist_3p_to_g": float(nearest),
+        "longest_g_run": float(max((len(r) for r in runs), default=0)),
+    }
+
+
+def cns_sequence_features(sequence: str) -> Dict[str, float]:
+    """Every feature the externally trained cns_toxicity model uses.
+
+    Sequence only: the external CNS assays carry no chemistry annotation, so
+    this model never sees a chemistry or modality feature.
+    """
+    feats = sequence_features(sequence)
+    feats.pop("ps_x_len", None)
+    feats.pop("lna_x_gc", None)
+    feats.update(g_motif_features(sequence))
+
+    seq = sequence.strip().upper().replace("U", "T")
+    struct = build_structure_features(pd.DataFrame({"sequence": [seq]}))
+    for col in struct.columns:
+        feats[col] = float(struct.iloc[0][col])
     return feats

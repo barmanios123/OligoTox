@@ -9,6 +9,7 @@ from oligotox.models.loader import (
     load_feature_template,
     load_endpoint_models,
     load_endpoint_evidence,
+    load_endpoint_features,
     load_thresholds,
     load_composite_config,
 )
@@ -59,6 +60,7 @@ def score_candidate(
     thresholds = load_thresholds(config_dir)
     composite_cfg = load_composite_config(config_dir)
     evidence = load_endpoint_evidence(config_dir)
+    per_endpoint_features = load_endpoint_features(config_dir)
 
     # The shipped config carries the trained columns and endpoints, so scoring
     # works from a fresh clone without the processed training data.
@@ -83,7 +85,24 @@ def score_candidate(
     per_endpoint = {}
 
     for endpoint, model in models.items():
-        proba = model.predict_proba(X_row); prob = float(proba[0, 1] if proba.shape[1] > 1 else proba[0, 0])
+        # cns_toxicity is trained on external sequence-only data, so it has its
+        # own column list rather than the shared 55.
+        own = per_endpoint_features.get(endpoint, {}).get("feature_columns")
+        if own:
+            missing = [c for c in own if c not in candidate_features]
+            if missing:
+                raise KeyError(
+                    f"{endpoint} needs features the caller did not supply: {missing}. "
+                    "Build them with oligotox.features.candidate.candidate_features()."
+                )
+            row = build_feature_row(
+                feature_template=pd.DataFrame([[0.0] * len(own)], columns=own),
+                candidate_features=candidate_features,
+                trained_feature_columns=own,
+            )
+        else:
+            row = X_row
+        proba = model.predict_proba(row); prob = float(proba[0, 1] if proba.shape[1] > 1 else proba[0, 0])
         endpoint_probs[endpoint] = prob
         thr = thresholds.get(endpoint, {}).get("threshold")
         summary = summarize_endpoint(

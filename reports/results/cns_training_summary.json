@@ -1,0 +1,33 @@
+{
+  "endpoint": "cns_toxicity",
+  "sequences": 3338,
+  "positives": 1375,
+  "base_rate": 0.41192330736968247,
+  "assays": {
+    "MOE_Neurotox_2024": 1685,
+    "Hagedorn_2022": 1653
+  },
+  "n_features": 17,
+  "feature_columns": [
+    "cpg_density",
+    "dist_3p_to_g",
+    "g_count",
+    "g_fraction",
+    "gc_content",
+    "longest_g_run",
+    "seed_gc",
+    "seq_length",
+    "struct_dinucleotide_repeats",
+    "struct_gc_fraction",
+    "struct_hairpin_score",
+    "struct_longest_homopolymer",
+    "struct_mfe_proxy",
+    "struct_palindrome_fraction",
+    "struct_seq_len",
+    "struct_uracil_fraction",
+    "tlr7_score"
+  ],
+  "pooled_oof_roc_auc": 0.8178237391747325,
+  "threshold": 0.3499999999999999,
+  "validation": "cross-assay, see reports/results/cns_external.json"
+}

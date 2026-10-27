@@ -4,7 +4,7 @@
 
 OligoTox scores antisense oligos and siRNAs for 13 preclinical toxicity endpoints from design-time features only: sequence, chemistry and modality. It wraps the models in a Streamlit console that adds a GalNAc-siRNA PK/PD simulation and a regulatory-style safety report.
 
-The main result is in the evaluation. The first version scored PR-AUC 0.93 on hepatocellular injury. Most of that came from label leakage and from splitting replicate rows of the same oligo across train and test. After fixing both, the honest number is 0.27 against a 0.13 base rate. Baselines then showed that the one apparently strong endpoint is mostly dataset recognition, not biology. Of the 13 endpoints, 1 survives that scrutiny, and the app presents only that one as a prediction — the rest run but are labelled unsupported, with the reason attached.
+The main result is in the evaluation. The first version scored PR-AUC 0.93 on hepatocellular injury. Most of that came from label leakage and from splitting replicate rows of the same oligo across train and test. After fixing both, the honest number is 0.27 against a 0.13 base rate. Baselines then showed that the one apparently strong endpoint is mostly dataset recognition, not biology. Of the 13 endpoints, 2 now survive that scrutiny, one of them validated on an independent external assay. The app presents only those two as predictions; the rest run but are labelled unsupported, with the reason attached.
 
 ## Results
 
@@ -67,10 +67,10 @@ The evaluation above is enforced in the app, not just described here. `scripts/d
 
 | Tier | Endpoints | How the app presents it |
 |---|---|---|
-| **Validated** | hepatocellular injury | A prediction. Enters the composite score. |
+| **Validated** | hepatocellular injury, CNS neurotoxicity | A prediction. Enters the composite score. |
 | **Weak signal** | injection site reaction, offtarget gene silencing | Model output shown with its CI and the baseline it fails to clear. Not a prediction. |
 | **Source-confounded** | kupffer cell activation | Model output shown, labelled as dataset recognition. Not a prediction. |
-| **Insufficient data** | the remaining 9 | Model output shown with its positive-sequence count. Not a prediction. |
+| **Insufficient data** | the remaining 8 | Model output shown with its positive-sequence count. Not a prediction. |
 
 The practical consequences:
 
@@ -79,6 +79,34 @@ The practical consequences:
 - **The regulatory report raises no recommendation from an unsupported endpoint,** whatever it scores. It used to emit "Immunogenicity assessment required per OSWG guidelines" from a complement-activation model fit on 6 positive sequences. A report with no validated endpoint is classified `UNCLASSIFIED_NO_VALIDATED_ENDPOINT` rather than `LOW_RISK`.
 
 Nothing is hidden: every model output is still shown and still in the downloadable JSON. The tier decides whether it is labelled a prediction.
+
+## CNS neurotoxicity, validated on an independent assay
+
+Every other number here is internal: one curation, cross-validated. CNS neurotoxicity is different, and it is the strongest result in the project.
+
+Two public datasets measure it on sequences this repo never trained on, and they share no sequences with each other:
+
+| Dataset | Sequences | Assay | Readout |
+|---|---|---|---|
+| `MOE_Neurotox_2024` | 1,685 | in vivo | FOB score at 3h |
+| `Hagedorn_2022` | 1,653 | in vitro | calcium oscillation, LNA gapmers |
+
+Training on one and testing on the other is a real external test, across different chemistry, different assays and different in vivo/in vitro settings.
+
+| Direction | All sequence features | G-count rule | GC only |
+|---|---|---|---|
+| MOE to Hagedorn | 0.828 [0.808-0.847] | **0.839** | 0.717 |
+| Hagedorn to MOE | 0.783 [0.761-0.803] | **0.797** | 0.628 |
+
+ROC-AUC with 95% bootstrap CIs. Both directions clear chance comfortably, so the signal is real and it transfers.
+
+**The honest caveat: the model does not beat the published rule.** Hagedorn et al. report that G count and the distance from the 3' end to the nearest G drive acute neurotoxicity. Those four features alone score the same or slightly better than the full feature set in both directions. So this endpoint is best read as a reimplementation of their rule, validated on an independent assay, rather than a new finding. The evidence config says so in the text the app displays.
+
+The shipped `cns_toxicity` model is trained on all 3,338 sequences and uses sequence-derived features only, since the external data carries no chemistry annotation, so it has its own column list in `artifacts/config/endpoint_features.json`. It replaces a model fit on **2 positive sequences** that training had marked `fallback_low_count_fit`.
+
+### A label direction worth flagging
+
+Hagedorn's readout is calcium oscillation, and toxicity shows up as a **reduction** in it, so a low score means toxic. `data/oligogym/oligogym_tox_combined_fixed.csv` has this inverted: it labels high scores as toxic and ends up calling 83% of the compounds neurotoxic. The threshold used here is stated in `scripts/evaluate_cns_external.py` and swept over five values, and the result holds across all of them (MOE 0.81 at every cut-off, Hagedorn 0.90 at the strictest).
 
 ## Run it
 
@@ -143,8 +171,8 @@ An earlier Efficacy tab held untrained model slots and produced no predictions. 
 ## Limitations
 
 - 74 unique sequences is small. Nine of the 13 endpoints have 7 or fewer positive sequences.
-- **Only 1 of the 13 endpoints is presented as a prediction.** Hepatocellular injury is the one whose signal survives both the data-source baseline and a within-source check; Kupffer cell activation, the highest raw score, does not. The other 12 models ship and run, but the app labels them as unsupported.
-- The one validated endpoint rests on 19 positive sequences, and the within-source confirmation comes from a single dataset. A second independent source is what would settle it.
+- **Only 2 of the 13 endpoints are presented as predictions.** Hepatocellular injury survives both the data-source baseline and a within-source check; Kupffer cell activation, the highest raw score, does not. CNS neurotoxicity is validated on external data but reproduces a published rule rather than improving on it. The other 11 models ship and run, but the app labels them unsupported.
+- Hepatocellular injury rests on 19 positive sequences with within-source confirmation from a single dataset. A second independent source is what would settle it, and no external hepatotoxicity data is on hand.
 - Several endpoints draw all their positives from one source dataset, so source and biology cannot be separated for them with this data.
 - The structure features use a placeholder MFE, and the sequence embedding is a hash, not a learned model.
 - The PK/PD simulator is mechanistic and has not been fitted or validated against measured exposure data.

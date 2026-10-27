@@ -41,6 +41,16 @@ def load_composite_config(config_dir: str | Path) -> dict:
     return _read_json(config_dir / "composite_config.json")
 
 
+def load_endpoint_features(config_dir: str | Path) -> dict:
+    """Per-endpoint feature columns, for models not using the shared list.
+
+    Missing file means every endpoint uses the shared trained columns.
+    """
+    config_dir = Path(config_dir)
+    path = config_dir / "endpoint_features.json"
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
 def load_endpoint_evidence(config_dir: str | Path) -> dict:
     """Evidence tier per endpoint, from scripts/derive_evidence_tiers.py."""
     config_dir = Path(config_dir)
