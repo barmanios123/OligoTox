@@ -1,0 +1,39 @@
+{
+  "workbook": "data/external/papargyri_2020_LNA_512gapmers_TableS1.xlsx",
+  "format_note": "legacy .xls despite the .xlsx extension, which is why it was never opened",
+  "rows": 772,
+  "design_columns_recovered": [
+    "gapmer",
+    "sequence",
+    "lnadna",
+    "gapmer.length",
+    "number.lna",
+    "number.dna",
+    "gap",
+    "length.gap",
+    "flank5",
+    "flank3",
+    "tm_up",
+    "tm_down",
+    "tm_dt",
+    "tm_avg",
+    "design_length",
+    "design_lna_count",
+    "design_lna_fraction",
+    "design_flank5_len",
+    "design_flank3_len",
+    "design_gap_len",
+    "design_is_gapmer"
+  ],
+  "post_dose_columns_excluded": [
+    "cas_1",
+    "cas_2",
+    "cas_3",
+    "cas_avg",
+    "kd_avg"
+  ],
+  "training_sequences_total": 74,
+  "training_sequences_matched": 12,
+  "coverage": 0.16216216216216217,
+  "usable_as_features": "design_* columns are design-time and legitimate. They give the real gapmer architecture for the matched sequences, where the pipeline currently infers lna_fraction from the sequence alone."
+}

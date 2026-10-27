@@ -207,6 +207,25 @@ Read together: hepatocellular injury ranks within `papargyri_2020`, does not pro
 
 This is also the clearest statement of what the project needs: not more features, but hepatotoxicity data at the scale the CNS endpoint has.
 
+## The evaluation is the product
+
+The models here are not better than PFRED, ASOptimizer or any proprietary platform, and with 74 unique sequences they will not be. What this repo has instead is a harness that says, per endpoint, whether a result survives scrutiny, and an app that refuses to present anything that does not.
+
+| Check | Script | Catches |
+|---|---|---|
+| Leakage | `src/oligotox/training/train.py` | Curated annotations and post-dose readouts used as features |
+| Grouped splits | same | Replicate rows of one sequence spanning a split |
+| Source baseline | `scripts/evaluate_baselines.py` | A model reading which dataset a row came from |
+| Ablation | `scripts/ablate_hash_embedding.py` | Feature blocks that carry nothing |
+| Representation | `scripts/evaluate_sequence_representations.py` | Whether a richer encoder would help |
+| Calibration | `scripts/evaluate_calibration.py` | Scores that rank but are not probabilities |
+| External transfer | `scripts/evaluate_cns_external.py`, `evaluate_hepatotox_external.py` | Internal validity that does not generalise |
+| Gating | `scripts/derive_evidence_tiers.py` | Any of the above reaching the user as a prediction |
+
+The checks are modality-agnostic: they need a feature matrix, labels, a group column and a source column. Each result lands in `artifacts/config/endpoint_evidence.json`, which the app and the OSWG report read at runtime, so a failed check becomes a label in the interface rather than a footnote.
+
+**[`docs/NEGATIVE_RESULTS.md`](docs/NEGATIVE_RESULTS.md)** records the nine failure modes this found, with numbers and the script for each. **[`docs/DATA_REQUESTS.md`](docs/DATA_REQUESTS.md)** lists what the platform is actually limited by, which is labelled data rather than method.
+
 ## Run it
 
 ```bash
