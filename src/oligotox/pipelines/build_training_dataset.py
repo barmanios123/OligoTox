@@ -11,6 +11,7 @@ from oligotox.config.paths import RAW_DATA_DIR
 from oligotox.omics import OMICS_REGISTRY, load_omics_table, join_omics_tables
 from oligotox.omics.join_utils import safe_left_join_on_candidate
 from oligotox.features.aso_rich_features import build_aso_rich_features
+from oligotox.features.candidate import recompute_sequence_features
 
 try:
     from features.aso_optimizer_v03 import batch_aso_features as batch_aso_features_v03
@@ -188,6 +189,8 @@ def run(
 
     # 1) Load base training table
     df = _load_base_training_table(training_csv_path)
+    if "sequence" in df.columns:
+        df = recompute_sequence_features(df)
 
     if "candidate_id" not in df.columns:
         raise ValueError("training dataset must contain candidate_id")

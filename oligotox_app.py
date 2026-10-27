@@ -16,7 +16,6 @@ if str(SRC) not in sys.path:
 
 from oligotox.features.candidate import candidate_features as build_candidate_features
 from oligotox.pipelines.score_candidate import score_candidate
-from oligotox.efficacy.registry import EfficacyModelRegistry
 from oligotox.pkpd.bridge import compute_pkpd_enriched_features
 from oligotox.reporting.oswg_report import OSWGSafetyReport
 
@@ -94,30 +93,6 @@ def _run_toxicity(candidate_features):
         config_dir=CONFIG_DIR,
     )
 
-def _run_efficacy(seq: str, modality: str, chemistry: str):
-    registry = EfficacyModelRegistry()
-    out = registry.predict_all(sequence=seq, modality=modality, chemistry=chemistry)
-    rows = []
-    for name, raw in out.items():
-        value = None
-        if isinstance(raw, (float, int)):
-            value = float(raw)
-        elif isinstance(raw, dict):
-            for v in raw.values():
-                try:
-                    value = float(v[0] if hasattr(v, "__len__") and not isinstance(v, (str, bytes)) else v)
-                    break
-                except Exception:
-                    pass
-        elif hasattr(raw, "__len__") and not isinstance(raw, (str, bytes)):
-            try:
-                value = float(raw[0])
-            except Exception:
-                value = None
-        rows.append({"model": name, "predicted_activity": value})
-    df = pd.DataFrame(rows).sort_values("predicted_activity", ascending=False, na_position="last")
-    return {"raw": out, "table": df}
-
 def _run_pkpd(seq: str, dose_mg_kg: float, modality: str, chemistry: str, schedule: str = "weekly"):
     try:
         return compute_pkpd_enriched_features(
@@ -141,20 +116,12 @@ def _run_pkpd(seq: str, dose_mg_kg: float, modality: str, chemistry: str, schedu
     except Exception as e:
         return {"error": str(e)}
 
-def _build_report(seq, chemistry, toxicity_result, efficacy_result, pkpd_result):
+def _build_report(seq, chemistry, toxicity_result, pkpd_result):
     toxicity_predictions = {}
     for endpoint, info in toxicity_result.get("per_endpoint", {}).items():
         val = _extract_endpoint_value(info)
         if isinstance(val, (float, int)):
             toxicity_predictions[endpoint] = float(val)
-
-    efficacy_score = None
-    try:
-        t = efficacy_result["table"]["predicted_activity"].dropna()
-        if len(t) > 0:
-            efficacy_score = float(t.mean())
-    except Exception:
-        efficacy_score = None
 
     pkpd_summary = {}
     if isinstance(pkpd_result, dict):
@@ -167,7 +134,6 @@ def _build_report(seq, chemistry, toxicity_result, efficacy_result, pkpd_result)
         sequence=seq,
         assessment_date=datetime.utcnow().strftime("%Y-%m-%d"),
         toxicity_predictions=toxicity_predictions,
-        efficacy_score=(0.0 if efficacy_score is None else efficacy_score),
         pkpd_summary=pkpd_summary,
     )
 
@@ -248,7 +214,6 @@ with st.sidebar:
 tabs = st.tabs([
     "Candidate Input",
     "Toxicity Results",
-    "Efficacy Results",
     "PK/PD",
     "Regulatory Report",
     "Saved Runs",
@@ -290,9 +255,8 @@ if run_btn:
 
         with st.spinner("Running OligoTox analysis..."):
             toxicity_result = _run_toxicity(candidate_features)
-            efficacy_result = _run_efficacy(normalized_seq, modality, chemistry)
             pkpd_result = _run_pkpd(normalized_seq, dose_mg_kg, modality, chemistry)
-            report_result = _build_report(normalized_seq, chemistry, toxicity_result, efficacy_result, pkpd_result)
+            report_result = _build_report(normalized_seq, chemistry, toxicity_result, pkpd_result)
 
         payload = {
             "input": {
@@ -304,9 +268,6 @@ if run_btn:
                 "candidate_features": candidate_features,
             },
             "toxicity": toxicity_result,
-            "efficacy": {
-                "table": efficacy_result["table"].to_dict(orient="records"),
-            },
             "pkpd": pkpd_result,
             "report": report_result,
         }
@@ -339,22 +300,6 @@ with tabs[1]:
         )
 
 with tabs[2]:
-    st.subheader("Efficacy")
-    st.warning(
-        "These efficacy models are untrained architecture stubs (random weights or "
-        "placeholder rules). Their outputs are not predictions."
-    )
-    if not run:
-        st.info("Run an analysis to view efficacy outputs.")
-    else:
-        eff_df = pd.DataFrame(run["efficacy"]["table"])
-        st.dataframe(eff_df, width="stretch", hide_index=True)
-        if not eff_df.empty and "predicted_activity" in eff_df.columns:
-            top = eff_df.dropna(subset=["predicted_activity"]).sort_values("predicted_activity", ascending=False).head(1)
-            if len(top):
-                st.metric("Top efficacy model", f"{top.iloc[0]['model']} ({top.iloc[0]['predicted_activity']:.3f})")
-
-with tabs[3]:
     st.subheader("PK/PD")
     if not run:
         st.info("Run an analysis to view PK/PD outputs.")
@@ -365,7 +310,7 @@ with tabs[3]:
         else:
             st.write(pkpd)
 
-with tabs[4]:
+with tabs[3]:
     st.subheader("Regulatory report")
     if not run:
         st.info("Run an analysis to generate a report.")
@@ -382,7 +327,7 @@ with tabs[4]:
             mime="application/json",
         )
 
-with tabs[5]:
+with tabs[4]:
     st.subheader("Saved runs")
     runs_df = _load_saved_runs()
     if runs_df.empty:
@@ -394,7 +339,7 @@ with tabs[5]:
             with open(selected) as f:
                 st.json(json.load(f))
 
-with tabs[6]:
+with tabs[5]:
     st.subheader("Build info")
     st.write({
         "app_file": str(ROOT / "oligotox_app.py"),

@@ -1,6 +1,6 @@
 """OSWG-aligned safety reporting for oligonucleotides"""
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Optional
 from datetime import datetime
 import json
 
@@ -11,8 +11,8 @@ class OSWGSafetyReport:
     sequence: str
     assessment_date: str
     toxicity_predictions: Dict[str, float]
-    efficacy_score: float
     pkpd_summary: Dict
+    efficacy_score: Optional[float] = None
     
     def generate_report(self, format='json') -> str:
         """Generate formatted safety report.
@@ -41,13 +41,11 @@ class OSWGSafetyReport:
                 "overall_risk": self._calculate_risk_score(),
                 "classification": self._classify_safety()
             },
-            "efficacy": {
-                "predicted_score": self.efficacy_score,
-                "confidence": "high" if self.efficacy_score > 0.7 else "medium"
-            },
             "pkpd_characteristics": self.pkpd_summary,
             "regulatory_notes": self._generate_regulatory_notes()
         }
+        if self.efficacy_score is not None:
+            report["efficacy"] = {"predicted_score": self.efficacy_score}
         return json.dumps(report, indent=2)
     
     def _calculate_risk_score(self) -> float:

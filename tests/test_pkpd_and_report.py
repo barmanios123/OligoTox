@@ -24,10 +24,20 @@ def test_report_generates_json():
         sequence="AUGCUAGCUAGCUAGCUAGC",
         assessment_date="2026-10-27",
         toxicity_predictions={"hepatocellular_injury": 0.3, "thrombocytopenia": 0.05},
-        efficacy_score=0.0,
         pkpd_summary={"exposure_score": 1.2},
     )
     payload = json.loads(report.generate_report(format="json"))
     assert payload
     assert 0.0 <= report._calculate_risk_score() <= 1.0
     assert isinstance(report._classify_safety(), str)
+
+
+def test_report_omits_efficacy_when_not_scored():
+    report = OSWGSafetyReport(
+        compound_id="TEST-2",
+        sequence="AUGC" * 5,
+        assessment_date="2026-10-27",
+        toxicity_predictions={},
+        pkpd_summary={},
+    )
+    assert "efficacy" not in json.loads(report.generate_report(format="json"))

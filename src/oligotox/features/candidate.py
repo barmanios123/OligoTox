@@ -19,6 +19,44 @@ def _gc(seq: str) -> float:
     return (seq.count("G") + seq.count("C")) / len(seq) if seq else 0.0
 
 
+def sequence_features(sequence: str, ps_fraction: float = 0.0, lna_fraction: float = 0.0) -> Dict[str, float]:
+    """Features derived from sequence and backbone fractions alone.
+
+    Training recomputes these for every row with this function, because the
+    upstream sources filled them in inconsistently.
+    """
+    seq = sequence.strip().upper().replace("U", "T")
+    length = len(seq)
+    gc = _gc(seq)
+    return {
+        "seq_length": float(length),
+        "gc_content": gc,
+        # seed region = positions 2-8
+        "seed_gc": _gc(seq[1:8]),
+        "cpg_density": sum(seq[i:i + 2] == "CG" for i in range(length - 1)) / max(length - 1, 1),
+        "tlr7_score": score_tlr_innate(seq, ps_fraction=ps_fraction).tlr7_score,
+        "ps_x_len": ps_fraction * length,
+        "lna_x_gc": lna_fraction * gc,
+    }
+
+
+def recompute_sequence_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Overwrite sequence-derived columns in a training table, row by row."""
+    df = df.copy()
+    has_seq = df["sequence"].fillna("").astype(str).str.strip().str.len() > 0
+    ps = pd.to_numeric(df.get("ps_fraction", 0.0), errors="coerce").fillna(0.0)
+    lna = pd.to_numeric(df.get("lna_fraction", 0.0), errors="coerce").fillna(0.0)
+    rows = [
+        sequence_features(s, p, l)
+        for s, p, l in zip(df.loc[has_seq, "sequence"], ps[has_seq], lna[has_seq])
+    ]
+    if rows:
+        recomputed = pd.DataFrame(rows, index=df.index[has_seq])
+        for col in recomputed.columns:
+            df.loc[has_seq, col] = recomputed[col]
+    return df
+
+
 def candidate_features(
     sequence: str,
     modality: str = "siRNA",
@@ -28,30 +66,21 @@ def candidate_features(
     dose_mg_kg: float = 0.0,
 ) -> Dict[str, Any]:
     seq = sequence.strip().upper().replace("U", "T")
-    length = len(seq)
-    gc = _gc(seq)
     row = pd.DataFrame([{
         "sequence": seq,
         "modality": modality,
         "chemistry": chemistry,
-        "length_nt": length,
-        "gc_content": gc,
+        "length_nt": len(seq),
+        "gc_content": _gc(seq),
         "ps_fraction": ps_fraction,
         "lna_fraction": lna_fraction,
     }])
 
     feats: Dict[str, Any] = {
-        "seq_length": float(length),
-        "gc_content": gc,
         "ps_fraction": ps_fraction,
         "lna_fraction": lna_fraction,
-        # seed region = positions 2-8
-        "seed_gc": _gc(seq[1:8]),
-        "cpg_density": sum(seq[i:i + 2] == "CG" for i in range(length - 1)) / max(length - 1, 1),
-        "tlr7_score": score_tlr_innate(seq, ps_fraction=ps_fraction).tlr7_score,
-        "ps_x_len": ps_fraction * length,
-        "lna_x_gc": lna_fraction * gc,
         "dose_mg_kg": dose_mg_kg,
+        **sequence_features(seq, ps_fraction, lna_fraction),
     }
     for block in (
         build_aso_rich_features(row),
