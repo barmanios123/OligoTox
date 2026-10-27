@@ -71,3 +71,35 @@ behind it at all.
 
 **Status:** no source identified. Until there is one, the simulator should
 keep saying it is unfitted rather than acquiring a second unvalidated layer.
+
+---
+
+## 5. Redistribution terms for the OligoGym-derived datasets (open question)
+
+**What:** the six processed datasets in `data/oligogym/`, 1.4 MB, which the
+CNS neurotoxicity and potency validation depend on.
+
+**Why it is open:** they are tracked and public, unlike `data/raw/`, because
+removing them would break the reproducibility this repository claims. They
+are processed derivatives rather than publisher PDFs, which is a different
+position, but their redistribution terms have **not** been verified. That
+should be checked before the project gets more visible.
+
+**If the terms do not permit redistribution:** replace the files with a
+fetch script and checksums, so the numbers stay reproducible for anyone who
+obtains the data themselves.
+
+---
+
+## A note on repository history
+
+`data/raw` was tracked and public until commit 437556e: 114 files, 174 MB,
+including 51 PDFs that are mostly publisher copyright, and two third-party
+UniTox CSVs. It is removed from the current branch and gitignored, but those
+objects remain reachable in history.
+
+Purging them was considered and deliberately not done. The repository had
+been public for a matter of hours, a force push breaks every clone, and
+GitHub retains unreferenced objects for a period regardless, so a rewrite
+would have been disruptive and incomplete. Recorded here so the decision is
+visible rather than looking like an oversight.
