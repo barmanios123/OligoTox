@@ -41,8 +41,21 @@ def guide_features(sequence: str) -> Dict[str, float]:
     feats["asymmetry"] = feats["five_prime_au"] - feats["three_prime_au"]
     for base in "ACGT":
         feats[f"frac_{base}"] = seq.count(base) / n if n else 0.0
-    for base in "ACGT":
-        feats[f"pos1_{base}"] = float(seq[:1] == base)
+    # Position-specific identity. The literature's strongest siRNA potency
+    # signals are positional, not compositional: the 5' end of the guide
+    # (position 1), the cleavage-site region near position 10, and the 3' end.
+    for pos, label in ((0, "p1"), (9, "p10"), (n - 1 if n else 0, "p_last")):
+        base_at = seq[pos] if 0 <= pos < n else ""
+        for base in "ACGT":
+            feats[f"{label}_{base}"] = float(base_at == base)
+    # Seed region AU content (positions 2-8), which drives off-target load and
+    # duplex-end stability.
+    seed = seq[1:8]
+    feats["seed_au"] = sum(c in "AT" for c in seed) / max(len(seed), 1)
+    # Duplex-end stability difference, the classic asymmetry rule in nucleotides.
+    feats["end_stability_diff"] = (
+        sum(c in "GC" for c in seq[-2:]) - sum(c in "GC" for c in seq[:2])
+    )
     return feats
 
 

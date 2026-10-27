@@ -137,10 +137,10 @@ Potency has its own shortcut. It varies far more between target genes than withi
 
 | Model | Data | Gene-grouped CV | Cross-study | GC only | Gene mean | Tier |
 |---|---|---|---|---|---|---|
-| siRNA potency | 2,838 duplexes, 41 genes | **0.53** [0.50-0.56] | **0.44** / **0.48** | 0.30 | -0.11 | validated |
-| ASO activity | 3,867 PS-ASOs, 85 genes | **0.25** [0.22-0.28] | none available | 0.14 | -0.15 | weak |
+| siRNA potency | 2,838 duplexes, 41 genes | **0.57** [0.54-0.59] | **0.46** / **0.49** | 0.30 | -0.11 | validated |
+| ASO activity | 3,867 PS-ASOs, 85 genes | **0.26** [0.23-0.29] | none available | 0.14 | -0.15 | weak |
 
-Spearman between measured potency and out-of-fold prediction. The siRNA number transfers between two independent studies (Ichihara 1 and 2) that share no sequences, in both directions. The gene-mean baseline carries none of it, and 17-29% of the variance is between genes, which is why the grouping matters.
+Spearman between measured potency and out-of-fold prediction, using position-specific features (nucleotide identity at positions 1, 10 and the 3' end, seed AU content and duplex-end stability) alongside composition. Adding them lifted every split, held-out studies included. The siRNA number transfers between two independent studies (Ichihara 1 and 2) that share no sequences, in both directions. The gene-mean baseline carries none of it, and 17-29% of the variance is between genes, which is why the grouping matters.
 
 The tab only scores the modality a model was trained for: ask it about a PMO and it says no model is validated for that, rather than returning a number. Scores are raw readouts in the units of the training data, labelled as such, never probabilities.
 
@@ -153,6 +153,25 @@ Ichihara's entries are siRNA duplexes written as one string, `sense.antisense`. 
 ### Privacy on the public deployment
 
 Runs live in the visitor's browser session and are never written to the server. An earlier version saved every run to `artifacts/runs/` and the Saved runs tab listed every file it found there, which on a shared container means one visitor's sequences are readable by the next. Download a run to keep it.
+
+## Calibration, reported separately from ranking
+
+PR-AUC says whether a model ranks. It says nothing about whether 0.30 means a three-in-ten chance. For a safety tool those come apart, so `scripts/evaluate_calibration.py` reports both on the same out-of-fold predictions.
+
+| Endpoint | Tier | Observed rate | Mean predicted | Brier skill | Calibration MAE |
+|---|---|---|---|---|---|
+| cns toxicity | validated | 0.412 | 0.404 | **+0.30** | 0.009 |
+| offtarget gene silencing | validated | 0.042 | 0.045 | +0.03 | 0.037 |
+| hepatocellular injury | validated | 0.126 | 0.111 | **-0.01** | 0.066 |
+| injection site reaction | weak | 0.007 | 0.029 | -2.37 | 0.021 |
+
+Brier skill is `1 - brier/brier_base_rate`; at or below zero means the probabilities are no better than quoting the base rate.
+
+**The finding that matters: hepatocellular injury ranks but does not calibrate.** It beats every baseline on PR-AUC and its signal survives a within-source check, yet its Brier skill is slightly negative. Read its score as a ranking, not a percentage. CNS neurotoxicity is the one endpoint whose probabilities are trustworthy as probabilities, which is unsurprising given it has 3,338 training sequences against 74.
+
+Most unsupported endpoints over-predict badly, injection site reaction by about four times its base rate, which is a second reason not to read them as predictions. Every endpoint's `probabilities_calibrated` flag and Brier skill is in `artifacts/config/endpoint_evidence.json`, and the app shows a "reads as" column saying *probability* or *ranking only*.
+
+![Calibration of the validated endpoints](reports/results/calibration.png)
 
 ## Run it
 

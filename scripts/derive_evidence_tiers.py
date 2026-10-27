@@ -185,6 +185,28 @@ def main() -> None:
             "positive_sequences": n_sequences,
         }
 
+    # Calibration is separate from ranking: an endpoint can beat its baselines
+    # on PR-AUC while its probabilities are worse than quoting the base rate.
+    calibration_path = RESULTS / "calibration.csv"
+    if calibration_path.exists():
+        import csv
+
+        with calibration_path.open() as fh:
+            for row in csv.DictReader(fh):
+                entry = endpoints.get(row["endpoint"])
+                if not entry:
+                    continue
+                skill = float(row["brier_skill"])
+                entry["brier_skill"] = skill
+                entry["calibration_mae"] = float(row["calibration_mae"])
+                entry["probabilities_calibrated"] = skill > 0
+                if skill <= 0:
+                    entry["reason"] += (
+                        " Its probabilities are not calibrated: Brier skill "
+                        f"{skill:+.2f} against the base rate, so read the score as a "
+                        "ranking, not as a percentage chance."
+                    )
+
     validated = sorted(e for e, v in endpoints.items() if v["tier"] == "validated")
     payload = {
         "description": (

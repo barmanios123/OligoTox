@@ -205,6 +205,9 @@ def _render_endpoint_table(toxicity_result, tiers=None):
             {
                 "endpoint": endpoint,
                 "value": _extract_endpoint_value(info),
+                # A number that is not calibrated is a rank, not a percentage.
+                "reads as": ("probability" if info.get("probabilities_calibrated")
+                             else "ranking only"),
                 "threshold": info.get("threshold") if isinstance(info, dict) else None,
                 "predicted_positive": info.get("predicted_positive") if isinstance(info, dict) else None,
                 "risk_band": info.get("risk_band") if isinstance(info, dict) else None,

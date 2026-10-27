@@ -25,11 +25,14 @@
       "checks": {
         "external_transfer_above_chance": true,
         "beats_published_rule": false
-      }
+      },
+      "brier_skill": 0.2982152887540376,
+      "calibration_mae": 0.00917291337752337,
+      "probabilities_calibrated": true
     },
     "hepatocellular_injury": {
       "tier": "validated",
-      "reason": "PR-AUC 0.29 [0.21-0.56] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source",
+      "reason": "PR-AUC 0.29 [0.21-0.56] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source Its probabilities are not calibrated: Brier skill -0.01 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.2893,
       "ci_low": 0.2108,
       "ci_high": 0.5648,
@@ -43,7 +46,10 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -0.008857059060946915,
+      "calibration_mae": 0.06581980022567245,
+      "probabilities_calibrated": false
     },
     "offtarget_gene_silencing": {
       "tier": "validated",
@@ -61,11 +67,14 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": 0.025129341270145544,
+      "calibration_mae": 0.03709250264825961,
+      "probabilities_calibrated": true
     },
     "injection_site_reaction": {
       "tier": "weak",
-      "reason": "the model's 95% CI reaches 0.07, below the best simple baseline (0.20), so it is not distinguishable from one crude sequence number",
+      "reason": "the model's 95% CI reaches 0.07, below the best simple baseline (0.20), so it is not distinguishable from one crude sequence number Its probabilities are not calibrated: Brier skill -2.37 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.2689,
       "ci_low": 0.0682,
       "ci_high": 0.4939,
@@ -79,7 +88,10 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -2.3666650296895373,
+      "calibration_mae": 0.02121162622797861,
+      "probabilities_calibrated": false
     },
     "kupffer_cell_activation": {
       "tier": "source_confounded",
@@ -97,11 +109,14 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": false
-      }
+      },
+      "brier_skill": 0.3436017648592756,
+      "calibration_mae": 0.005853657633557722,
+      "probabilities_calibrated": true
     },
     "coagulation_effect": {
       "tier": "insufficient_data",
-      "reason": "5 positive sequences; PR-AUC is not a usable estimate below 10",
+      "reason": "5 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.59 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.0664,
       "ci_low": 0.0109,
       "ci_high": 0.2498,
@@ -115,11 +130,14 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -0.58707826348085,
+      "calibration_mae": 0.005870172212459244,
+      "probabilities_calibrated": false
     },
     "complement_activation": {
       "tier": "insufficient_data",
-      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10",
+      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.55 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.0737,
       "ci_low": 0.0107,
       "ci_high": 0.3138,
@@ -133,11 +151,14 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -0.5514517851629546,
+      "calibration_mae": 0.009608035375180178,
+      "probabilities_calibrated": false
     },
     "cytokine_release": {
       "tier": "insufficient_data",
-      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.46 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.0562,
       "ci_low": 0.0213,
       "ci_high": 0.1612,
@@ -151,11 +172,14 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -0.4570207084195488,
+      "calibration_mae": 0.0076698358462257915,
+      "probabilities_calibrated": false
     },
     "hepatic_vacuolation": {
       "tier": "insufficient_data",
-      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10",
+      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -2.13 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.1557,
       "ci_low": 0.0405,
       "ci_high": 0.3363,
@@ -169,11 +193,14 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -2.1283343318909256,
+      "calibration_mae": 0.017447925091272222,
+      "probabilities_calibrated": false
     },
     "innate_immune_activation": {
       "tier": "insufficient_data",
-      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.46 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.0562,
       "ci_low": 0.0208,
       "ci_high": 0.1603,
@@ -187,11 +214,14 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -0.4570207084195488,
+      "calibration_mae": 0.0076698358462257915,
+      "probabilities_calibrated": false
     },
     "renal_accumulation": {
       "tier": "insufficient_data",
-      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.27 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.0235,
       "ci_low": 0.0033,
       "ci_high": 0.079,
@@ -205,11 +235,14 @@
         "ci_clears_base_rate": false,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -0.271090787268943,
+      "calibration_mae": 0.007144030184247985,
+      "probabilities_calibrated": false
     },
     "renal_tubular_injury": {
       "tier": "insufficient_data",
-      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.24 against the base rate, so read the score as a ranking, not as a percentage chance.",
       "pr_auc": 0.064,
       "ci_low": 0.0061,
       "ci_high": 0.2774,
@@ -223,7 +256,10 @@
         "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": -0.24398617429728486,
+      "calibration_mae": 0.005187446192061205,
+      "probabilities_calibrated": false
     },
     "thrombocytopenia": {
       "tier": "insufficient_data",
@@ -241,7 +277,10 @@
         "ci_clears_base_rate": false,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
-      }
+      },
+      "brier_skill": 0.002513252749068662,
+      "calibration_mae": 0.0026040271969322228,
+      "probabilities_calibrated": true
     }
   }
 }

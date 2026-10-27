@@ -118,6 +118,8 @@ def score_candidate(
         summary["evidence_tier"] = tier
         summary["evidence_note"] = ev.get("reason")
         summary["cv_pr_auc"] = ev.get("pr_auc")
+        summary["probabilities_calibrated"] = ev.get("probabilities_calibrated")
+        summary["brier_skill"] = ev.get("brier_skill")
         summary["base_rate"] = ev.get("base_rate")
         summary["positive_sequences"] = ev.get("positive_sequences")
         if tier != "validated":
