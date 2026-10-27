@@ -246,5 +246,6 @@ capability:
 
 - **Maintainer**: Beshoy Armanios, PhD
 - **Repository**: https://github.com/barmanios123/OligoTox
-- **License**: Proprietary; see `LICENSE`. Available for evaluation and
-  collaboration discussions.
+- **License**: MIT; see `LICENSE`. The datasets above are derived from the
+  published sources cited in this document and keep their own terms, so cite
+  the original publications rather than this repository.

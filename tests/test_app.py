@@ -49,3 +49,21 @@ def test_saved_run_report_is_gated(root):
     assert evidence["endpoints_not_supported"]
     for note in report["regulatory_notes"]:
         assert "Immunogenicity" not in note, "raised from an unsupported endpoint"
+
+
+def test_runs_are_not_written_to_shared_storage(root):
+    """A public deployment must not show one visitor's sequences to the next.
+
+    Runs used to be written to artifacts/runs/ and the Saved runs tab listed
+    every file it found there.
+    """
+    source = (root / "oligotox_app.py").read_text()
+    assert "RUNS_DIR" not in source, "the app still references a shared runs directory"
+    assert 'st.session_state.setdefault("runs"' in source
+
+    at = _run(root)
+    runs = at.session_state["runs"]
+    assert len(runs) == 1, "the run should live in session state"
+    # Nothing on disk for this run.
+    run_id = runs[0]["run_id"]
+    assert not list((root / "artifacts" / "runs").glob(f"{run_id}.json"))

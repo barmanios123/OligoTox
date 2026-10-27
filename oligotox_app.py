@@ -22,8 +22,9 @@ from oligotox.reporting.oswg_report import OSWGSafetyReport
 
 APP_TITLE = "OligoTox Operator Console"
 APP_SUBTITLE = (
-    "Research prototype. Toxicity models are trained on 74 unique sequences; "
-    "see the README for per-endpoint validation before trusting any score."
+    "Research prototype. Most toxicity endpoints rest on 74 unique sequences and are "
+    "shown as unsupported; CNS neurotoxicity and siRNA potency are trained on external "
+    "data. Each number carries the evidence behind it."
 )
 
 # Endpoints are presented by how well the evaluation supports them, not by how
@@ -38,8 +39,6 @@ TIER_LABELS = {
 PROCESSED_DIR = ROOT / "data" / "processed"
 MODEL_DIR = ROOT / "artifacts" / "models"
 CONFIG_DIR = ROOT / "artifacts" / "config"
-RUNS_DIR = ROOT / "artifacts" / "runs"
-RUNS_DIR.mkdir(parents=True, exist_ok=True)
 
 st.set_page_config(
     page_title="OligoTox",
@@ -165,36 +164,37 @@ def _build_report(seq, chemistry, toxicity_result, pkpd_result):
     }
 
 def _save_run(payload: dict):
+    """Keep the run in this visitor's session only.
+
+    Runs used to be written to artifacts/runs/ and the Saved runs tab listed
+    every file it found there. On a shared deployment that is one visitor's
+    sequences shown to the next, so runs now live in session state and leave
+    with the session. Use the download buttons to keep one.
+    """
     run_id = payload.get("run_id") or str(uuid.uuid4())
     payload["run_id"] = run_id
     payload["saved_at"] = datetime.utcnow().isoformat() + "Z"
-    out = RUNS_DIR / f"{run_id}.json"
-    with open(out, "w") as f:
-        json.dump(payload, f, indent=2, default=str)
-    return out
+    st.session_state.setdefault("runs", []).insert(0, payload)
+    return run_id
 
 def _load_saved_runs():
+    """This session's runs, newest first."""
     rows = []
-    for fp in sorted(RUNS_DIR.glob("*.json"), reverse=True):
-        try:
-            with open(fp) as f:
-                obj = json.load(f)
-            rows.append(
-                {
-                    "run_id": obj.get("run_id"),
-                    "saved_at": obj.get("saved_at"),
-                    "sequence": obj.get("input", {}).get("sequence"),
-                    "chemistry": obj.get("input", {}).get("chemistry"),
-                    "modality": obj.get("input", {}).get("modality"),
-                    "composite_score": obj.get("toxicity", {}).get("composite_score"),
-                    "composite_band": obj.get("toxicity", {}).get("composite_band"),
-                    "dominant_endpoint": obj.get("toxicity", {}).get("dominant_endpoint"),
-                    "path": str(fp),
-                }
-            )
-        except Exception:
-            pass
+    for obj in st.session_state.get("runs", []):
+        rows.append(
+            {
+                "run_id": obj.get("run_id"),
+                "saved_at": obj.get("saved_at"),
+                "sequence": obj.get("input", {}).get("sequence"),
+                "chemistry": obj.get("input", {}).get("chemistry"),
+                "modality": obj.get("input", {}).get("modality"),
+                "composite_score": obj.get("toxicity", {}).get("composite_score"),
+                "composite_band": obj.get("toxicity", {}).get("composite_band"),
+                "dominant_endpoint": obj.get("toxicity", {}).get("dominant_endpoint"),
+            }
+        )
     return pd.DataFrame(rows)
+
 
 def _render_endpoint_table(toxicity_result, tiers=None):
     rows = []
@@ -293,7 +293,6 @@ with tabs[0]:
         "processed_dir_exists": PROCESSED_DIR.exists(),
         "model_dir_exists": MODEL_DIR.exists(),
         "config_dir_exists": CONFIG_DIR.exists(),
-        "runs_dir_exists": RUNS_DIR.exists(),
     })
 
 if run_btn:
@@ -322,10 +321,9 @@ if run_btn:
             "pkpd": pkpd_result,
             "report": report_result,
         }
-        saved_path = _save_run(payload)
-        payload["saved_path"] = str(saved_path)
+        run_id = _save_run(payload)
         st.session_state["last_run"] = payload
-        st.success(f"Analysis complete. Saved run: {saved_path.name}")
+        st.success(f"Analysis complete. Run {run_id} kept in this session.")
 
 run = st.session_state.get("last_run")
 
@@ -438,15 +436,28 @@ with tabs[4]:
 
 with tabs[5]:
     st.subheader("Saved runs")
+    st.caption(
+        "Runs from this browser session only. They are not written to the server "
+        "and are gone when you close the tab, so nothing you enter here is visible "
+        "to anyone else. Download a run to keep it."
+    )
     runs_df = _load_saved_runs()
     if runs_df.empty:
-        st.info("No saved runs yet.")
+        st.info("No runs in this session yet.")
     else:
         st.dataframe(runs_df, width="stretch", hide_index=True)
-        selected = st.selectbox("Open saved run file", runs_df["path"].tolist())
+        session_runs = st.session_state.get("runs", [])
+        labels = {f"{r['saved_at']}  {r['input']['sequence'][:24]}": r for r in session_runs}
+        selected = st.selectbox("Open a run from this session", list(labels))
         if selected:
-            with open(selected) as f:
-                st.json(json.load(f))
+            chosen = labels[selected]
+            st.download_button(
+                "Download this run as JSON",
+                data=json.dumps(chosen, indent=2, default=str),
+                file_name=f"oligotox_run_{chosen['run_id']}.json",
+                mime="application/json",
+            )
+            st.json(chosen)
 
 with tabs[6]:
     st.subheader("Build info")
@@ -455,6 +466,6 @@ with tabs[6]:
         "processed_dir": str(PROCESSED_DIR),
         "model_dir": str(MODEL_DIR),
         "config_dir": str(CONFIG_DIR),
-        "runs_dir": str(RUNS_DIR),
+        "run_storage": "session only, not written to disk",
     })
     st.write("Validation status: backend validated end-to-end in current workspace.")

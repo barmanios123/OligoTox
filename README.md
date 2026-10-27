@@ -150,6 +150,10 @@ The tab only scores the modality a model was trained for: ask it about a PMO and
 
 Ichihara's entries are siRNA duplexes written as one string, `sense.antisense`. Read naively they look like 41-nt "sequences" whose length and GC content are computed over both strands and the separator. The normalizer now splits them and uses the 21-nt antisense guide, which is what drives potency.
 
+### Privacy on the public deployment
+
+Runs live in the visitor's browser session and are never written to the server. An earlier version saved every run to `artifacts/runs/` and the Saved runs tab listed every file it found there, which on a shared container means one visitor's sequences are readable by the next. Download a run to keep it.
+
 ## Run it
 
 ```bash
@@ -235,4 +239,6 @@ docs/                    architecture and provenance notes
 
 ## License
 
-Proprietary; see `LICENSE`. Available for evaluation and collaboration discussions.
+MIT; see `LICENSE`.
+
+The curated datasets under `data/` are derived from published literature, PMC articles and FDA labels, each credited in `docs/provenance/DATA_AND_MODEL_PROVENANCE.md`. The MIT grant covers this repository's own code and curation; the underlying publications keep their own terms, so cite the original sources rather than this repo when using the data.
