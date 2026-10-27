@@ -32,6 +32,33 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 COMBINED = ROOT / "data" / "oligogym" / "oligogym_tox_combined.csv"
+RAW = ROOT / "data" / "oligogym"
+
+# The combined file drops the target gene, which is the grouping any potency
+# split has to respect. Pull it back from the per-source files.
+RAW_FILES = {
+    "Ichihara_2007_1": "Ichihara_2007_1_processed.csv.gz",
+    "Ichihara_2007_2": "Ichihara_2007_2_processed.csv.gz",
+    "McQuisten_2007": "McQuisten_2007_1_processed.csv.gz",
+    "Hagedorn_2022": "Hagedorn_2022_1_processed.csv.gz",
+    "MOE_Neurotox_2024": "MOE_Neurotox_1_processed.csv.gz",
+    "Papargyri_2020_OligoGym": "Papargyri_2020_1_processed.csv.gz",
+}
+
+
+def _target_genes(source: str) -> pd.DataFrame | None:
+    """sequence -> target gene, from the per-source file."""
+    path = RAW / RAW_FILES.get(source, "")
+    if not path.exists():
+        return None
+    raw = pd.read_csv(path, low_memory=False)
+    if "fasta" not in raw.columns or "targets" not in raw.columns:
+        return None
+    out = pd.DataFrame({
+        "sequence": _normalize_sequence(raw["fasta"]),
+        "target_gene": raw["targets"].astype(str),
+    })
+    return out.drop_duplicates("sequence")
 OUT = ROOT / "data" / "processed"
 
 HIGHER_IS_TOXIC = "higher_is_toxic"
@@ -106,6 +133,29 @@ def _normalize_sequence(series: pd.Series) -> pd.Series:
     return series.astype(str).str.upper().str.replace("U", "T", regex=False).str.strip()
 
 
+def _split_duplex(series: pd.Series) -> pd.DataFrame:
+    """Split `sense.antisense` siRNA duplexes into their two strands.
+
+    The Ichihara entries are duplexes written as one string with a dot
+    separator, so a naive read gives a 41-character "sequence" whose length
+    and GC content are computed over both strands and the separator. The
+    guide (antisense) strand is what drives potency, so it is pulled out
+    here rather than left for each caller to rediscover.
+    """
+    has_dot = series.str.contains(".", regex=False)
+    # A source with no duplexes splits into a single column, so widen to two.
+    parts = series.str.split(".", n=1, expand=True).reindex(columns=[0, 1])
+    sense = parts[0].where(has_dot, series)
+    antisense = parts[1].where(has_dot)
+    return pd.DataFrame({
+        "sense_strand": sense,
+        "antisense_strand": antisense,
+        # The guide is the antisense strand; a single-stranded ASO is its own guide.
+        "guide_sequence": antisense.astype(object).fillna(series),
+        "is_duplex": has_dot,
+    })
+
+
 def normalize() -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     raw = pd.read_csv(COMBINED, low_memory=False)
 
@@ -122,6 +172,7 @@ def normalize() -> tuple[pd.DataFrame, pd.DataFrame, dict]:
         if df.empty:
             continue
         df["sequence"] = _normalize_sequence(df["sequence"])
+        df = pd.concat([df, _split_duplex(df["sequence"])], axis=1)
         df["y_raw"] = pd.to_numeric(df["y_raw"], errors="coerce")
         df = df.dropna(subset=["y_raw"])
 
@@ -135,10 +186,19 @@ def normalize() -> tuple[pd.DataFrame, pd.DataFrame, dict]:
         # One row per sequence. Replicates are averaged, never split across a label.
         agg = df.groupby("sequence", as_index=False).agg(
             y_raw=("y_raw", "mean"), n_replicates=("y_raw", "size"),
+            guide_sequence=("guide_sequence", "first"),
+            sense_strand=("sense_strand", "first"),
+            antisense_strand=("antisense_strand", "first"),
+            is_duplex=("is_duplex", "first"),
         )
         agg["source"] = name
         agg["readout"] = spec.readout
         agg["endpoint"] = spec.endpoint
+        genes = _target_genes(name)
+        if genes is not None:
+            agg = agg.merge(genes, on="sequence", how="left")
+        else:
+            agg["target_gene"] = pd.NA
         agg["modality"] = df["modality"].iloc[0]
         agg["assay_type"] = df["assay_type"].iloc[0]
 

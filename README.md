@@ -120,6 +120,27 @@ python scripts/normalize_external_tox.py
 
 Writes `external_tox_normalized.csv`, `external_efficacy_normalized.csv` and a manifest recording every labelling decision. Tests assert the direction of each source and that no efficacy readout carries a toxic label.
 
+## Efficacy, back with evidence behind it
+
+The Efficacy tab was removed in an earlier pass because it held untrained model slots whose outputs were not predictions. It is back, trained on 6,718 potency sequences that were sitting unused in `data/oligogym`.
+
+Potency has its own shortcut. It varies far more between target genes than within one, so a model that has seen other oligos against the same gene can score well while knowing nothing about design. Two guards: folds are grouped by target gene, and a target-gene-mean baseline that ignores the sequence entirely is scored alongside.
+
+| Model | Data | Gene-grouped CV | Cross-study | GC only | Gene mean | Tier |
+|---|---|---|---|---|---|---|
+| siRNA potency | 2,838 duplexes, 41 genes | **0.53** [0.50-0.56] | **0.44** / **0.48** | 0.30 | -0.11 | validated |
+| ASO activity | 3,867 PS-ASOs, 85 genes | **0.25** [0.22-0.28] | none available | 0.14 | -0.15 | weak |
+
+Spearman between measured potency and out-of-fold prediction. The siRNA number transfers between two independent studies (Ichihara 1 and 2) that share no sequences, in both directions. The gene-mean baseline carries none of it, and 17-29% of the variance is between genes, which is why the grouping matters.
+
+The tab only scores the modality a model was trained for: ask it about a PMO and it says no model is validated for that, rather than returning a number. Scores are raw readouts in the units of the training data, labelled as such, never probabilities.
+
+**Caveat on the siRNA model:** the training data is 2007 chemistry with no modification annotation, so it scores sequence design only and knows nothing about the chemistry of a modern GalNAc-siRNA.
+
+### A duplex parsing bug this turned up
+
+Ichihara's entries are siRNA duplexes written as one string, `sense.antisense`. Read naively they look like 41-nt "sequences" whose length and GC content are computed over both strands and the separator. The normalizer now splits them and uses the 21-nt antisense guide, which is what drives potency.
+
 ## Run it
 
 ```bash
@@ -175,10 +196,11 @@ The last step is what the app reads, so rerun it after any change to the baselin
 | Toxicity Results | Predictions for the validated endpoints, a composite over those only, and the remaining model outputs behind an expander with the reason each is excluded | Gated by evidence tier |
 | PK/PD | Liver AUC, Cmax and half-life from a GalNAc-siRNA compartment simulator | Mechanistic simulator, not fitted to this data |
 | Regulatory Report | OSWG-style JSON safety summary, with an evidence block and recommendations raised only from validated endpoints | Report formatting |
+| Efficacy | Potency for the candidate's modality, with its units, evidence and caveat | siRNA validated, ASO weak |
 | Saved Runs | Runs kept during the session | — |
 | Build Info | Model versions, feature count and config provenance | — |
 
-An earlier Efficacy tab held untrained model slots and produced no predictions. It was removed rather than shipped behind a disclaimer.
+The Efficacy tab previously held untrained model slots and was removed rather than shipped behind a disclaimer. It returned once the models were trained and validated against baselines.
 
 ## Limitations
 

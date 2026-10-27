@@ -17,6 +17,7 @@ if str(SRC) not in sys.path:
 from oligotox.features.candidate import candidate_features as build_candidate_features
 from oligotox.pipelines.score_candidate import score_candidate
 from oligotox.pkpd.bridge import compute_pkpd_enriched_features
+from oligotox.efficacy.potency import score_efficacy
 from oligotox.reporting.oswg_report import OSWGSafetyReport
 
 APP_TITLE = "OligoTox Operator Console"
@@ -265,6 +266,7 @@ tabs = st.tabs([
     "Toxicity Results",
     "PK/PD",
     "Regulatory Report",
+    "Efficacy",
     "Saved Runs",
     "Build Info",
 ])
@@ -407,7 +409,34 @@ with tabs[3]:
             mime="application/json",
         )
 
+
 with tabs[4]:
+    st.subheader("Efficacy")
+    if not run:
+        st.info("Run an analysis to view efficacy outputs.")
+    else:
+        seq = run["input"]["sequence"]
+        modality = run["input"]["modality"]
+        eff = score_efficacy(seq, modality, MODEL_DIR, CONFIG_DIR)
+        if not eff["available"]:
+            st.info(eff["reason"])
+        else:
+            for name, pred in eff["predictions"].items():
+                label = name.replace("_", " ")
+                if pred["tier"] == "validated":
+                    st.metric(label, f"{pred['score']:.1f}", help=pred["units"])
+                else:
+                    st.metric(f"{label} (weak evidence)", f"{pred['score']:.2f}", help=pred["units"])
+                st.caption(f"{pred['readout']}. {pred['evidence']}")
+                if pred["caveat"]:
+                    st.caption(f"Caveat: {pred['caveat']}")
+                st.divider()
+            st.caption(
+                "These are raw model readouts in the units of the training data, not "
+                "probabilities, and they are not comparable across modalities."
+            )
+
+with tabs[5]:
     st.subheader("Saved runs")
     runs_df = _load_saved_runs()
     if runs_df.empty:
@@ -419,7 +448,7 @@ with tabs[4]:
             with open(selected) as f:
                 st.json(json.load(f))
 
-with tabs[5]:
+with tabs[6]:
     st.subheader("Build info")
     st.write({
         "app_file": str(ROOT / "oligotox_app.py"),

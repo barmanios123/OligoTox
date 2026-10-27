@@ -1,0 +1,209 @@
+{
+  "note": "Spearman between measured potency and out-of-fold prediction. Folds are grouped by target gene. The target-gene-mean baseline uses no sequence information.",
+  "datasets": {
+    "Ichihara_2007_1": {
+      "sequences": 2431,
+      "genes": 30
+    },
+    "Ichihara_2007_2": {
+      "sequences": 407,
+      "genes": 11
+    },
+    "McQuisten_2007": {
+      "sequences": 3867,
+      "genes": 85
+    }
+  },
+  "results": [
+    {
+      "dataset": "Ichihara_2007_1",
+      "evaluation": "gene-grouped CV",
+      "model": "All guide features",
+      "spearman": 0.531228030726556,
+      "ci_low": 0.5044846620468674,
+      "ci_high": 0.5593382282613054,
+      "n": 2431,
+      "n_genes": 30
+    },
+    {
+      "dataset": "Ichihara_2007_1",
+      "evaluation": "gene-grouped CV",
+      "model": "Asymmetry + seed only",
+      "spearman": 0.39079141217725505,
+      "ci_low": 0.3570285517070036,
+      "ci_high": 0.4257901588980529,
+      "n": 2431,
+      "n_genes": 30
+    },
+    {
+      "dataset": "Ichihara_2007_1",
+      "evaluation": "gene-grouped CV",
+      "model": "GC only",
+      "spearman": 0.29645758170884146,
+      "ci_low": 0.2608189692746091,
+      "ci_high": 0.3336916573718037,
+      "n": 2431,
+      "n_genes": 30
+    },
+    {
+      "dataset": "Ichihara_2007_1",
+      "evaluation": "gene-grouped CV",
+      "model": "Target gene mean (no sequence)",
+      "spearman": -0.10535678614205202,
+      "ci_low": null,
+      "ci_high": null,
+      "n": 2431,
+      "n_genes": 30
+    },
+    {
+      "dataset": "Ichihara_2007_1",
+      "evaluation": "variance decomposition",
+      "model": "fraction of variance between genes",
+      "spearman": 0.17126194926065513,
+      "ci_low": null,
+      "ci_high": null,
+      "n": 2431,
+      "n_genes": 30
+    },
+    {
+      "dataset": "Ichihara_2007_2",
+      "evaluation": "gene-grouped CV",
+      "model": "All guide features",
+      "spearman": 0.32447539381763657,
+      "ci_low": 0.24132006646432458,
+      "ci_high": 0.4072484620805165,
+      "n": 407,
+      "n_genes": 11
+    },
+    {
+      "dataset": "Ichihara_2007_2",
+      "evaluation": "gene-grouped CV",
+      "model": "Asymmetry + seed only",
+      "spearman": 0.13391492943338446,
+      "ci_low": 0.041008783519978616,
+      "ci_high": 0.2182125736696642,
+      "n": 407,
+      "n_genes": 11
+    },
+    {
+      "dataset": "Ichihara_2007_2",
+      "evaluation": "gene-grouped CV",
+      "model": "GC only",
+      "spearman": 0.06158326722321931,
+      "ci_low": -0.03277940259121107,
+      "ci_high": 0.14799262532055174,
+      "n": 407,
+      "n_genes": 11
+    },
+    {
+      "dataset": "Ichihara_2007_2",
+      "evaluation": "gene-grouped CV",
+      "model": "Target gene mean (no sequence)",
+      "spearman": -0.36277292583793974,
+      "ci_low": null,
+      "ci_high": null,
+      "n": 407,
+      "n_genes": 11
+    },
+    {
+      "dataset": "Ichihara_2007_2",
+      "evaluation": "variance decomposition",
+      "model": "fraction of variance between genes",
+      "spearman": 0.28510475791243495,
+      "ci_low": null,
+      "ci_high": null,
+      "n": 407,
+      "n_genes": 11
+    },
+    {
+      "dataset": "McQuisten_2007",
+      "evaluation": "gene-grouped CV",
+      "model": "All guide features",
+      "spearman": 0.24535820473132414,
+      "ci_low": 0.21726344542174875,
+      "ci_high": 0.2752486286914712,
+      "n": 3867,
+      "n_genes": 85
+    },
+    {
+      "dataset": "McQuisten_2007",
+      "evaluation": "gene-grouped CV",
+      "model": "Asymmetry + seed only",
+      "spearman": 0.10561663118709601,
+      "ci_low": 0.07449967984628034,
+      "ci_high": 0.13528130627964643,
+      "n": 3867,
+      "n_genes": 85
+    },
+    {
+      "dataset": "McQuisten_2007",
+      "evaluation": "gene-grouped CV",
+      "model": "GC only",
+      "spearman": 0.1424577524520839,
+      "ci_low": 0.11098650264318781,
+      "ci_high": 0.1719335703217048,
+      "n": 3867,
+      "n_genes": 85
+    },
+    {
+      "dataset": "McQuisten_2007",
+      "evaluation": "gene-grouped CV",
+      "model": "Target gene mean (no sequence)",
+      "spearman": -0.14638695353046272,
+      "ci_low": null,
+      "ci_high": null,
+      "n": 3867,
+      "n_genes": 85
+    },
+    {
+      "dataset": "McQuisten_2007",
+      "evaluation": "variance decomposition",
+      "model": "fraction of variance between genes",
+      "spearman": 0.28719363750996146,
+      "ci_low": null,
+      "ci_high": null,
+      "n": 3867,
+      "n_genes": 85
+    },
+    {
+      "dataset": "Ichihara_2007_1 -> Ichihara_2007_2",
+      "evaluation": "cross-study transfer",
+      "model": "All guide features",
+      "spearman": 0.4391330409091077,
+      "ci_low": 0.3569671491741868,
+      "ci_high": 0.5104932576593039,
+      "n": 407,
+      "n_genes": 11
+    },
+    {
+      "dataset": "Ichihara_2007_1 -> Ichihara_2007_2",
+      "evaluation": "cross-study transfer",
+      "model": "GC only",
+      "spearman": 0.22995587114299462,
+      "ci_low": 0.14143020749221671,
+      "ci_high": 0.317028707709996,
+      "n": 407,
+      "n_genes": 11
+    },
+    {
+      "dataset": "Ichihara_2007_2 -> Ichihara_2007_1",
+      "evaluation": "cross-study transfer",
+      "model": "All guide features",
+      "spearman": 0.47628076288577476,
+      "ci_low": 0.4466125836097388,
+      "ci_high": 0.5060443070331602,
+      "n": 2431,
+      "n_genes": 30
+    },
+    {
+      "dataset": "Ichihara_2007_2 -> Ichihara_2007_1",
+      "evaluation": "cross-study transfer",
+      "model": "GC only",
+      "spearman": 0.30762682897018684,
+      "ci_low": 0.27040547180063146,
+      "ci_high": 0.3419325367926754,
+      "n": 2431,
+      "n_genes": 30
+    }
+  ]
+}
