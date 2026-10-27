@@ -1,6 +1,28 @@
 # OligoTox Training Pipeline Architecture
 **Complete End-to-End Documentation**
 
+> **Correction notice (2026-10-27). This document describes the pipeline as it
+> was before the label leakage fix, and parts of it document the bug itself.**
+>
+> Do not follow it as a specification. The three things to know:
+>
+> 1. **The random 80/20 `train_test_split` shown under "Training Process" is
+>    exactly the leakage this project later fixed.** Many rows are replicate
+>    measurements of the same oligo, so a random row-level split puts the same
+>    sequence in train and test. Folds now come from `StratifiedGroupKFold`
+>    grouped on the normalized sequence.
+> 2. **Models are not RandomForest.** They are
+>    `CalibratedClassifierCV(LogisticRegression(...), method="sigmoid", cv=2)`.
+>    The hyperparameter block below is dead code.
+> 3. **"54 features" and the per-endpoint prevalences quoted below are wrong.**
+>    55 features survive filtering, and hepatocellular injury's base rate is
+>    0.126, not 0.0247. 23 outcome-annotation columns and 2 post-dose assay
+>    readouts were removed as leakage.
+>
+> `docs/provenance/DATA_AND_MODEL_PROVENANCE.md` has the corrected pipeline and
+> feature breakdown; the root `README.md` has the honest metrics. The feature
+> extraction and inference sections here are still broadly accurate.
+
 ---
 
 ## 🎯 Overview: What You're Training
@@ -139,20 +161,23 @@ ASO_001,0,1,1,...  # Safe liver, but vacuolation + KC activation
 ### Hyperparameters (Fixed Across All Endpoints):
 
 ```python
-from sklearn.ensemble import RandomForestClassifier
+# SUPERSEDED. The shipped model, from _make_model() in
+# src/oligotox/training/train.py:
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.linear_model import LogisticRegression
 
-model = RandomForestClassifier(
-    n_estimators=100,          # 100 decision trees
-    max_depth=10,              # Prevent overfitting on small datasets
-    min_samples_split=5,       # Require ≥5 samples to split node
-    min_samples_leaf=2,        # Require ≥2 samples per leaf
-    max_features='sqrt',       # Use √54 ≈ 7 features per tree
-    class_weight='balanced',   # Upweight minority class (toxics)
-    bootstrap=True,            # Sample with replacement
-    random_state=42,           # Reproducibility
-    n_jobs=-1                  # Parallel training
+base = LogisticRegression(
+    max_iter=2000,
+    class_weight="balanced",   # upweight the rare positive class
+    solver="liblinear",
 )
+model = CalibratedClassifierCV(base, method="sigmoid", cv=2)
 ```
+
+With 74 unique sequences, a calibrated linear model is the defensible choice.
+Gradient boosting was evaluated as a baseline and matches or beats it on
+several endpoints, but every confidence interval overlaps, so there is no
+evidence to prefer either (see the root README's Baselines section).
 
 **Class Weighting Formula:**
 ```
@@ -175,7 +200,7 @@ Example for `hepatocellular_injury` (2.47% prevalence):
 ```python
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedGroupKFold, cross_val_predict
 
 # Load features (X)
 X = pd.read_csv('data/processed/training_dataset.csv').drop('oligo_id', axis=1)
@@ -186,24 +211,34 @@ y = pd.read_csv('data/processed/label_matrix.csv')['hepatocellular_injury']
 # 1614 binary labels (0/1)
 ```
 
-#### Step 2: Train/Test Split (80/20)
+#### Step 2: Sequence-grouped cross-validation
+
+**The random split previously documented here was the leakage.** The 1,614
+rows cover only 74 unique sequences, so `train_test_split` on rows put
+replicate measurements of the same oligo on both sides. Hepatocellular injury
+scored 0.93 PR-AUC that way and 0.27 once the split was fixed.
+
 ```python
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y,
-    test_size=0.2,        # 323 test, 1291 train
-    stratify=y,           # Preserve 2.47% prevalence in both sets
-    random_state=42
-)
+from sklearn.model_selection import StratifiedGroupKFold, cross_val_predict
+
+# All rows of one sequence stay on the same side of every split.
+# RNA and DNA spellings of a sequence are the same group.
+groups = raw["sequence"].str.upper().str.replace("U", "T", regex=False)
+
+cv = StratifiedGroupKFold(n_splits=n_splits)
+prob = cross_val_predict(_make_model(), X, y, cv=cv, groups=groups,
+                         method="predict_proba")[:, 1]
 ```
 
-**Result:**
-- **Training Set:** 1,291 oligos (32 toxic, 1259 safe)
-- **Test Set:** 323 oligos (8 toxic, 315 safe)
+There is no held-out test set. With 4-27 positive sequences per endpoint, a
+single split would be noise, so every published number is out-of-fold under
+sequence-grouped CV, reported with its base rate and a 95% bootstrap CI over
+sequences.
 
 #### Step 3: Model Training
 ```python
-model = RandomForestClassifier(...)
-model.fit(X_train, y_train)  # Learn from 1,291 examples
+# Superseded: see Step 2. Fitting now happens inside
+# cross_val_predict, once per fold, on the grouped folds.
 ```
 
 **What Happens Internally:**

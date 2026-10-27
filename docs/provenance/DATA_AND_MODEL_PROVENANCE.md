@@ -1,40 +1,17 @@
-# 📊 OligoTox: Data & Model Provenance Documentation
+# OligoTox: Data & Model Provenance
 
-**Generated**: June 26, 2026
-**Version**: v1.0 Production Release
+**Revised**: 2026-10-27 (supersedes the June 26, 2026 version in full)
 **Maintainer**: Beshoy Armanios, PhD (Pharmacology/Toxicology)
 
-
-> **Correction notice (2026-10-27). The model and metric claims below are
-> superseded and wrong; the citations are not.**
->
-> This document was written before the label leakage in the training data was
-> found. Specifically, do not rely on these statements:
->
-> - **"99.9% average accuracy" / per-model `acc=0.999`.** These came from
->   leaked outcome columns and row-level splits on endpoints whose base rates
->   are as low as 0.2%, where accuracy is meaningless anyway. The honest
->   sequence-grouped numbers are PR-AUCs between 0.03 and 0.48, and only one
->   endpoint of 13 beats its baselines. See the root `README.md`.
-> - **RandomForestClassifier, `n_estimators=100`, `max_depth=10`, ~1.7 MB
->   models, `endpoint_*.joblib` filenames.** Models are now calibrated
->   logistic regression (`CalibratedClassifierCV` over `LogisticRegression`),
->   about 6.8 KB each, named `<endpoint>.joblib`.
-> - **"1,576 sequences, 49 features".** The data is 1,614 rows covering 74
->   unique sequences, with 55 features.
-> - **`cas_avg` / `kd_avg` ("CAS average", "Kd average") as features.** Both
->   were removed: they are measured after dosing and don't exist for a new
->   design.
-> - **DataSAIL as the headline split.** Folds come from
->   `StratifiedGroupKFold` grouped on the normalized sequence; the DataSAIL
->   run is kept only as a diagnostic.
->
-> The primary data sources and citations above are still accurate and are the
-> reason this file is kept. The root `README.md` and `data/README.md` are
-> authoritative for anything about models, features or metrics.
+The June 2026 version of this file was written before label leakage was found
+in the training data. It advertised 99.9% accuracy, RandomForest models, 1,576
+sequences and 49 features. All of that was wrong or has since changed, and the
+numbers in it came from leaked outcome columns. It has been rewritten against
+the code and artifacts as they stand. The root `README.md` remains
+authoritative for evaluation results; this file covers where the data and
+models came from.
 
 ---
-
 
 ## 📖 PRIMARY DATA SOURCES & CITATIONS
 
@@ -85,373 +62,189 @@
 
 ---
 
-## 🧬 TRAINED MODEL REGISTRY
+## TRAINING DATA
 
-### Production Models (v4 - Current)
-**Storage Location**: `artifacts/models/`
+**File**: `data/processed/training_dataset.csv` (committed, 335 KB)
 
-**Training Date**: June 26, 2026
-**Training Script**: `artifacts/models/latest_train_baseline/` pretrained bundle (root) + `src/oligotox/training/train.py`
-**Algorithm**: RandomForestClassifier (scikit-learn)
-**Hyperparameters**:
-- `n_estimators=100`
-- `max_depth=10`
-- `random_state=42`
-- `n_jobs=-1`
+- **1,614 rows covering 74 unique sequences.** Many rows are replicate
+  measurements of the same oligo. 74, not 1,614, is the effective sample size,
+  and all cross-validation is grouped on the normalized sequence (RNA and DNA
+  spellings of one sequence count as the same group).
+- **13 binary toxicity endpoints** in `label_matrix.csv`. Nine have 7 or fewer
+  positive sequences; CNS toxicity has 2 and is not evaluated.
+- **`source`** names the originating dataset per row.
 
-#### Trained Endpoint Models:
-```
-artifacts/models/
-├── endpoint_cns_neurotoxicity.joblib        117 KB  (acc=1.000)
-├── endpoint_coagulation_effect.joblib        148 KB  (acc=0.999)
-├── endpoint_complement_activation.joblib     165 KB  (acc=0.999)
-├── endpoint_cytokine_release.joblib          159 KB  (acc=0.999)
-├── endpoint_hepatocellular_injury.joblib     336 KB  (acc=0.999)
-├── endpoint_injection_site_reaction.joblib   191 KB  (acc=0.998)
-├── endpoint_innate_immune_activation.joblib  159 KB  (acc=0.999)
-├── endpoint_renal_accumulation.joblib        171 KB  (acc=0.999)
-├── endpoint_renal_tubular_injury.joblib      181 KB  (acc=0.999)
-└── endpoint_thrombocytopenia.joblib          132 KB  (acc=1.000)
+### Source composition and its selection bias
 
-TOTAL: 10 models, ~1.7 MB, 99.9% average accuracy
-```
+| Bucket | Rows | Rows positive on >=1 endpoint |
+|---|---|---|
+| `oligotox_main` | 800 | 214 of 1,572 across both systematic sources |
+| `papargyri_2020` | 772 | (same 214) |
+| individually curated (35 distinct sources) | 42 | 36 |
 
-#### Additional Variant Models:
-- `hepatic_vacuolation.joblib`
-- `kupffer_cell_activation.joblib`
-- `offtarget_gene_silencing.joblib`
-
-**Total Artifacts Registered**: 13 models (detected by UI Model Registry)
+The 42 individually curated rows come from single papers, PMC articles and FDA
+labels, and they exist *because* a toxicity finding was published about them.
+So 86% of them carry a positive label, against 14% of the systematic rows. The
+consequence is that "which source is this row from" is close to the label
+itself, by construction. This is measured, not assumed: the root README's
+Baselines section scores a data-source-only baseline against the real model,
+and for Kupffer cell activation the source baseline wins (0.69 vs 0.48). All
+34 Kupffer positive rows sit in the 42-row curated bucket and none in the
+systematic sources.
 
 ---
 
-## 🗃️ TRAINING DATASET CONSTRUCTION
+## FEATURES
 
-### Dataset Metadata
-- **File**: `data/processed/training_dataset.csv`
-- **Sequences**: 1,576 unique oligonucleotides
-- **Features**: 49 engineered features
-- **Endpoints**: 13 binary toxicity endpoints
-- **Metadata**: `data/processed/dataset_metadata.json`
+`build_training_dataset` assembles 191 candidate feature columns; training
+filters them to **55**. The filter is in `artifacts/metrics/dropped_features.json`:
 
-### Feature Categories (49 total)
+| Dropped | Count | Why |
+|---|---|---|
+| Outcome annotations (`label_*`, `endpoint_*`) | 23 | Curated annotations of the outcome. `label_kupffer_activation` correlated 0.98 with its own target. This was the leakage. |
+| Assay readouts (`cas_avg`, `kd_avg`) | 2 | Measured after dosing; they do not exist for a new design. |
+| Constant columns | 111 | No variance across rows, so no information. |
 
-#### 1. Structural Features (15 features)
-**Module**: `src/oligotox/features/structure_features.py`
-- GC content, melting temperature (Tm)
-- Secondary structure propensity
-- Hairpin stability, self-dimer formation
-- Length, molecular weight
+### The 55 surviving features
 
-#### 2. Chemical Modification Features (8 features)
-**Module**: `src/oligotox/features/aso_rich_features.py`
-- **PS fraction**: Phosphorothioate backbone percentage
-- **LNA fraction**: Locked nucleic acid content
-- **2'-OMe fraction**: 2'-O-methyl sugar modifications
-- **CAS average**: Chemical Analog Score (similarity to known toxic structures)
-- **Kd average**: Average binding affinity (dissociation constant)
+| Block | Count | Contents |
+|---|---|---|
+| Design and chemistry | 9 | `ps_fraction`, `lna_fraction`, `seq_length`, `gc_content`, `seed_gc`, `cpg_density`, `tlr7_score`, `ps_x_len`, `lna_x_gc` |
+| `aso_*` | 22 | Chemistry and modality one-hots (LNA, MoE, 2'-OMe, PS, GalNAc; gapmer, siRNA, PMO, SSO, mRNA) and derived flags |
+| `struct_*` | 8 | Length, GC, uracil fraction, longest homopolymer, palindrome fraction, dinucleotide repeats, hairpin score, `struct_mfe_proxy` |
+| `embed_stub_hash_rna_00..15` | 16 | A hash of the sequence, not a learned embedding |
 
-#### 3. Mechanistic/Pathway Features (18 features)
-**Module**: `src/oligotox/integrations/`
-- **TLR activation scores**: TLR7/8/9 immune stimulation (`tlr_immune.py`)
-- **Seed match scores**: miRNA-like off-target potential (`seed_match.py`)
-- **GSEA pathway enrichment**: Enriched biological pathways (`gsea_pathway.py`)
-- **Sentinel markers**: Tissue-specific toxicity biomarkers (`omics/feature_dictionary.py`)
+Two caveats a reader should not have to discover from the code:
 
-#### 4. Embedding Features (8 features)
-**Module**: `src/oligotox/features/embedding_features.py`
-- k-mer frequency vectors
-- Chemistry-aware sequence encodings
+- **`struct_mfe_proxy` is a placeholder, not a folding energy.** ViennaRNA is
+  requested at build time (`viennarna_requested: true`) but never used
+  (`struct_viennarna_used` is 0.0 for every row), so the structure block
+  carries no thermodynamic information.
+- **16 of the 55 features (29%) are a hash stub.** The column names say so.
+  There is no trained sequence model behind them.
 
-### Endpoint Label Curation
-**Mapping**: `CURATED_ENDPOINT_MAP` (line 297 in `build_training_dataset.py`)
+### Omics features add nothing to the shipped models
 
-```python
-CURATED_ENDPOINT_MAP = {
-    'endpoint_hepatocellular_injury': 'curated_hepatocellular_injury',
-    'endpoint_renal_tubular_injury': 'curated_renal_tubular_injury',
-    'endpoint_thrombocytopenia': 'curated_thrombocytopenia',
-    'endpoint_coagulation_effect': 'curated_coagulation',
-    'endpoint_complement_activation': 'curated_complement',
-    'endpoint_innate_immune_activation': 'curated_innate_immune',
-    'endpoint_cytokine_release': 'curated_cytokine',
-    'endpoint_injection_site_reaction': 'curated_injection_site',
-    'endpoint_cns_neurotoxicity': 'curated_cns_tox',
-    'endpoint_renal_accumulation': 'curated_renal_accum',
-}
-```
-
-**Normalization**: `_normalize_label_series()` converts categorical/numeric to binary (0/1)
+`build_training_dataset` loads 4 omics modalities and joins 66 omics feature
+columns (`omics_features_added: 66`, `candidate_level_omics_joined: true`).
+Because the join is at candidate level, every one of those columns is constant
+across rows, and all 66 are dropped by the constant filter. **No omics, GSEA,
+pathway, sentinel-marker or Geneformer feature reaches any shipped model.**
+The modules under `src/oligotox/omics/` and `src/oligotox/integrations/` run
+and are reachable from the API, but they do not contribute to the 55 features
+the models are trained on.
 
 ---
 
-## 🔗 DATA PIPELINE WORKFLOW
+## MODELS
 
-### Stage 1: Raw Data Ingestion
-```
-data/raw/
-├── github_repos/
-│   ├── scaso/          # Mortberg 2023 - scRNA-seq + ASO
-│   └── openASO/        # McQuisten 2007 - Motifs
-├── oligogym/
-│   └── oligogym_bulk/  # Martinelli 2023 - siRNA benchmark
-└── external_repos/     # Additional curated sources
-```
+**Location**: `artifacts/models/<endpoint>.joblib` (13 files, ~6.8 KB each)
 
-### Stage 2: Omics Integration
-**Module**: `src/oligotox/omics/`
+- **Algorithm**: `CalibratedClassifierCV(LogisticRegression(max_iter=2000,
+  class_weight="balanced", solver="liblinear"), method="sigmoid", cv=2)`
+- **Defined in**: `_make_model()` in `src/oligotox/training/train.py`
+- **Not RandomForest.** The earlier RandomForest models, their
+  `endpoint_*.joblib` filenames and their reported accuracies are gone.
 
-**Registry**: `OMICS_REGISTRY` (defined in `__init__.py`)
-- Centralized catalog of all omics data sources
-- Metadata: modality, tissue, species, publication
+### Why accuracy is not reported
 
-**Loaders**: `loaders.py`
-- `load_omics_table(name)` - Load specific omics dataset
-- `join_omics_tables(tables)` - Merge multiple modalities
-- Reducers: `passthrough`, `variance_topk`
+Base rates run from 0.126 down to 0.0012. A model predicting "no toxicity"
+for every oligo scores above 99% accuracy on most of these endpoints, which is
+how the old "99.9% average accuracy" claim arose. Evaluation uses PR-AUC
+against the base rate, with 95% bootstrap CIs over sequences, plus baselines.
+Current results, including the finding that only 1 of 13 endpoints is
+defensible, are in the root `README.md`.
 
-**Quality Control**: `deg_qc.py`
-- Expression threshold validation
-- Replicate consistency checks
-- P-value/FDR filtering
+### Evidence gating
 
-**Gene Symbol Normalization**: `symbol_cleaner.py`
-- Uses `GENE_ALIAS_MAP` from `reference/gene_aliases.py`
-- Resolves ambiguous gene names
-
-**Mechanistic Readout Conversion**: `deg_to_readout.py`
-- Converts DEG tables → `OmicsReadout` objects
-- Maps to pathway features (`PATHWAY_FEATURES`, `SENTINEL_MARKERS`)
-
-**Supported Omics Modalities** (`omics/schemas.py`):
-1. RNA-seq (bulk, single-cell)
-2. Proteomics (mass spec, antibody arrays)
-3. Metabolomics (LC-MS, NMR)
-4. miRNA profiling
-
-### Stage 3: Feature Engineering
-**Main Builder**: `src/oligotox/pipelines/build_training_dataset.py`
-
-**Workflow** (run function, line 159):
-1. **Load raw CSV sources** from `data/raw/`
-2. **Join omics tables**: `join_omics_tables(OMICS_REGISTRY)`
-3. **Build rich features**: `build_aso_rich_features()`
-   - Structural: `build_structure_features()`
-   - Embeddings: `build_embedding_features()`
-   - Chemical mods from input columns
-4. **Safe left join on candidate**: `safe_left_join_on_candidate()`
-5. **Normalize endpoint labels**: Apply `CURATED_ENDPOINT_MAP`
-6. **Export**:
-   - CSV: `data/processed/training_dataset.csv`
-   - Metadata: `data/processed/dataset_metadata.json`
-
-### Stage 4: Model Training
-**Script**: `src/oligotox/training/train.py`
-
-**Full Training Pipeline** (train_all function, line 185):
-```python
-1. build_info = build_training_dataset(
-       "data/processed/training_dataset.csv",
-       ...,
-       "data/processed/dataset_metadata.json"
-   )
-2. Load metadata: dataset_metadata.json
-3. Build v03 feature DataFrame: build_v03_feature_df()
-4. DataSAIL cross-validation splits: datasail_splits.py
-5. Train RandomForest per endpoint:
-   - Fit on training fold
-   - Evaluate on validation fold
-   - Threshold selection: batch_select_thresholds()
-6. Save artifacts:
-   - Models: artifacts/models/*.joblib
-   - Manifest: model_manifest.json
-   - Metadata: dataset_metadata.json (updated with training_dataset_hash)
-7. Update Registry: ModelRecord (src/oligotox/registry.py)
-```
-
-**Cross-Validation Strategy**: `src/oligotox/integrations_v03/datasail_splits.py`
-- Sequence-aware splitting (avoids data leakage)
-- Chemistry-aware grouping
-- Maintains endpoint prevalence balance
+`artifacts/config/endpoint_evidence.json`, generated by
+`scripts/derive_evidence_tiers.py` from the baseline results, assigns each
+endpoint a tier. The app and the OSWG report read it at runtime: only
+`validated` endpoints are presented as predictions, enter the composite score,
+or can raise a regulatory recommendation.
 
 ---
 
-## 🧪 MECHANISTIC EVIDENCE INTEGRATION
+## PIPELINE
 
-### Geneformer Cell-Type Context
-**Module**: `src/oligotox/integrations/geneformer_context.py`
-- **Purpose**: Cell-type-specific transcriptome embedding
-- **Current Status**: Curated proxy (placeholder)
-- **Future (v2.0)**: HuggingFace Geneformer model integration
-- **Output**: Context vector for tissue-specific predictions
+**Training entry point**: `python -m oligotox.training.train`
 
-### TLR/Innate Immune Activation
-**Module**: `src/oligotox/integrations/tlr_immune.py`
-- **Function**: `score_tlr_innate(sequence)`
-- **Mechanisms Detected**:
-  - CpG motifs (TLR9 agonists)
-  - dsRNA mimics (TLR3)
-  - ssRNA motifs (TLR7/8)
-- **Output**: Immune activation risk score (0-1)
-
-### Seed Match Off-Target Scoring
-**Module**: `src/oligotox/integrations/seed_match.py`
-- **Function**: `score_seed_matches(sequence)`
-- **Algorithm**: miRNA seed region matching (2-8mer)
-- **Database**: Human 3'UTR transcriptome
-- **Output**: Off-target gene silencing potential
-
-### GSEA Pathway Enrichment
-**Module**: `src/oligotox/integrations/gsea_pathway.py`
-- **Function**: `score_pathways(deg_table)`
-- **Gene Sets**: `src/oligotox/omics/gene_sets.py` (GENE_SETS dictionary)
-- **Pathways**: Inflammatory, apoptosis, complement, coagulation
-- **Output**: Pathway enrichment scores (NES, FDR)
-
-### Candidate Mechanistic Evidence Builder
-**Module**: `src/oligotox/integrations/candidate_mechanism.py`
-- **Function**: `build_candidate_mechanistic_evidence()`
-- **Integrates**:
-  1. Seed match analysis
-  2. TLR immune scoring
-  3. Pathway enrichment
-- **Output**: Unified mechanistic report for UI
-
----
-
-## 🔬 BENCHMARKING & VALIDATION
-
-### 1. OligoGym Benchmark Integration
-**Module**: `src/oligotox/benchmarks/oligogym.py`
-
-**Class**: `OligoGymDataset`
-- **Cache**: `./data/benchmarks/`
-- **Methods**:
-  - `load_task(task_name)` - Load specific benchmark
-  - `generate_synthetic()` - Synthetic test data
-- **Status Function**: `benchmark_status()` in `evaluation/benchmark_registry.py`
-
-### 2. ChEMBL Drug Comparison
-**Module**: `src/oligotox/integrations/chembl_benchmark.py`
-
-**Function**: `benchmark_against_drug(predicted, drug_name)`
-- **Input**: OligoTox predictions + approved drug name
-- **Output**: `BenchmarkComparison` dataclass
-- **Metrics**: Concordance with known clinical toxicity
-
-**Drug Database** (13 entries):
-- Mipomersen, Fomivirsen, Eteplirsen, Nusinersen, Inotersen, Patisiran, etc.
-- Each with known BLACK BOX warnings, REMS, clinical AEs
-
-### 3. Model Comparator
-**Module**: `src/oligotox/models/comparator.py`
-- Compare OligoTox predictions against external models
-- Track prediction concordance
-- Identify divergent cases for further investigation
-
----
-
-## 📝 REPRODUCIBILITY & VERSION CONTROL
-
-### Dataset Versioning
-1. **Hash Tracking**: `training_dataset_hash` field in `ModelRecord`
-2. **Metadata Preservation**: `dataset_metadata.json` stores:
-   - `training_csv` path
-   - Feature list (column names)
-   - Endpoint definitions
-   - Data source provenance
-   - Build timestamp
-3. **Audit Trail**: `data/processed/training_dataset_rebuilt_audit.csv`
-
-### Model Versioning
-1. **Timestamped Runs**: 
-   - Format: `train_model_v4_YYYYMMDD_HHMMSS_<hash>/`
-   - Location: `artifacts/models/`
-2. **Manifest per Run**: `model_manifest.json`
-   - Training params
-   - Endpoint list
-   - Accuracy metrics
-   - Feature importance
-3. **Model Index**: `models_index.json` (aggregates all runs)
-4. **Legacy Archives**:
-   - v3 models: `artifacts/models_v3/` (pkl format)
-   - Backups: `_local_only/backups/retrain_*/models.bak/`
-
-### Code Provenance
-**Import Graph** (key dependencies):
 ```
-oligotox_app.py
-  └─ oligotox.inference.api.run_oligotox()
-      ├─ oligotox.pipelines.score_candidate.score_candidate()
-      │   └─ oligotox.models.loader.load_dataset_metadata()
-      └─ oligotox.omics (OMICS_REGISTRY, load_omics_table, join_omics_tables)
-
-src/oligotox/training/train.py
-  ├─ oligotox.pipelines.build_training_dataset.run()
-  │   ├─ oligotox.features.aso_rich_features.build_aso_rich_features()
-  │   ├─ oligotox.features.structure_features.build_structure_features()
-  │   └─ oligotox.features.embedding_features.build_embedding_features()
-  ├─ oligotox.features.v03_bridge.build_v03_feature_df()
-  ├─ oligotox.integrations_v03.datasail_splits (cross-validation)
-  └─ oligotox.pipelines.thresholds.batch_select_thresholds()
+1. build_training_dataset.run()        -> training_dataset.csv, feature_matrix.csv,
+                                          label_matrix.csv, dataset_metadata.json
+     features/aso_rich_features.py        chemistry and modality
+     features/structure_features.py       sequence structure (placeholder MFE)
+     features/embedding_features.py       hash stub
+     omics/ + integrations/               joined, then dropped as constant
+2. Drop outcome annotations, assay readouts and constant columns (55 remain)
+3. Recompute tlr7_score, ps_x_len, lna_x_gc, seed_gc, cpg_density from the
+   sequence, so training features match what the app derives at scoring time
+4. Per endpoint: StratifiedGroupKFold on normalized sequence, out-of-fold
+   predict_proba, PR-AUC and Brier
+5. pipelines/thresholds.batch_select_thresholds() -> endpoint_thresholds.json
+6. Save models, composite_config.json, training_summary.json, build_info.json,
+   dropped_features.json
+7. DataSAIL split kept as a diagnostic only (datasail_split_diagnostic.json)
 ```
 
----
-
-## 🔍 QUALITY ASSURANCE
-
-### 1. Data QC Pipeline
-**Omics QC** (`src/oligotox/omics/deg_qc.py`):
-- Expression threshold: log2FC > 0.5, padj < 0.05
-- Replicate correlation > 0.8
-- Batch effect detection
-
-**Sequence Validation** (`src/oligotox/validators.py`):
-- `validate_sequence_input()` - ATGCU alphabet only
-- Length constraints (15-30 nt)
-- `validate_mapping_file()` - Format checks
-
-### 2. Feature Engineering QC
-- **Missing Value Handling**: Imputation or exclusion
-- **Outlier Detection**: Z-score > 3 flagged
-- **Feature Correlation**: Multicollinearity checks
-- **Audit File**: `data/processed/training_dataset_rebuilt_audit.csv`
-
-### 3. Model Evaluation
-- **Training Accuracy**: 99.9% average
-- **Cross-Validation**: DataSAIL k-fold (sequence-aware)
-- **Threshold Optimization**: Per-endpoint F1-score maximization
-- **Calibration**: Probability calibration curves
-
-### 4. Test Suite
-- **Unit Tests**: `pytest src/oligotox/` (quick tests pass 3/3 in 0.82s)
-- **Integration Tests**: End-to-end prediction pipeline
-- **Regression Tests**: Model performance benchmarks
+**Cross-validation**: `StratifiedGroupKFold` grouped on the normalized
+sequence. DataSAIL (`integrations_v03/datasail_splits.py`) is run for
+comparison and is not the basis of any published number.
 
 ---
 
-## 📚 ADDITIONAL DOCUMENTATION
+## REPRODUCIBILITY
 
-### Key Files
-1. `PLATFORM_COMPLETE.md` - Production deployment status
-3. `DATA_AND_MODEL_PROVENANCE.md` - This document
-4. `README.md` - User-facing documentation
+Four files are committed so the published numbers can be checked:
+`feature_matrix.csv`, `label_matrix.csv`, `training_dataset.csv` and
+`dataset_metadata.json` (1.2 MB total). The rest of `data/processed/` (445 MB)
+and `data/raw/` (160 MB) are intermediates and stay out of the repo.
 
-### Data Preservation
-- **Archives**: `_local_only/archive/`
-- **Backups**: `_local_only/backups/`
+```bash
+python -m oligotox.training.train       # ~10 s
+python scripts/evaluate_baselines.py    # ~95 s
+python scripts/derive_evidence_tiers.py
+```
 
-### Contact
+Verified in a clean clone at commit `8d31e2c`: all 13 per-endpoint PR-AUCs
+reproduce exactly, `baselines.csv` and `within_source.csv` reproduce with zero
+difference over all 60 and 36 rows, `endpoint_evidence.json` is byte-identical,
+and all 13 `.joblib` models are byte-identical. The shipped models are the
+ones this data and this script produce.
+
+### What is not versioned
+
+`artifacts/models/` holds only the 13 current `.joblib` files. The timestamped
+run directories, `model_manifest.json`, `models_index.json` and
+`artifacts/models_v3/` described in the June version do not exist. Model
+provenance is the git history plus `artifacts/metrics/build_info.json`, which
+records the training CSV path, row count and the feature and label columns.
+
+---
+
+## MODULES THAT EXIST BUT DO NOT AFFECT PREDICTIONS
+
+Present, importable, and outside the shipped prediction path. Listed so a
+reader does not mistake the repository's surface area for validated
+capability:
+
+| Module | Status |
+|---|---|
+| `integrations/geneformer_context.py` | Curated proxy, no Geneformer model |
+| `integrations/seed_match.py` | `score_seed_matches()` takes an optional transcriptome sample; there is no bundled 3'UTR database |
+| `integrations/gsea_pathway.py` | Runs on a DEG table; its outputs are not training features |
+| `integrations/candidate_mechanism.py` | Assembles the above for display |
+| `integrations/chembl_benchmark.py` | 13 approved-drug comparison entries |
+| `benchmarks/oligogym.py` | OligoGym loader; see `benchmarks/oligogym/README.md` |
+| `models/comparator.py` | Ranks candidates by composite score |
+| `inference/api.py` | `run_oligotox()`; the Streamlit app calls `score_candidate()` directly and does not use it |
+| `efficacy/` | Model interfaces only. The Efficacy tab was removed rather than shipped untrained |
+
+---
+
+## CONTACT
+
 - **Maintainer**: Beshoy Armanios, PhD
-- **Email**: [Redacted for privacy]
-- **GitHub**: [Project repository]
-- **Status**: Actively maintained, production-ready v1.0
-
----
-
-**Last Updated**: June 26, 2026, 12:00 PM EDT
-**Platform Version**: v1.0 Production Release
-**Models Trained**: 10 endpoint models (13 total artifacts)
-**Training Accuracy**: 99.9% average across all endpoints
-**Dataset Size**: 1,576 sequences, 49 features, 13 endpoints
-
+- **Repository**: https://github.com/barmanios123/OligoTox
+- **License**: Proprietary; see `LICENSE`. Available for evaluation and
+  collaboration discussions.
