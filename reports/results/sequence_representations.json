@@ -1,0 +1,125 @@
+{
+  "note": "Pretrained RNA language model embeddings were not evaluated: no weights are available in this environment. The k-mer arms test whether learned sequence content beats hand-designed features.",
+  "results": [
+    {
+      "evaluation": "within MOE_Neurotox_2024 5-fold",
+      "representation": "Hand features",
+      "n_features": 17,
+      "roc_auc": 0.8112985284796967,
+      "ci_low": 0.7920500864967954,
+      "ci_high": 0.8316730628656804
+    },
+    {
+      "evaluation": "cross-assay MOE_Neurotox_2024 -> Hagedorn_2022",
+      "representation": "Hand features",
+      "n_features": 17,
+      "roc_auc": 0.828236862030545,
+      "ci_low": 0.8077904490179699,
+      "ci_high": 0.8474220184030518
+    },
+    {
+      "evaluation": "cross-assay Hagedorn_2022 -> MOE_Neurotox_2024",
+      "representation": "Hand features",
+      "n_features": 17,
+      "roc_auc": 0.7829170574182576,
+      "ci_low": 0.7608184922825826,
+      "ci_high": 0.8041748442186998
+    },
+    {
+      "evaluation": "within MOE_Neurotox_2024 5-fold",
+      "representation": "3-mer counts",
+      "n_features": 64,
+      "roc_auc": 0.7834404494575364,
+      "ci_low": 0.7597351724838676,
+      "ci_high": 0.8037718397617543
+    },
+    {
+      "evaluation": "cross-assay MOE_Neurotox_2024 -> Hagedorn_2022",
+      "representation": "3-mer counts",
+      "n_features": 64,
+      "roc_auc": 0.7911836945749128,
+      "ci_low": 0.7684779828059348,
+      "ci_high": 0.812189379338199
+    },
+    {
+      "evaluation": "cross-assay Hagedorn_2022 -> MOE_Neurotox_2024",
+      "representation": "3-mer counts",
+      "n_features": 64,
+      "roc_auc": 0.7722821613653504,
+      "ci_low": 0.7497038982665465,
+      "ci_high": 0.7949392597241639
+    },
+    {
+      "evaluation": "within MOE_Neurotox_2024 5-fold",
+      "representation": "3-mer + 4-mer",
+      "n_features": 320,
+      "roc_auc": 0.7935340290862578,
+      "ci_low": 0.7730305209733931,
+      "ci_high": 0.8144473156101221
+    },
+    {
+      "evaluation": "cross-assay MOE_Neurotox_2024 -> Hagedorn_2022",
+      "representation": "3-mer + 4-mer",
+      "n_features": 320,
+      "roc_auc": 0.791597670653559,
+      "ci_low": 0.7692029548989113,
+      "ci_high": 0.8143031937337941
+    },
+    {
+      "evaluation": "cross-assay Hagedorn_2022 -> MOE_Neurotox_2024",
+      "representation": "3-mer + 4-mer",
+      "n_features": 320,
+      "roc_auc": 0.7673744647778667,
+      "ci_low": 0.7433421915765306,
+      "ci_high": 0.7874182785550268
+    },
+    {
+      "evaluation": "within MOE_Neurotox_2024 5-fold",
+      "representation": "k-mer + hand",
+      "n_features": 337,
+      "roc_auc": 0.8185779796780495,
+      "ci_low": 0.7997311807190796,
+      "ci_high": 0.8382928833604637
+    },
+    {
+      "evaluation": "cross-assay MOE_Neurotox_2024 -> Hagedorn_2022",
+      "representation": "k-mer + hand",
+      "n_features": 337,
+      "roc_auc": 0.8267040732783828,
+      "ci_low": 0.8067078240265854,
+      "ci_high": 0.846689959112958
+    },
+    {
+      "evaluation": "cross-assay Hagedorn_2022 -> MOE_Neurotox_2024",
+      "representation": "k-mer + hand",
+      "n_features": 337,
+      "roc_auc": 0.7794669718113953,
+      "ci_low": 0.7567530074576921,
+      "ci_high": 0.7994195155897662
+    },
+    {
+      "evaluation": "within MOE_Neurotox_2024 5-fold",
+      "representation": "Hash stub (control)",
+      "n_features": 16,
+      "roc_auc": 0.5383108633244142,
+      "ci_low": 0.5120887681730458,
+      "ci_high": 0.5664657839305289
+    },
+    {
+      "evaluation": "cross-assay MOE_Neurotox_2024 -> Hagedorn_2022",
+      "representation": "Hash stub (control)",
+      "n_features": 16,
+      "roc_auc": 0.5063943145233273,
+      "ci_low": 0.4795540421602787,
+      "ci_high": 0.535698917709245
+    },
+    {
+      "evaluation": "cross-assay Hagedorn_2022 -> MOE_Neurotox_2024",
+      "representation": "Hash stub (control)",
+      "n_features": 16,
+      "roc_auc": 0.5065445514171736,
+      "ci_low": 0.4789834119038044,
+      "ci_high": 0.5338479538417066
+    }
+  ]
+}

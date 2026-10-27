@@ -173,6 +173,22 @@ Most unsupported endpoints over-predict badly, injection site reaction by about 
 
 ![Calibration of the validated endpoints](reports/results/calibration.png)
 
+### Do richer representations help? No.
+
+The strategy roadmap lists three RNA foundation models under "what we have". Nothing called them, and what reached the models was the hash stub. With 3,338 CNS sequences and a cross-assay split, the question is finally testable: `scripts/evaluate_sequence_representations.py`.
+
+| Representation | Features | MOE to Hagedorn | Hagedorn to MOE |
+|---|---|---|---|
+| **Hand features** | 17 | **0.828** [0.808-0.847] | **0.783** [0.761-0.804] |
+| 3-mer counts | 64 | 0.791 | 0.772 |
+| 3-mer + 4-mer | 320 | 0.792 | 0.767 |
+| k-mer + hand | 337 | 0.827 | 0.779 |
+| Hash stub (control) | 16 | 0.506 | 0.507 |
+
+Seventeen hand-designed features beat 320 k-mer features in both directions, and adding k-mers to them changes nothing. Sequence content past what the design features already capture does not carry CNS neurotoxicity here. The hash control lands on 0.506, exactly chance, which is both a sanity check on the setup and confirmation that removing it was right.
+
+Pretrained RNA language model embeddings are not evaluated, because no weights are available in this environment; downloading them is a prerequisite, not a result. But the k-mer arms test the thing those embeddings are meant to supply, and it is not what is limiting this endpoint. The roadmap's claim that foundation models are integrated remains untrue, and on this evidence acting on it is not the highest-value next step.
+
 ## Run it
 
 ```bash
