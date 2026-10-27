@@ -14,13 +14,17 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+from oligotox.features.candidate import candidate_features as build_candidate_features
 from oligotox.pipelines.score_candidate import score_candidate
 from oligotox.efficacy.registry import EfficacyModelRegistry
 from oligotox.pkpd.bridge import compute_pkpd_enriched_features
 from oligotox.reporting.oswg_report import OSWGSafetyReport
 
 APP_TITLE = "OligoTox Operator Console"
-APP_SUBTITLE = "Client-ready oligonucleotide toxicity, efficacy, PK/PD, and reporting workspace"
+APP_SUBTITLE = (
+    "Research prototype. Toxicity models are trained on 74 unique sequences; "
+    "see the README for per-endpoint validation before trusting any score."
+)
 
 PROCESSED_DIR = ROOT / "data" / "processed"
 MODEL_DIR = ROOT / "artifacts" / "models"
@@ -72,20 +76,15 @@ def _validate_sequence(seq: str):
         return False, "Sequence is too short for meaningful analysis; use at least 8 nt."
     return True, seq
 
-def _sequence_features(seq: str, chemistry: str, dose_mg_kg: float):
-    seq = seq.upper().replace("U", "T")
-    length = len(seq)
-    gc = (seq.count("G") + seq.count("C")) / max(length, 1)
-    cpg = sum(1 for i in range(len(seq) - 1) if seq[i:i+2] == "CG") / max(length - 1, 1)
-    chemistry = chemistry.upper()
-    ps_fraction = 0.9 if "PS" in chemistry else 0.0
-    return {
-        "seq_length": int(length),
-        "gc_content": float(gc),
-        "cpg_density": float(cpg),
-        "ps_fraction": float(ps_fraction),
-        "dose_mg_kg": float(dose_mg_kg),
-    }
+def _sequence_features(seq: str, chemistry: str, dose_mg_kg: float, modality: str = "siRNA"):
+    ps_fraction = 0.9 if "PS" in chemistry.upper() else 0.0
+    return build_candidate_features(
+        seq,
+        modality=modality,
+        chemistry=chemistry,
+        ps_fraction=ps_fraction,
+        dose_mg_kg=dose_mg_kg,
+    )
 
 def _run_toxicity(candidate_features):
     return score_candidate(
@@ -244,7 +243,7 @@ with st.sidebar:
     modality = st.selectbox("Modality", ["siRNA", "ASO"], index=0)
     dose_mg_kg = st.number_input("Dose (mg/kg)", min_value=0.0, max_value=100.0, value=3.0, step=0.5)
     analyst_note = st.text_input("Analyst note", value="")
-    run_btn = st.button("Run analysis", type="primary", use_container_width=True)
+    run_btn = st.button("Run analysis", type="primary", width="stretch")
 
 tabs = st.tabs([
     "Candidate Input",
@@ -266,7 +265,7 @@ with tabs[0]:
         normalized_seq = seq_or_msg
         st.success(f"Sequence accepted. Length: {len(normalized_seq)} nt.")
         st.code(normalized_seq)
-        features_preview = _sequence_features(normalized_seq, chemistry, dose_mg_kg)
+        features_preview = _sequence_features(normalized_seq, chemistry, dose_mg_kg, modality)
         st.write("Derived feature preview")
         st.json(features_preview)
     else:
@@ -287,7 +286,7 @@ if run_btn:
         st.error(seq_or_msg)
     else:
         normalized_seq = seq_or_msg
-        candidate_features = _sequence_features(normalized_seq, chemistry, dose_mg_kg)
+        candidate_features = _sequence_features(normalized_seq, chemistry, dose_mg_kg, modality)
 
         with st.spinner("Running OligoTox analysis..."):
             toxicity_result = _run_toxicity(candidate_features)
@@ -330,7 +329,7 @@ with tabs[1]:
         c3.metric("Dominant endpoint", str(tox.get("dominant_endpoint")))
 
         endpoint_df = _render_endpoint_table(tox)
-        st.dataframe(endpoint_df, use_container_width=True, hide_index=True)
+        st.dataframe(endpoint_df, width="stretch", hide_index=True)
 
         st.download_button(
             "Download toxicity JSON",
@@ -341,11 +340,15 @@ with tabs[1]:
 
 with tabs[2]:
     st.subheader("Efficacy")
+    st.warning(
+        "These efficacy models are untrained architecture stubs (random weights or "
+        "placeholder rules). Their outputs are not predictions."
+    )
     if not run:
         st.info("Run an analysis to view efficacy outputs.")
     else:
         eff_df = pd.DataFrame(run["efficacy"]["table"])
-        st.dataframe(eff_df, use_container_width=True, hide_index=True)
+        st.dataframe(eff_df, width="stretch", hide_index=True)
         if not eff_df.empty and "predicted_activity" in eff_df.columns:
             top = eff_df.dropna(subset=["predicted_activity"]).sort_values("predicted_activity", ascending=False).head(1)
             if len(top):
@@ -385,7 +388,7 @@ with tabs[5]:
     if runs_df.empty:
         st.info("No saved runs yet.")
     else:
-        st.dataframe(runs_df, use_container_width=True, hide_index=True)
+        st.dataframe(runs_df, width="stretch", hide_index=True)
         selected = st.selectbox("Open saved run file", runs_df["path"].tolist())
         if selected:
             with open(selected) as f:

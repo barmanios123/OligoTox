@@ -9,7 +9,7 @@ echo "== OligoTox project health =="
 echo "[INFO] root: $(pwd)"
 
 section "1) core repo layout"
-for p in pyproject.toml README.md src data artifacts configs validate_platform.py; do
+for p in pyproject.toml README.md src data artifacts configs tests; do
   [[ -e "$p" ]] && pass "$p exists" || warn "$p missing"
 done
 
@@ -55,11 +55,11 @@ PY
 section "5) model artifacts"
 find artifacts -type f \( -iname "*.joblib" -o -iname "*.json" \) 2>/dev/null | sort | head -n 200
 
-section "6) validate_platform.py"
-if [[ -f validate_platform.py ]]; then
-  python validate_platform.py || warn "validate_platform.py returned non-zero"
+section "6) test suite"
+if [[ -d tests ]]; then
+  python -m pytest -q || warn "pytest returned non-zero"
 else
-  warn "validate_platform.py not found"
+  warn "tests/ not found"
 fi
 
 section "7) inference smoke test"

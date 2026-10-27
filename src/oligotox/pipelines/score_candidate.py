@@ -55,14 +55,19 @@ def score_candidate(
     model_dir = Path(model_dir)
     config_dir = Path(config_dir)
 
-    meta = load_dataset_metadata(processed_dir)
-    feature_template = load_feature_template(processed_dir)
     thresholds = load_thresholds(config_dir)
     composite_cfg = load_composite_config(config_dir)
 
-    trained_feature_columns = composite_cfg.get("trained_feature_columns", list(feature_template.columns))
+    # The shipped config carries the trained columns and endpoints, so scoring
+    # works from a fresh clone without the processed training data.
+    trained_feature_columns = composite_cfg.get("trained_feature_columns")
+    label_cols = endpoints or composite_cfg.get("label_columns")
+    if trained_feature_columns is None or label_cols is None:
+        meta = load_dataset_metadata(processed_dir)
+        trained_feature_columns = trained_feature_columns or list(load_feature_template(processed_dir).columns)
+        label_cols = label_cols or meta["label_columns"]
+    feature_template = pd.DataFrame([[0.0] * len(trained_feature_columns)], columns=trained_feature_columns)
 
-    label_cols = endpoints or meta["label_columns"]
     models = load_endpoint_models(model_dir, label_cols)
 
     X_row = build_feature_row(

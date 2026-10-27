@@ -1,0 +1,268 @@
+{
+  "hepatocellular_injury": {
+    "samples": 1614,
+    "positive_rate": 0.12577447335811648,
+    "status": "ok",
+    "pr_auc": 0.2897339274791736,
+    "brier": 0.13615373992172367,
+    "positives": 203,
+    "negatives": 1411,
+    "positive_sequences": 19,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.5659552652107485,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "hepatocellular_injury",
+      "pr_auc": 0.2897339274791736,
+      "roc_auc": 0.7427757974814354,
+      "brier": 0.13615373992172367,
+      "n_pos": 203,
+      "n_total": 1614
+    }
+  },
+  "hepatic_vacuolation": {
+    "samples": 1614,
+    "positive_rate": 0.007434944237918215,
+    "status": "ok",
+    "pr_auc": 0.22671590210289902,
+    "brier": 0.01326472143609496,
+    "positives": 12,
+    "negatives": 1602,
+    "positive_sequences": 6,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.5739469947335659,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "hepatic_vacuolation",
+      "pr_auc": 0.22671590210289902,
+      "roc_auc": 0.9847066167290887,
+      "brier": 0.01326472143609496,
+      "n_pos": 12,
+      "n_total": 1614
+    }
+  },
+  "renal_tubular_injury": {
+    "samples": 1614,
+    "positive_rate": 0.004337050805452293,
+    "status": "ok",
+    "pr_auc": 0.04521257787244763,
+    "brier": 0.011272347121600362,
+    "positives": 7,
+    "negatives": 1607,
+    "positive_sequences": 7,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.3727961162743771,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "renal_tubular_injury",
+      "pr_auc": 0.04521257787244763,
+      "roc_auc": 0.9500400035558717,
+      "brier": 0.011272347121600362,
+      "n_pos": 7,
+      "n_total": 1614
+    }
+  },
+  "renal_accumulation": {
+    "samples": 1614,
+    "positive_rate": 0.004337050805452293,
+    "status": "ok",
+    "pr_auc": 0.16485243886584167,
+    "brier": 0.004303800921716135,
+    "positives": 7,
+    "negatives": 1607,
+    "positive_sequences": 7,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.29825906059993756,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "renal_accumulation",
+      "pr_auc": 0.16485243886584167,
+      "roc_auc": 0.979109254155925,
+      "brier": 0.004303800921716135,
+      "n_pos": 7,
+      "n_total": 1614
+    }
+  },
+  "thrombocytopenia": {
+    "samples": 1614,
+    "positive_rate": 0.0024783147459727386,
+    "status": "ok",
+    "pr_auc": 0.36295157358156027,
+    "brier": 0.002171513991996483,
+    "positives": 4,
+    "negatives": 1610,
+    "positive_sequences": 4,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.3929824561403509,
+    "n_splits": 4,
+    "datasail_eval": {
+      "endpoint": "thrombocytopenia",
+      "pr_auc": 0.36295157358156027,
+      "roc_auc": 0.9588509316770186,
+      "brier": 0.002171513991996483,
+      "n_pos": 4,
+      "n_total": 1614
+    }
+  },
+  "coagulation_effect": {
+    "samples": 1614,
+    "positive_rate": 0.0030978934324659233,
+    "status": "ok",
+    "pr_auc": 0.2835786435786436,
+    "brier": 0.004186729336783659,
+    "positives": 5,
+    "negatives": 1609,
+    "positive_sequences": 5,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.352014652014652,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "coagulation_effect",
+      "pr_auc": 0.2835786435786436,
+      "roc_auc": 0.9825978868862648,
+      "brier": 0.004186729336783659,
+      "n_pos": 5,
+      "n_total": 1614
+    }
+  },
+  "complement_activation": {
+    "samples": 1614,
+    "positive_rate": 0.0037174721189591076,
+    "status": "ok",
+    "pr_auc": 0.0025780898316015498,
+    "brier": 0.0042313274366457,
+    "positives": 6,
+    "negatives": 1608,
+    "positive_sequences": 6,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.0027296901791550084,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "complement_activation",
+      "pr_auc": 0.0025780898316015498,
+      "roc_auc": 0.19309701492537315,
+      "brier": 0.0042313274366457,
+      "n_pos": 6,
+      "n_total": 1614
+    }
+  },
+  "innate_immune_activation": {
+    "samples": 1614,
+    "positive_rate": 0.004337050805452293,
+    "status": "ok",
+    "pr_auc": 0.021953337498462646,
+    "brier": 0.008748740493872859,
+    "positives": 7,
+    "negatives": 1607,
+    "positive_sequences": 7,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.33794875448182726,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "innate_immune_activation",
+      "pr_auc": 0.021953337498462646,
+      "roc_auc": 0.7803360298693216,
+      "brier": 0.008748740493872859,
+      "n_pos": 7,
+      "n_total": 1614
+    }
+  },
+  "cytokine_release": {
+    "samples": 1614,
+    "positive_rate": 0.004337050805452293,
+    "status": "ok",
+    "pr_auc": 0.021953337498462646,
+    "brier": 0.008748740493872859,
+    "positives": 7,
+    "negatives": 1607,
+    "positive_sequences": 7,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.33794875448182726,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "cytokine_release",
+      "pr_auc": 0.021953337498462646,
+      "roc_auc": 0.7803360298693216,
+      "brier": 0.008748740493872859,
+      "n_pos": 7,
+      "n_total": 1614
+    }
+  },
+  "kupffer_cell_activation": {
+    "samples": 1614,
+    "positive_rate": 0.021065675340768277,
+    "status": "ok",
+    "pr_auc": 0.8851134228612656,
+    "brier": 0.002591382018908579,
+    "positives": 34,
+    "negatives": 1580,
+    "positive_sequences": 27,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.9484799243282127,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "kupffer_cell_activation",
+      "pr_auc": 0.8851134228612656,
+      "roc_auc": 0.9982315711094565,
+      "brier": 0.002591382018908579,
+      "n_pos": 34,
+      "n_total": 1614
+    }
+  },
+  "cns_toxicity": {
+    "samples": 1614,
+    "positive_rate": 0.0012391573729863693,
+    "status": "fallback_low_count_fit",
+    "pr_auc": null,
+    "brier": null,
+    "positives": 2,
+    "negatives": 1612,
+    "positive_sequences": 2,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": null,
+    "n_splits": null,
+    "datasail_eval": null
+  },
+  "offtarget_gene_silencing": {
+    "samples": 1614,
+    "positive_rate": 0.042131350681536554,
+    "status": "ok",
+    "pr_auc": 0.08946569954272496,
+    "brier": 0.0572025665614962,
+    "positives": 68,
+    "negatives": 1546,
+    "positive_sequences": 12,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.3461355744412016,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "offtarget_gene_silencing",
+      "pr_auc": 0.08946569954272496,
+      "roc_auc": 0.6577695761357584,
+      "brier": 0.0572025665614962,
+      "n_pos": 68,
+      "n_total": 1614
+    }
+  },
+  "injection_site_reaction": {
+    "samples": 1614,
+    "positive_rate": 0.007434944237918215,
+    "status": "ok",
+    "pr_auc": 0.39974885705506696,
+    "brier": 0.01010395770891892,
+    "positives": 12,
+    "negatives": 1602,
+    "positive_sequences": 12,
+    "cv": "sequence_grouped",
+    "random_split_pr_auc": 0.4124529003286915,
+    "n_splits": 5,
+    "datasail_eval": {
+      "endpoint": "injection_site_reaction",
+      "pr_auc": 0.39974885705506696,
+      "roc_auc": 0.9753433208489388,
+      "brier": 0.01010395770891892,
+      "n_pos": 12,
+      "n_total": 1614
+    }
+  }
+}

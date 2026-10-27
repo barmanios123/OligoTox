@@ -58,7 +58,7 @@
 ## 🧬 TRAINED MODEL REGISTRY
 
 ### Production Models (v4 - Current)
-**Storage Location**: `src/oligotox/models/trained/`
+**Storage Location**: `artifacts/models/`
 
 **Training Date**: June 26, 2026
 **Training Script**: `artifacts/models/latest_train_baseline/` pretrained bundle (root) + `src/oligotox/training/train.py`
@@ -71,7 +71,7 @@
 
 #### Trained Endpoint Models:
 ```
-src/oligotox/models/trained/
+artifacts/models/
 ├── endpoint_cns_neurotoxicity.joblib        117 KB  (acc=1.000)
 ├── endpoint_coagulation_effect.joblib        148 KB  (acc=0.999)
 ├── endpoint_complement_activation.joblib     165 KB  (acc=0.999)
@@ -233,7 +233,7 @@ data/raw/
    - Evaluate on validation fold
    - Threshold selection: batch_select_thresholds()
 6. Save artifacts:
-   - Models: src/oligotox/models/trained/*.joblib
+   - Models: artifacts/models/*.joblib
    - Manifest: model_manifest.json
    - Metadata: dataset_metadata.json (updated with training_dataset_hash)
 7. Update Registry: ModelRecord (src/oligotox/registry.py)
@@ -404,7 +404,6 @@ src/oligotox/training/train.py
 
 ### Key Files
 1. `PLATFORM_COMPLETE.md` - Production deployment status
-2. `FINAL_SYSTEM_STATUS.md` - Comprehensive system audit
 3. `DATA_AND_MODEL_PROVENANCE.md` - This document
 4. `README.md` - User-facing documentation
 

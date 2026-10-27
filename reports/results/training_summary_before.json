@@ -1,0 +1,229 @@
+{
+  "hepatocellular_injury": {
+    "samples": 1614,
+    "positive_rate": 0.12577447335811648,
+    "status": "ok",
+    "pr_auc": 0.9274214890475121,
+    "brier": 0.026283601805086803,
+    "positives": 203,
+    "negatives": 1411,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "hepatocellular_injury",
+      "pr_auc": 0.9274214890475121,
+      "roc_auc": 0.9545094315249988,
+      "brier": 0.026283601805086803,
+      "n_pos": 203,
+      "n_total": 1614
+    }
+  },
+  "hepatic_vacuolation": {
+    "samples": 1614,
+    "positive_rate": 0.007434944237918215,
+    "status": "ok",
+    "pr_auc": 0.568887673457566,
+    "brier": 0.00506124994019794,
+    "positives": 12,
+    "negatives": 1602,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "hepatic_vacuolation",
+      "pr_auc": 0.568887673457566,
+      "roc_auc": 0.995110278818144,
+      "brier": 0.00506124994019794,
+      "n_pos": 12,
+      "n_total": 1614
+    }
+  },
+  "renal_tubular_injury": {
+    "samples": 1614,
+    "positive_rate": 0.004337050805452293,
+    "status": "ok",
+    "pr_auc": 0.20294125244335515,
+    "brier": 0.004131290222952763,
+    "positives": 7,
+    "negatives": 1607,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "renal_tubular_injury",
+      "pr_auc": 0.20294125244335515,
+      "roc_auc": 0.7838030047115299,
+      "brier": 0.004131290222952763,
+      "n_pos": 7,
+      "n_total": 1614
+    }
+  },
+  "renal_accumulation": {
+    "samples": 1614,
+    "positive_rate": 0.004337050805452293,
+    "status": "ok",
+    "pr_auc": 0.4032046553561184,
+    "brier": 0.003723311163656939,
+    "positives": 7,
+    "negatives": 1607,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "renal_accumulation",
+      "pr_auc": 0.4032046553561184,
+      "roc_auc": 0.9885323139834653,
+      "brier": 0.003723311163656939,
+      "n_pos": 7,
+      "n_total": 1614
+    }
+  },
+  "thrombocytopenia": {
+    "samples": 1614,
+    "positive_rate": 0.0024783147459727386,
+    "status": "ok",
+    "pr_auc": 0.1498905309250137,
+    "brier": 0.002463909480777985,
+    "positives": 4,
+    "negatives": 1610,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "thrombocytopenia",
+      "pr_auc": 0.1498905309250137,
+      "roc_auc": 0.9787267080745342,
+      "brier": 0.002463909480777985,
+      "n_pos": 4,
+      "n_total": 1614
+    }
+  },
+  "coagulation_effect": {
+    "samples": 1614,
+    "positive_rate": 0.0030978934324659233,
+    "status": "ok",
+    "pr_auc": 0.32435517970401695,
+    "brier": 0.00266708711607175,
+    "positives": 5,
+    "negatives": 1609,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "coagulation_effect",
+      "pr_auc": 0.32435517970401695,
+      "roc_auc": 0.9876942200124301,
+      "brier": 0.00266708711607175,
+      "n_pos": 5,
+      "n_total": 1614
+    }
+  },
+  "complement_activation": {
+    "samples": 1614,
+    "positive_rate": 0.0037174721189591076,
+    "status": "ok",
+    "pr_auc": 0.003373575491682994,
+    "brier": 0.004046589392676764,
+    "positives": 6,
+    "negatives": 1608,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "complement_activation",
+      "pr_auc": 0.003373575491682994,
+      "roc_auc": 0.3962479270315091,
+      "brier": 0.004046589392676764,
+      "n_pos": 6,
+      "n_total": 1614
+    }
+  },
+  "innate_immune_activation": {
+    "samples": 1614,
+    "positive_rate": 0.004337050805452293,
+    "status": "ok",
+    "pr_auc": 0.08539737014565162,
+    "brier": 0.004250815327301587,
+    "positives": 7,
+    "negatives": 1607,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "innate_immune_activation",
+      "pr_auc": 0.08539737014565162,
+      "roc_auc": 0.8951017868254956,
+      "brier": 0.004250815327301587,
+      "n_pos": 7,
+      "n_total": 1614
+    }
+  },
+  "cytokine_release": {
+    "samples": 1614,
+    "positive_rate": 0.004337050805452293,
+    "status": "ok",
+    "pr_auc": 0.08539737014565162,
+    "brier": 0.004250815327301587,
+    "positives": 7,
+    "negatives": 1607,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "cytokine_release",
+      "pr_auc": 0.08539737014565162,
+      "roc_auc": 0.8951017868254956,
+      "brier": 0.004250815327301587,
+      "n_pos": 7,
+      "n_total": 1614
+    }
+  },
+  "kupffer_cell_activation": {
+    "samples": 1614,
+    "positive_rate": 0.021065675340768277,
+    "status": "ok",
+    "pr_auc": 0.93243960336527,
+    "brier": 0.0029305821049668565,
+    "positives": 34,
+    "negatives": 1580,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "kupffer_cell_activation",
+      "pr_auc": 0.93243960336527,
+      "roc_auc": 0.9988644825018614,
+      "brier": 0.0029305821049668565,
+      "n_pos": 34,
+      "n_total": 1614
+    }
+  },
+  "cns_toxicity": {
+    "samples": 1614,
+    "positive_rate": 0.0012391573729863693,
+    "status": "fallback_low_count_fit",
+    "pr_auc": null,
+    "brier": null,
+    "positives": 2,
+    "negatives": 1612,
+    "n_splits": null,
+    "datasail_eval": null
+  },
+  "offtarget_gene_silencing": {
+    "samples": 1614,
+    "positive_rate": 0.042131350681536554,
+    "status": "ok",
+    "pr_auc": 0.6430888941890422,
+    "brier": 0.02275640790418193,
+    "positives": 68,
+    "negatives": 1546,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "offtarget_gene_silencing",
+      "pr_auc": 0.6430888941890422,
+      "roc_auc": 0.9536564949395024,
+      "brier": 0.02275640790418193,
+      "n_pos": 68,
+      "n_total": 1614
+    }
+  },
+  "injection_site_reaction": {
+    "samples": 1614,
+    "positive_rate": 0.007434944237918215,
+    "status": "ok",
+    "pr_auc": 0.42483893558404934,
+    "brier": 0.005938861830746942,
+    "positives": 12,
+    "negatives": 1602,
+    "n_splits": 3,
+    "datasail_eval": {
+      "endpoint": "injection_site_reaction",
+      "pr_auc": 0.42483893558404934,
+      "roc_auc": 0.9343528922180607,
+      "brier": 0.005938861830746942,
+      "n_pos": 12,
+      "n_total": 1614
+    }
+  }
+}

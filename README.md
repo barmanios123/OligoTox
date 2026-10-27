@@ -1,180 +1,105 @@
 # OligoTox
 
-OligoTox is a mechanism-aware safety, translational interpretation, and candidate triage platform for oligonucleotide therapeutics. It combines multi-endpoint toxicity scoring, efficacy model integration, PK/PD context, and regulatory-style reporting in a Streamlit-based operator workflow.
+[![CI](https://github.com/barmanios123/OligoTox/actions/workflows/ci.yml/badge.svg)](https://github.com/barmanios123/OligoTox/actions/workflows/ci.yml)
 
-## Why this repository exists
+OligoTox scores antisense oligos and siRNAs for 13 preclinical toxicity endpoints from design-time features only: sequence, chemistry and modality. It wraps the models in a Streamlit console that adds a GalNAc-siRNA PK/PD simulation and a regulatory-style safety report.
 
-Oligonucleotide programs can fail for very different reasons: exaggerated on-target pharmacology, hybridization-dependent off-target effects, and liabilities introduced by chemistry, formulation, conjugates, or delivery strategy. OligoTox is organized around those risk classes to support earlier, more structured candidate review.
+The main result is in the evaluation. The first version scored PR-AUC 0.93 on hepatocellular injury. Most of that came from label leakage and from splitting replicate rows of the same oligo across train and test. After fixing both, the honest number is 0.29 against a 0.13 base rate. This README reports the fixed numbers.
 
-The repository is organized as a package, an app, and supporting docs:
+## Results
 
-- `src/oligotox/` contains the core package code
-- `oligotox_app.py` is the primary Streamlit operator console entrypoint
-- `validate_platform.py` is the primary end-to-end validation command
-- `docs/` contains setup, architecture, and supporting documentation
-- `scripts/` contains health checks and launch helpers
+![Per-endpoint PR-AUC before and after the leakage fix](reports/results/pr_auc_by_endpoint.png)
 
-## Current capabilities
+Each bar is an out-of-fold PR-AUC from a calibrated logistic regression. Blue is the number to trust. In that setup, all rows of a sequence (RNA and DNA spellings count as the same sequence) stay on the same side of every split. That matches the real use case: scoring an oligo the model has never seen.
 
-The current platform supports the following verified capabilities:
+| Endpoint | Positive rows / sequences | Base rate | Before fix | Row-level CV | **Sequence-grouped CV** |
+|---|---|---|---|---|---|
+| kupffer cell activation | 34 / 27 | 0.021 | 0.93 | 0.95 | **0.89** |
+| injection site reaction | 12 / 12 | 0.007 | 0.42 | 0.41 | **0.40** |
+| thrombocytopenia | 4 / 4 | 0.002 | 0.15 | 0.39 | **0.36** |
+| hepatocellular injury | 203 / 19 | 0.126 | 0.93 | 0.57 | **0.29** |
+| coagulation effect | 5 / 5 | 0.003 | 0.32 | 0.35 | **0.28** |
+| hepatic vacuolation | 12 / 6 | 0.007 | 0.57 | 0.57 | **0.23** |
+| renal accumulation | 7 / 7 | 0.004 | 0.40 | 0.30 | **0.16** |
+| offtarget gene silencing | 68 / 12 | 0.042 | 0.64 | 0.35 | **0.09** |
+| renal tubular injury | 7 / 7 | 0.004 | 0.20 | 0.37 | **0.05** |
+| innate immune activation | 7 / 7 | 0.004 | 0.09 | 0.34 | **0.02** |
+| cytokine release | 7 / 7 | 0.004 | 0.09 | 0.34 | **0.02** |
+| complement activation | 6 / 6 | 0.004 | 0.00 | 0.00 | **0.00** |
 
-- Streamlit app launch through `oligotox_app.py`
-- Multi-endpoint toxicity inference through the OligoTox backend
-- Modality- and chemistry-aware candidate input
-- Endpoint-level output including composite score, dominant endpoint, and per-endpoint detail
-- Efficacy model integration through the package registry
-- PK/PD context integration in the operator console workflow
-- Regulatory-style safety reporting
-- JSON-style result export
-- Local validation through `validate_platform.py`
-- Project health checks through `scripts/project_health.sh`
+CNS toxicity has only 2 positives and is not evaluated. 1,614 rows cover 74 unique sequences.
 
-## Repository structure
+### What the fix changed
 
-### Core runtime
+- **Removed outcome columns from the features.** 23 `label_*` / `endpoint_*` columns were curated annotations of the outcome; `label_kupffer_activation` correlated 0.98 with its own target. Two assay readouts (`cas_avg`, `kd_avg`) were also removed, because they are measured after dosing and don't exist for a new design. 111 constant columns were dropped. 55 features remain.
+- **Grouped CV by sequence.** Many rows are replicate measurements of the same oligo, so row-level folds leak. Folds now come from `StratifiedGroupKFold` on the normalized sequence.
+- **Reported with the base rate.** For endpoints with fewer than 10 positive sequences, PR-AUC is noisy. Read the gap to the base rate, not the absolute value.
 
-- `oligotox_app.py` — primary Streamlit operator console entrypoint
-- `validate_platform.py` — primary end-to-end validation entrypoint
-- `src/oligotox/` — core package code for inference, training, efficacy, PK/PD, and reporting
+### How to read it
 
-### Project support
+- **Kupffer cell activation** is the one endpoint with a strong, sequence-held-out signal. Its top predictors are design features (low GC, PS fraction, length). Those positives also come from a small number of curated sources, so part of the signal may be source rather than biology.
+- **Hepatocellular injury** keeps a real but modest signal (2.3× the base rate).
+- **Endpoints with 4–7 positive sequences** are not reliable estimates. Treat them as placeholders until more labeled data arrives.
 
-- `scripts/` — launchers, health checks, and utilities
-- `docs/` — architecture, setup, notes, and integration guidance
-- `configs/` — configuration and integration files
-- `benchmarks/` — benchmarking utilities
-- `reports/` — generated and development-stage reports
-
-### Data and artifacts
-
-- `data/` — local data assets used by the workflow
-- `artifacts/` — local runtime artifacts such as model outputs, configs, and run products
-
-## Run the app
-
-Launch the app with:
-
-```bash
-bash scripts/run_app.sh
-```
-
-This wraps the Streamlit entrypoint:
-
-```bash
-streamlit run oligotox_app.py --server.port 8502
-```
-
-Then open:
-
-```text
-http://localhost:8502
-```
-
-## Validate
-
-Validate the platform with:
-
-```bash
-python validate_platform.py
-```
-
-For a broader operational check, run:
-
-```bash
-bash scripts/project_health.sh
-```
-
-## Quickstart
-
-### 1. Clone the repository
+## Run it
 
 ```bash
 git clone https://github.com/barmanios123/OligoTox.git
 cd OligoTox
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt && pip install -e . --no-deps
+streamlit run oligotox_app.py
 ```
 
-### 2. Create and activate an environment
+The trained models and their config ship in `artifacts/`, so the app scores candidates from a fresh clone without the training data.
 
-Using `venv`:
+### Tests
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+pip install pytest
+pytest -q
 ```
 
-Or using Conda:
+The suite checks that leaky columns can't re-enter training, that published metrics are sequence-grouped, that app-time features match the trained columns, and that the app completes a full run headlessly. CI runs it on every push.
 
-```bash
-conda create -n oligotox python=3.11 -y
-conda activate oligotox
-```
+### Retrain and regenerate the figure
 
-### 3. Install dependencies
-
-```bash
-pip install -U pip
-pip install -e .
-pip install streamlit pandas numpy scikit-learn joblib
-```
-
-### 4. Validate the platform
-
-```bash
-python validate_platform.py
-bash scripts/project_health.sh
-```
-
-### 5. Launch the app
-
-```bash
-bash scripts/run_app.sh
-```
-
-## Typical usage flow
-
-1. Launch the app locally.
-2. Enter a candidate oligonucleotide sequence.
-3. Select modality and chemistry.
-4. Optionally provide dose and PK/PD context.
-5. Run the analysis.
-6. Review toxicity, efficacy, PK/PD, and regulatory-style outputs.
-7. Save or export the resulting run outputs.
-
-## Training
-
-If retraining is needed and the local environment includes the training module:
+Retraining needs the processed training data in `data/processed/`, which is not in the repo.
 
 ```bash
 python -m oligotox.training.train
+cp artifacts/metrics/training_summary.json reports/results/training_summary_after.json
+python scripts/make_results_figure.py
 ```
 
-After retraining, rerun validation and health checks:
+## What's in the app
 
-```bash
-python validate_platform.py
-bash scripts/project_health.sh
+| Tab | What it does | Status |
+|---|---|---|
+| Toxicity | 13 per-endpoint probabilities, a severity-weighted composite and a risk band | Trained models, validated above |
+| PK/PD | Liver AUC, Cmax and half-life from a GalNAc-siRNA compartment simulator | Mechanistic simulator, not fitted to this data |
+| Regulatory report | OSWG-style JSON safety summary built from the other tabs | Report formatting |
+| Efficacy | OligoFormer, ENsiRNA, siDPT and other model slots | **Untrained stubs.** The app labels them; their outputs are not predictions |
+
+## Limitations
+
+- 74 unique sequences is small. Nine of the 13 endpoints have 7 or fewer positive sequences.
+- Some training features (`ps_x_len`, `lna_x_gc`) were zeroed by upstream processing in about half the source rows. The app computes them consistently, so scores for real designs may shift slightly from CV behaviour.
+- The structure features use a placeholder MFE, and the sequence embedding is a hash, not a learned model.
+- The efficacy tab is not implemented beyond model interfaces.
+
+## Repository layout
+
 ```
-
-## Documentation
-
-Start here:
-
-- `docs/RUNNING_OLIGOTOX.md` — step-by-step local setup and execution guide
-- `docs/REPOSITORY_CONVENTIONS.md` — what is source code vs local/generated material
-
-## Status
-
-Working Streamlit app, validated backend components, and health-check scripts. Suitable for candidate review, demos, and collaboration discussions.
+oligotox_app.py          Streamlit console
+src/oligotox/            package: features, training, scoring, PK/PD, reporting
+artifacts/models|config  shipped trained models and scoring config
+reports/results/         metrics and the results figure
+tests/                   pytest suite (run in CI)
+benchmarks/oligogym/     leakage-aware benchmark scripts
+docs/                    architecture and provenance notes
+```
 
 ## License
 
-**Proprietary and Confidential**
-
-This software is proprietary and confidential. It is provided for evaluation purposes only to authorized clients and collaborators.
-
-- No commercial use without license
-- No modification or derivative works
-- No distribution or sublicensing
-- Evaluation and collaboration discussions only
-
-For licensing inquiries, contact the repository owner. See the `LICENSE` file for full terms.
+Proprietary; see `LICENSE`. Available for evaluation and collaboration discussions.

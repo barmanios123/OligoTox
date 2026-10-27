@@ -370,7 +370,7 @@ def plot_efficacy_safety_frontier(
 #### Week 9-10: Validation and Documentation
 - [ ] Validate cross-species scaling with known IND-enabling studies
 - [ ] Create case study: "Species-aware dose selection for [Candidate X]"
-- [ ] Update PRODUCTION_READINESS.md with cross-species validation results
+- [ ] Document cross-species validation results
 
 ---
 

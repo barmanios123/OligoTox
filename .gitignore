@@ -114,7 +114,6 @@ reports/cleanup_logs/
 output/
 
 # Large/generated data + model outputs kept local unless explicitly curated
-artifacts/models/
 artifacts/metrics/
 artifacts/eval/
 artifacts/registry/

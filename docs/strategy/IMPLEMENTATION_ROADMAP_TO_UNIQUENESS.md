@@ -9,7 +9,7 @@
 1. **13 Toxicity Endpoint Models** - Pretrained and ready
 2. **3 RNA Foundation Models** - Nucleotide Transformer, RiNALMo, BiRNA-BERT integrated
 3. **PKPD Architecture** - Documented and module structure created
-4. **Working Streamlit App** - oligotox_app_minimal.py functional
+4. **Working Streamlit App** - oligotox_app.py
 5. **Clean Repository** - Production-ready structure
 
 ### ❌ What We Need to Add (40% REMAINING)

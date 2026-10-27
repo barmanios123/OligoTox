@@ -13,7 +13,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import average_precision_score, brier_score_loss
-from sklearn.model_selection import StratifiedKFold, GroupKFold, cross_val_predict
+from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold, cross_val_predict
 
 from oligotox.config.paths import (
     PROCESSED_DATA_DIR,
@@ -88,22 +88,45 @@ def _positive_class_proba(model, X):
     return proba[:, -1]
 
 
-def _get_groups_for_cv(X: pd.DataFrame) -> "np.ndarray | None":
-    """Return grouping labels for leakage-aware CV if available.
+# Columns that encode the outcome (curated endpoint annotations, label copies)
+# or wet-lab readouts measured after dosing. None of these exist for a new
+# design at prediction time, so training on them inflates CV scores.
+LEAKY_PREFIXES = ("label_", "endpoint_")
+ASSAY_READOUT_COLUMNS = ["cas_avg", "kd_avg"]
 
-    Priority:
-      1) gapmer_id series-level grouping
-      2) oligo_id grouping
-      3) None (fall back to standard StratifiedKFold)
+# An endpoint needs positives in at least this many distinct sequences to be
+# cross-validated with sequence-grouped folds.
+MIN_POSITIVE_GROUPS = 3
+
+
+def _drop_leaky_features(X: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, list[str]]]:
+    leaky = [c for c in X.columns if c.startswith(LEAKY_PREFIXES)]
+    readouts = [c for c in ASSAY_READOUT_COLUMNS if c in X.columns]
+    X = X.drop(columns=leaky + readouts)
+    constant = [c for c in X.columns if X[c].nunique(dropna=False) <= 1]
+    X = X.drop(columns=constant)
+    return X, {"outcome_annotations": leaky, "assay_readouts": readouts, "constant": constant}
+
+
+def _get_groups_for_cv(raw_X: pd.DataFrame) -> "np.ndarray | None":
+    """Return grouping labels for leakage-aware CV.
+
+    Many rows are replicate measurements of the same oligo, so rows are
+    grouped by normalized sequence and a sequence never spans train and test.
     """
-    import numpy as np
-
-    for col in ["gapmer_id", "oligo_id"]:
-        if col in X.columns:
-            g = X[col]
+    for col in ["sequence", "gapmer_id", "oligo_id"]:
+        if col in raw_X.columns:
+            g = raw_X[col].astype(str).str.upper().str.replace("U", "T", regex=False)
             if g.nunique(dropna=True) > 1:
-                return g.astype(str).fillna("NA").values
+                return g.values
     return None
+
+
+def _random_split_pr_auc(X: pd.DataFrame, y: np.ndarray, n_splits: int) -> float:
+    """Ungrouped CV score, kept only to show how much row-level splits inflate metrics."""
+    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+    prob = cross_val_predict(_make_model(), X, y, cv=cv, method="predict_proba")[:, 1]
+    return float(average_precision_score(y, prob))
 
 
 def _run_datasail_diagnostic_split(
@@ -193,9 +216,12 @@ def main() -> None:
     Y = pd.read_csv(PROCESSED_DATA_DIR / "label_matrix.csv")
     meta = json.loads((PROCESSED_DATA_DIR / "dataset_metadata.json").read_text())
 
+    groups = _get_groups_for_cv(X)
     X = _prepare_training_matrix(X)
 
     print(f"Rows: {len(X)}")
+    if groups is not None:
+        print(f"Unique sequences (CV groups): {len(set(groups))}")
     print(f"Feature columns: {X.shape[1]}")
     print(f"Endpoint labels: {Y.shape[1]}")
     print()
@@ -217,6 +243,11 @@ def main() -> None:
     else:
         print(f"v0.3 mechanistic features already present: {len(v03_cols_existing)} columns")
 
+    X, dropped_features = _drop_leaky_features(X)
+    for kind, cols in dropped_features.items():
+        print(f"Dropped {len(cols)} {kind} columns")
+    print(f"Training feature columns: {X.shape[1]}")
+
     print("=" * 80)
     print("Training summary")
     print("=" * 80)
@@ -228,6 +259,8 @@ def main() -> None:
         positive_rate = float(np.mean(y))
         samples = int(len(y))
         min_class = min(positives, negatives)
+        positive_groups = int(len(set(groups[y == 1]))) if groups is not None else None
+        random_pr_auc = None
 
         if positives == 0 or negatives == 0:
             status = "fallback_single_class_fit"
@@ -247,21 +280,26 @@ def main() -> None:
             brier = None
             n_splits = None
             endpoint_metrics = None
+        elif groups is not None and positive_groups < MIN_POSITIVE_GROUPS:
+            status = "fallback_few_positive_sequences"
+            model = _make_model()
+            model.fit(X, y)
+            y_prob = _positive_class_proba(model, X)
+            pr_auc = None
+            brier = None
+            n_splits = None
+            endpoint_metrics = None
         else:
             status = "ok"
-            n_splits = min(3, min_class)
-            groups = _get_groups_for_cv(X)
             if groups is not None:
-                unique_groups = len(set(map(str, groups)))
-                if unique_groups >= n_splits:
-                    cv = GroupKFold(n_splits=n_splits)
-                    cv_iter = cv.split(X, y, groups=groups)
-                else:
-                    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-                    cv_iter = cv.split(X, y)
+                n_splits = min(5, positive_groups)
+                cv = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=42)
+                cv_iter = cv.split(X, y, groups=groups)
             else:
+                n_splits = min(3, min_class)
                 cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
                 cv_iter = cv.split(X, y)
+            random_pr_auc = _random_split_pr_auc(X, y, min(5, min_class))
 
             model = _make_model()
 
@@ -294,6 +332,9 @@ def main() -> None:
             "brier": brier,
             "positives": positives,
             "negatives": negatives,
+            "positive_sequences": positive_groups,
+            "cv": "sequence_grouped" if groups is not None else "stratified",
+            "random_split_pr_auc": random_pr_auc,
             "n_splits": n_splits,
             "datasail_eval": endpoint_metrics,
         }
@@ -322,12 +363,14 @@ def main() -> None:
         "endpoint_weights": ENDPOINT_SEVERITY_WEIGHTS,
         "risk_bands": RISK_BANDS,
         "trained_feature_columns": list(X.columns),
+        "label_columns": list(Y.columns),
     }
 
     _json_dump(METRICS_ARTIFACTS_DIR / "training_summary.json", summary)
     _json_dump(CONFIG_ARTIFACTS_DIR / "endpoint_thresholds.json", thresholds)
     _json_dump(CONFIG_ARTIFACTS_DIR / "composite_config.json", composite_cfg)
     _json_dump(METRICS_ARTIFACTS_DIR / "build_info.json", build_info)
+    _json_dump(METRICS_ARTIFACTS_DIR / "dropped_features.json", dropped_features)
 
     feature_matrix_path = PROCESSED_DATA_DIR / "feature_matrix.csv"
     label_matrix_path = PROCESSED_DATA_DIR / "label_matrix.csv"

@@ -55,7 +55,7 @@ pip install streamlit pandas numpy scikit-learn joblib
 Key paths:
 
 - `oligotox_app.py`
-- `validate_platform.py`
+- `tests/`
 - `src/`
 - `scripts/`
 - `docs/`
@@ -73,7 +73,7 @@ ls
 Run:
 
 ```bash
-python validate_platform.py
+pytest -q
 ```
 
 A successful run should show passing checks for imports, data/model artifacts, efficacy, PK/PD, reporting, toxicity, and app presence.
@@ -130,7 +130,7 @@ python -m oligotox.training.train
 Then rerun:
 
 ```bash
-python validate_platform.py
+pytest -q
 bash scripts/project_health.sh
 ```
 
@@ -164,7 +164,7 @@ If validation reports missing models or configs, ensure the required `artifacts/
 ```bash
 cd OligoTox
 source .venv/bin/activate
-python validate_platform.py
+pytest -q
 bash scripts/project_health.sh
 bash scripts/run_app.sh
 ```

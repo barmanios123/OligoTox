@@ -7,7 +7,7 @@ This document clarifies the intended meaning of the main repository areas and re
 The most important public entrypoints are:
 
 - `oligotox_app.py` — app entrypoint
-- `validate_platform.py` — validation entrypoint
+- `tests/` — pytest suite (run with `pytest`)
 - `src/oligotox/` — package implementation
 - `scripts/` — operational helpers
 - `docs/` — explanatory documentation
@@ -21,7 +21,7 @@ These areas should be treated as the main code surface:
 - `src/`
 - `scripts/`
 - `oligotox_app.py`
-- `validate_platform.py`
+- `tests/`
 - `configs/`
 - selected docs in `docs/`
 
@@ -58,7 +58,7 @@ streamlit run oligotox_app.py --server.port 8502
 The canonical validation command is:
 
 ```bash
-python validate_platform.py
+pytest -q
 ```
 
 The broader operational health command is:
