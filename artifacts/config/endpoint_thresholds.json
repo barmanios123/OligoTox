@@ -1,9 +1,9 @@
 {
   "hepatocellular_injury": {
     "threshold": 0.31000000000000005,
-    "precision": 0.3017241379310345,
-    "recall": 0.3448275862068966,
-    "f1": 0.3218390804597701,
+    "precision": 0.3387096774193548,
+    "recall": 0.3103448275862069,
+    "f1": 0.32390745501285345,
     "support": 203,
     "method": "f1"
   },
@@ -16,7 +16,7 @@
     "method": "f1"
   },
   "renal_tubular_injury": {
-    "threshold": 0.29000000000000004,
+    "threshold": 0.28,
     "precision": 0.2,
     "recall": 0.2857142857142857,
     "f1": 0.23529411764705882,
@@ -56,47 +56,47 @@
     "method": "f1"
   },
   "innate_immune_activation": {
-    "threshold": 0.45000000000000007,
-    "precision": 0.09090909090909091,
-    "recall": 0.14285714285714285,
-    "f1": 0.1111111111111111,
+    "threshold": 0.2,
+    "precision": 0.0625,
+    "recall": 0.2857142857142857,
+    "f1": 0.10256410256410256,
     "support": 7,
     "method": "f1"
   },
   "cytokine_release": {
-    "threshold": 0.45000000000000007,
-    "precision": 0.09090909090909091,
-    "recall": 0.14285714285714285,
-    "f1": 0.1111111111111111,
+    "threshold": 0.2,
+    "precision": 0.0625,
+    "recall": 0.2857142857142857,
+    "f1": 0.10256410256410256,
     "support": 7,
     "method": "f1"
   },
   "kupffer_cell_activation": {
-    "threshold": 0.44000000000000006,
+    "threshold": 0.45000000000000007,
     "precision": 0.6415094339622641,
     "recall": 1.0,
     "f1": 0.7816091954022989,
     "support": 34,
     "method": "f1"
   },
-  "cns_toxicity": {
-    "threshold": 0.3499999999999999,
-    "source": "external CNS assays, F1 on pooled OOF"
-  },
   "offtarget_gene_silencing": {
-    "threshold": 0.35000000000000003,
-    "precision": 0.42424242424242425,
-    "recall": 0.20588235294117646,
-    "f1": 0.27722772277227725,
+    "threshold": 0.25,
+    "precision": 0.2786885245901639,
+    "recall": 0.25,
+    "f1": 0.26356589147286824,
     "support": 68,
     "method": "f1"
   },
   "injection_site_reaction": {
-    "threshold": 0.5,
+    "threshold": 0.41000000000000003,
     "precision": 0.0784313725490196,
     "recall": 0.3333333333333333,
     "f1": 0.12698412698412698,
     "support": 12,
     "method": "f1"
+  },
+  "cns_toxicity": {
+    "threshold": 0.3499999999999999,
+    "source": "external CNS assays, F1 on pooled OOF"
   }
 }

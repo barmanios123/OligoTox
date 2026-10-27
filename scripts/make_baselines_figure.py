@@ -21,13 +21,18 @@ TEXT = "#0b0b0b"
 TEXT_2 = "#52514e"
 GRID = "#e4e3df"
 MODELS = [
-    ("Logistic (55 features)", "#2a78d6", "o"),
-    ("Gradient boosting (55 features)", "#eb6834", "D"),
+    ("Logistic (", "#2a78d6", "o"),
+    ("Gradient boosting (", "#eb6834", "D"),
     ("Data source only", "#1baf7a", "s"),
     ("GC content only", "#eda100", "^"),
     ("Length only", "#e87ba4", "v"),
 ]
 
+
+def _resolve(df, prefix):
+    """Model labels carry the feature count, so match on the prefix."""
+    hits = [m for m in df.model.unique() if m.startswith(prefix)]
+    return hits[0] if hits else prefix
 
 def main() -> None:
     df = pd.read_csv(RESULTS / "baselines.csv")

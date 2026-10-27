@@ -24,6 +24,10 @@ ROOT = Path(__file__).resolve().parent.parent
 PROCESSED = ROOT / "data" / "processed"
 RESULTS = ROOT / "reports" / "results"
 MAIN_SOURCES = ("oligotox_main", "papargyri_2020")
+
+
+def _label(n: int, kind: str) -> str:
+    return f"{kind} ({n} features)"
 N_BOOT = 1000
 
 
@@ -62,9 +66,11 @@ def main() -> None:
     source = raw["source"].where(raw["source"].isin(MAIN_SOURCES), "curated_other")
     source_X = pd.get_dummies(source, dtype=float)
 
+    n_feat = X.shape[1]
+    LOGISTIC, BOOSTED = _label(n_feat, "Logistic"), _label(n_feat, "Gradient boosting")
     models = {
-        "Logistic (55 features)": (_make_model, X),
-        "Gradient boosting (55 features)": (_boosted, X),
+        LOGISTIC: (_make_model, X),
+        BOOSTED: (_boosted, X),
         "GC content only": (_make_model, X[["gc_content"]]),
         "Length only": (_make_model, X[["seq_length"]]),
         "Data source only": (_make_model, source_X),
@@ -93,7 +99,7 @@ def main() -> None:
         pos_seq = len(set(gs[ys == 1]))
         neg_seq = len(set(gs[ys == 0]))
         if pos_seq >= 3 and neg_seq >= 3:
-            for name in ("Logistic (55 features)", "GC content only", "Length only"):
+            for name in (LOGISTIC, "GC content only", "Length only"):
                 factory, feats = models[name]
                 prob = _oof(factory(), feats[mask], ys, gs, min(5, pos_seq, neg_seq))
                 lo, hi = _bootstrap_ci(ys, prob, gs, rng)

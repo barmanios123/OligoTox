@@ -99,13 +99,23 @@ ASSAY_READOUT_COLUMNS = ["cas_avg", "kd_avg"]
 MIN_POSITIVE_GROUPS = 3
 
 
+# A sha256 of the sequence, named a "sequence embedding" but carrying no
+# sequence information a model can generalise from. An ablation over all 12
+# evaluated endpoints (scripts/ablate_hash_embedding.py) improved 9 of them
+# when these were removed, off-target gene silencing by 0.07 PR-AUC, so they
+# are dropped rather than shipped as a feature block.
+HASH_EMBEDDING_PREFIX = "embed_stub_hash"
+
+
 def _drop_leaky_features(X: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, list[str]]]:
     leaky = [c for c in X.columns if c.startswith(LEAKY_PREFIXES)]
     readouts = [c for c in ASSAY_READOUT_COLUMNS if c in X.columns]
-    X = X.drop(columns=leaky + readouts)
+    hashed = [c for c in X.columns if c.startswith(HASH_EMBEDDING_PREFIX)]
+    X = X.drop(columns=leaky + readouts + hashed)
     constant = [c for c in X.columns if X[c].nunique(dropna=False) <= 1]
     X = X.drop(columns=constant)
-    return X, {"outcome_annotations": leaky, "assay_readouts": readouts, "constant": constant}
+    return X, {"outcome_annotations": leaky, "assay_readouts": readouts,
+               "hash_embedding": hashed, "constant": constant}
 
 
 def _get_groups_for_cv(raw_X: pd.DataFrame) -> "np.ndarray | None":
@@ -252,7 +262,17 @@ def main() -> None:
     print("Training summary")
     print("=" * 80)
 
+    # An endpoint trained on external data has its own feature list and must
+    # not be overwritten by a run over the internal matrix.
+    externally_trained = set()
+    endpoint_features_path = CONFIG_ARTIFACTS_DIR / "endpoint_features.json"
+    if endpoint_features_path.exists():
+        externally_trained = set(json.loads(endpoint_features_path.read_text()))
+
     for endpoint in Y.columns:
+        if endpoint in externally_trained:
+            print(f"{endpoint:28s} skipped, trained externally with its own feature list")
+            continue
         y = pd.to_numeric(Y[endpoint], errors="coerce").fillna(0).astype(int).values
         positives = int(y.sum())
         negatives = int((y == 0).sum())

@@ -9,7 +9,8 @@
   ],
   "composite_endpoints": [
     "cns_toxicity",
-    "hepatocellular_injury"
+    "hepatocellular_injury",
+    "offtarget_gene_silencing"
   ],
   "endpoints": {
     "cns_toxicity": {
@@ -28,10 +29,10 @@
     },
     "hepatocellular_injury": {
       "tier": "validated",
-      "reason": "PR-AUC 0.27 [0.19-0.52] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source",
-      "pr_auc": 0.2723,
-      "ci_low": 0.1927,
-      "ci_high": 0.5154,
+      "reason": "PR-AUC 0.29 [0.21-0.56] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source",
+      "pr_auc": 0.2893,
+      "ci_low": 0.2108,
+      "ci_high": 0.5648,
       "base_rate": 0.1258,
       "positive_sequences": 19,
       "source_only_pr_auc": 0.2012,
@@ -44,12 +45,30 @@
         "beats_base_rate_within_source": true
       }
     },
+    "offtarget_gene_silencing": {
+      "tier": "validated",
+      "reason": "PR-AUC 0.23 [0.07-0.65] against a 0.042 base rate, clearing the source, GC and length baselines and holding up within a single source",
+      "pr_auc": 0.2298,
+      "ci_low": 0.0695,
+      "ci_high": 0.6518,
+      "base_rate": 0.0421,
+      "positive_sequences": 12,
+      "source_only_pr_auc": 0.0636,
+      "best_simple_baseline_pr_auc": 0.0589,
+      "checks": {
+        "has_enough_sequences": true,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "ci_clears_simple_baselines": true,
+        "beats_base_rate_within_source": true
+      }
+    },
     "injection_site_reaction": {
       "tier": "weak",
-      "reason": "the model's 95% CI reaches 0.06, below the best simple baseline (0.20), so it is not distinguishable from one crude sequence number",
-      "pr_auc": 0.2627,
-      "ci_low": 0.0633,
-      "ci_high": 0.4897,
+      "reason": "the model's 95% CI reaches 0.07, below the best simple baseline (0.20), so it is not distinguishable from one crude sequence number",
+      "pr_auc": 0.2689,
+      "ci_low": 0.0682,
+      "ci_high": 0.4939,
       "base_rate": 0.0074,
       "positive_sequences": 12,
       "source_only_pr_auc": 0.0107,
@@ -62,30 +81,12 @@
         "beats_base_rate_within_source": true
       }
     },
-    "offtarget_gene_silencing": {
-      "tier": "weak",
-      "reason": "the model's 95% CI reaches 0.05, below the best simple baseline (0.06), so it is not distinguishable from one crude sequence number",
-      "pr_auc": 0.19,
-      "ci_low": 0.0498,
-      "ci_high": 0.5948,
-      "base_rate": 0.0421,
-      "positive_sequences": 12,
-      "source_only_pr_auc": 0.0636,
-      "best_simple_baseline_pr_auc": 0.0589,
-      "checks": {
-        "has_enough_sequences": true,
-        "beats_source_baseline": true,
-        "ci_clears_base_rate": true,
-        "ci_clears_simple_baselines": false,
-        "beats_base_rate_within_source": true
-      }
-    },
     "kupffer_cell_activation": {
       "tier": "source_confounded",
       "reason": "the data-source-only baseline scores 0.69 against the model's 0.48, so the model is recognising the source dataset, not the design",
-      "pr_auc": 0.4774,
+      "pr_auc": 0.4773,
       "ci_low": 0.3191,
-      "ci_high": 0.7041,
+      "ci_high": 0.7043,
       "base_rate": 0.0211,
       "positive_sequences": 27,
       "source_only_pr_auc": 0.6896,
@@ -101,9 +102,9 @@
     "coagulation_effect": {
       "tier": "insufficient_data",
       "reason": "5 positive sequences; PR-AUC is not a usable estimate below 10",
-      "pr_auc": 0.0637,
-      "ci_low": 0.0103,
-      "ci_high": 0.2457,
+      "pr_auc": 0.0664,
+      "ci_low": 0.0109,
+      "ci_high": 0.2498,
       "base_rate": 0.0031,
       "positive_sequences": 5,
       "source_only_pr_auc": 0.0064,
@@ -119,9 +120,9 @@
     "complement_activation": {
       "tier": "insufficient_data",
       "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10",
-      "pr_auc": 0.0863,
-      "ci_low": 0.0158,
-      "ci_high": 0.3237,
+      "pr_auc": 0.0737,
+      "ci_low": 0.0107,
+      "ci_high": 0.3138,
       "base_rate": 0.0037,
       "positive_sequences": 6,
       "source_only_pr_auc": 0.0065,
@@ -137,9 +138,9 @@
     "cytokine_release": {
       "tier": "insufficient_data",
       "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
-      "pr_auc": 0.0573,
-      "ci_low": 0.021,
-      "ci_high": 0.1772,
+      "pr_auc": 0.0562,
+      "ci_low": 0.0213,
+      "ci_high": 0.1612,
       "base_rate": 0.0043,
       "positive_sequences": 7,
       "source_only_pr_auc": 0.0072,
@@ -155,9 +156,9 @@
     "hepatic_vacuolation": {
       "tier": "insufficient_data",
       "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10",
-      "pr_auc": 0.1578,
+      "pr_auc": 0.1557,
       "ci_low": 0.0405,
-      "ci_high": 0.3432,
+      "ci_high": 0.3363,
       "base_rate": 0.0074,
       "positive_sequences": 6,
       "source_only_pr_auc": 0.1984,
@@ -173,9 +174,9 @@
     "innate_immune_activation": {
       "tier": "insufficient_data",
       "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
-      "pr_auc": 0.0573,
-      "ci_low": 0.0193,
-      "ci_high": 0.1761,
+      "pr_auc": 0.0562,
+      "ci_low": 0.0208,
+      "ci_high": 0.1603,
       "base_rate": 0.0043,
       "positive_sequences": 7,
       "source_only_pr_auc": 0.0072,
@@ -191,9 +192,9 @@
     "renal_accumulation": {
       "tier": "insufficient_data",
       "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
-      "pr_auc": 0.0277,
-      "ci_low": 0.0035,
-      "ci_high": 0.1008,
+      "pr_auc": 0.0235,
+      "ci_low": 0.0033,
+      "ci_high": 0.079,
       "base_rate": 0.0043,
       "positive_sequences": 7,
       "source_only_pr_auc": 0.0072,
@@ -209,9 +210,9 @@
     "renal_tubular_injury": {
       "tier": "insufficient_data",
       "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10",
-      "pr_auc": 0.0627,
-      "ci_low": 0.0042,
-      "ci_high": 0.2757,
+      "pr_auc": 0.064,
+      "ci_low": 0.0061,
+      "ci_high": 0.2774,
       "base_rate": 0.0043,
       "positive_sequences": 7,
       "source_only_pr_auc": 0.0111,
@@ -219,7 +220,7 @@
       "checks": {
         "has_enough_sequences": false,
         "beats_source_baseline": true,
-        "ci_clears_base_rate": false,
+        "ci_clears_base_rate": true,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       }
@@ -227,9 +228,9 @@
     "thrombocytopenia": {
       "tier": "insufficient_data",
       "reason": "4 positive sequences; PR-AUC is not a usable estimate below 10",
-      "pr_auc": 0.0284,
-      "ci_low": 0.0026,
-      "ci_high": 0.5219,
+      "pr_auc": 0.0244,
+      "ci_low": 0.0014,
+      "ci_high": 0.3728,
       "base_rate": 0.0025,
       "positive_sequences": 4,
       "source_only_pr_auc": 0.0037,
@@ -237,7 +238,7 @@
       "checks": {
         "has_enough_sequences": false,
         "beats_source_baseline": true,
-        "ci_clears_base_rate": true,
+        "ci_clears_base_rate": false,
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       }

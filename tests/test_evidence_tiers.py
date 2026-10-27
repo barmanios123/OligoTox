@@ -18,7 +18,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from derive_evidence_tiers import MODEL, SIMPLE_BASELINES, SOURCE_BASELINE, classify  # noqa: E402
+from derive_evidence_tiers import (  # noqa: E402
+    SIMPLE_BASELINES,
+    SOURCE_BASELINE,
+    _model_label,
+    classify,
+)
 
 
 @pytest.fixture
@@ -43,8 +48,9 @@ def test_shipped_tiers_match_the_baseline_results(root, evidence):
 
     for endpoint, sub in baselines.groupby("endpoint"):
         by_model = sub.set_index("model")
-        model = by_model.loc[MODEL]
-        rows = within[(within.endpoint == endpoint) & (within.model == MODEL)]
+        model = by_model.loc[_model_label(sub)]
+        rows = within[(within.endpoint == endpoint)
+                      & (within.model == _model_label(sub))]
         tier, _, _ = classify(
             {
                 "pr_auc": float(model["pr_auc"]),

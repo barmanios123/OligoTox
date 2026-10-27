@@ -2,13 +2,12 @@ import json
 
 import pandas as pd
 
-MODELS = {
-    "Logistic (55 features)",
-    "Gradient boosting (55 features)",
+BASELINES = {
     "Data source only",
     "GC content only",
     "Length only",
 }
+
 
 
 def test_baselines_cover_every_evaluated_endpoint(root):
@@ -17,7 +16,11 @@ def test_baselines_cover_every_evaluated_endpoint(root):
     df = pd.read_csv(root / "reports/results/baselines.csv")
     assert set(df.endpoint) == evaluated
     for endpoint, sub in df.groupby("endpoint"):
-        assert set(sub.model) == MODELS, endpoint
+        # The two model labels carry the feature count, which changes with
+        # the matrix, so resolve them rather than hard-coding a number.
+        named = {m for m in sub.model if m.startswith(("Logistic (", "Gradient boosting ("))}
+        assert len(named) == 2, endpoint
+        assert set(sub.model) - named == BASELINES, endpoint
 
 
 def test_confidence_intervals_are_valid(root):

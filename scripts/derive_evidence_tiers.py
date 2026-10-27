@@ -31,13 +31,17 @@ ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "reports" / "results"
 CONFIG = ROOT / "artifacts" / "config"
 
-MODEL = "Logistic (55 features)"
+MODEL_PREFIX = "Logistic ("
 SIMPLE_BASELINES = ("GC content only", "Length only")
 SOURCE_BASELINE = "Data source only"
 MIN_POSITIVE_SEQUENCES = 10
 
 TIER_ORDER = ("validated", "weak", "source_confounded", "insufficient_data")
 
+
+def _model_label(df) -> str:
+    """The model label carries the feature count, so match on the prefix."""
+    return next(m for m in df.model.unique() if m.startswith(MODEL_PREFIX))
 
 def classify(model, source_pr_auc, best_simple, base_rate, n_sequences, within_beats_base):
     """Return (tier, reason, checks) for one endpoint."""
@@ -99,13 +103,13 @@ def main() -> None:
     endpoints = {}
     for endpoint, sub in baselines.groupby("endpoint"):
         by_model = sub.set_index("model")
-        model = by_model.loc[MODEL]
+        model = by_model.loc[_model_label(sub)]
         source_pr_auc = float(by_model.loc[SOURCE_BASELINE, "pr_auc"])
         best_simple = max(float(by_model.loc[name, "pr_auc"]) for name in SIMPLE_BASELINES)
         base_rate = float(model["base_rate"])
         n_sequences = int(model["positive_sequences"])
 
-        rows = within[(within.endpoint == endpoint) & (within.model == MODEL)]
+        rows = within[(within.endpoint == endpoint) & (within.model.str.startswith(MODEL_PREFIX))]
         within_beats_base = bool((rows.pr_auc > rows.base_rate).any()) if len(rows) else False
 
         model_metrics = {
