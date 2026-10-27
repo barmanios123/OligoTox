@@ -222,7 +222,22 @@ The models here are not better than PFRED, ASOptimizer or any proprietary platfo
 | External transfer | `scripts/evaluate_cns_external.py`, `evaluate_hepatotox_external.py` | Internal validity that does not generalise |
 | Gating | `scripts/derive_evidence_tiers.py` | Any of the above reaching the user as a prediction |
 
-The checks are modality-agnostic: they need a feature matrix, labels, a group column and a source column. Each result lands in `artifacts/config/endpoint_evidence.json`, which the app and the OSWG report read at runtime, so a failed check becomes a label in the interface rather than a footnote.
+The checks are modality-agnostic, and packaged to run on anyone's data:
+
+```bash
+python -m oligotox.audit their_data.csv --label hepatotox --sequence seq --source study
+```
+
+It needs a feature matrix, a label column, a sequence column to group on and optionally a source column, and it imports nothing else from this project. It exits non-zero when an endpoint fails a check, so it can gate a pipeline. Run blind against this repo's own training data it reproduces, unprompted, the three conclusions that took this project months to reach:
+
+```
+               endpoint                verdict  groups  pos_groups  grouped  ungrouped  source_only  brier_skill
+  hepatocellular_injury ranks but uncalibrated      74          19    0.274      0.551        0.201       -0.009
+kupffer_cell_activation      source confounded      74          27    0.477      0.782        0.827        0.344
+       thrombocytopenia      insufficient data      74           4    0.048      0.297        0.003        0.003
+```
+
+Each verdict comes with its reasoning, for example *"a model seeing only the source scores 0.83 against 0.48; the model is recognising the dataset"*. Each result lands in `artifacts/config/endpoint_evidence.json`, which the app and the OSWG report read at runtime, so a failed check becomes a label in the interface rather than a footnote.
 
 **[`docs/NEGATIVE_RESULTS.md`](docs/NEGATIVE_RESULTS.md)** records the nine failure modes this found, with numbers and the script for each. **[`docs/DATA_REQUESTS.md`](docs/DATA_REQUESTS.md)** lists what the platform is actually limited by, which is labelled data rather than method.
 
