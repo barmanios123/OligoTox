@@ -47,11 +47,10 @@
       "status": "fetchable",
       "kind": "toxicity",
       "endpoint": "hepatocellular_injury",
-      "on_disk": false,
+      "on_disk": true,
       "usable_for_training": false,
       "blocked_by": "status fetchable",
-      "sequences": 149,
-      "remote": "HTTP 403"
+      "sequences": 149
     },
     {
       "name": "asoptimizer_rodent_alt_ast",
@@ -61,19 +60,17 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "no label threshold declared",
-      "sequences": 6000,
-      "remote": "HTTP 403"
+      "sequences": 6000
     },
     {
       "name": "aso_atlas_patent_gapmers",
-      "status": "unverified",
+      "status": "available",
       "kind": "efficacy",
       "endpoint": "target_inhibition",
       "on_disk": false,
       "usable_for_training": false,
-      "blocked_by": "status unverified",
-      "sequences": 188521,
-      "remote": "HTTP 429"
+      "blocked_by": "status available",
+      "sequences": 188521
     },
     {
       "name": "open_tggates_liver",
@@ -83,8 +80,17 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "status deferred",
-      "sequences": null,
-      "remote": "unreachable (URLError)"
+      "sequences": null
+    },
+    {
+      "name": "safesense_human_adverse_events",
+      "status": "not_applicable",
+      "kind": "reference",
+      "endpoint": null,
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "status not_applicable",
+      "sequences": null
     }
   ]
 }

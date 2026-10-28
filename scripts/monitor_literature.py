@@ -140,15 +140,25 @@ def main(argv: list[str] | None = None) -> int:
                 "url": f"https://europepmc.org/article/MED/{ident}",
             }
 
-    ranked = sorted(candidates.values(), key=lambda c: -c["score"])
+    # Standing list: a quiet week must not erase leads found earlier.
+    existing = {}
+    candidates_path = RESULTS / "literature_candidates.json"
+    if candidates_path.exists():
+        existing = {c["id"]: c for c in
+                    json.loads(candidates_path.read_text()).get("candidates", [])}
+    new_ids = sorted(set(candidates) - set(existing))
+    merged = {**existing, **candidates}
+
+    ranked = sorted(merged.values(), key=lambda c: -c["score"])
     RESULTS.mkdir(parents=True, exist_ok=True)
-    (RESULTS / "literature_candidates.json").write_text(json.dumps({
+    candidates_path.write_text(json.dumps({
         "checked": datetime.now(timezone.utc).isoformat(),
         "since": args.since,
         "min_score": args.min_score,
         "note": "Leads, not sources. A candidate becomes ingestible only once its "
                 "readout direction and label threshold are declared in "
                 "data/registry/sources.json.",
+        "new_this_run": new_ids,
         "candidates": ranked,
     }, indent=2) + "\n")
 
@@ -158,13 +168,15 @@ def main(argv: list[str] | None = None) -> int:
             "ids": sorted(seen | set(candidates)),
         }, indent=2) + "\n")
 
-    print(f"\n{len(ranked)} new candidate(s) scoring >= {args.min_score}\n")
-    for candidate in ranked[:12]:
+    fresh = [c for c in ranked if c["id"] in new_ids]
+    print(f"\n{len(fresh)} new candidate(s) this run, {len(ranked)} standing, "
+          f"scoring >= {args.min_score}\n")
+    for candidate in (fresh or ranked)[:12]:
         print(f"  [{candidate['score']}] {candidate['year']} {candidate['title'][:76]}")
         print(f"      {'; '.join(candidate['why'])}")
         print(f"      {candidate['url']}")
-    if not ranked:
-        print("  nothing new. The pipeline has no fresh data to digest this week.")
+    if not fresh:
+        print("  nothing new this run; the standing list above is unchanged.")
     print(f"\nwrote {(RESULTS / 'literature_candidates.json').relative_to(ROOT)}")
     return 0
 

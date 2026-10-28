@@ -38,11 +38,20 @@ models from 2,838 sequences to a corpus comparable with anything proprietary.
 The siRNA potency model already transfers between independent studies
 (Spearman 0.46 and 0.49), so more data has a clear path to improving it.
 
-**Status:** preprint, availability unconfirmed. An automated read of the
-bioRxiv landing page returned HTTP 429, so the data availability statement
-has not been checked. Before writing to the authors, open the preprint and
-look for a Zenodo DOI, GitHub repository or Hugging Face dataset; the
-OligoAI platform they describe may host it directly.
+**Status: available, and no longer a request.** The literature monitor
+surfaced the published version in Molecular Therapy Nucleic Acids
+(doi:10.1016/j.omtn.2026.103004), and the dataset is at
+https://github.com/barneyhill/aso_atlas under Apache-2.0, which permits
+redistribution with attribution. 188,521 gapmers across 306 genes, with PS,
+2'-MOE and cEt annotation that no other source here carries.
+
+One caveat worth stating: it ships as a 69 MB pickle, and unpickling executes
+code. An opcode scan shows it reconstructs `src.formats.Chemistry` and
+`modifications.Modification` from the authors' own package, and `src` is
+generic enough to collide with this repository's own `src/`. Nothing in the
+scan looks hostile. `scripts/ingest_aso_atlas.py` converts it once with a
+restricted unpickler that stubs every foreign class, so the data comes
+through and no third-party code runs.
 
 ---
 

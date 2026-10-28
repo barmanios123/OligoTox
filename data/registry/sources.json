@@ -90,16 +90,21 @@
     },
     {
       "name": "aso_atlas_patent_gapmers",
-      "status": "unverified",
+      "status": "available",
       "kind": "efficacy",
       "endpoint": "target_inhibition",
-      "readout": "knockdown",
+      "readout": "qRT-PCR knockdown",
       "direction": null,
       "threshold": null,
-      "url": "https://www.biorxiv.org/content/10.1101/2025.10.29.685292v1",
-      "licence": "unknown",
+      "url": "https://github.com/barneyhill/aso_atlas",
+      "licence": "Apache-2.0 (repository LICENSE); permits redistribution with attribution",
       "sequences": 188521,
-      "notes": "188,521 gapmer sequences from USPTO patents. Availability not confirmed; a landing-page check returned HTTP 429."
+      "notes": "Found by scripts/monitor_literature.py, which surfaced the published version of what this registry had listed as an unverified preprint. Efficacy, not toxicity: it would replace the 3,867-sequence ASO activity model, currently tiered weak at Spearman 0.26. It carries PS, 2'-MOE and cEt annotation, which no other source here has.",
+      "paper": "Accurately modeling RNase H-mediated antisense oligonucleotide efficacy. Mol Ther Nucleic Acids 2026, doi:10.1016/j.omtn.2026.103004",
+      "local_path": "data/external/aso_atlas.parquet",
+      "genes": 306,
+      "carries_chemistry": true,
+      "fetch_note": "Distributed as a 69 MB pickle (data/aso_atlas.pkl). Unpickling executes code: an opcode scan shows it constructs src.formats.Chemistry and modifications.Modification from the authors' own package, and 'src' is generic enough to collide with this repository's own src/. Convert it once with scripts/ingest_aso_atlas.py, which stubs foreign classes so no third-party code runs, then use the parquet it writes."
     },
     {
       "name": "open_tggates_liver",
@@ -112,6 +117,18 @@
       "url": "https://toxico.nibiohn.go.jp/english/",
       "licence": "public",
       "notes": "Small molecules, not oligonucleotides. Usable only as a hepatotoxicity prior, which needs enough oligo labels to fine-tune against. Deferred behind asoptimizer_rodent_alt_ast."
+    },
+    {
+      "name": "safesense_human_adverse_events",
+      "status": "not_applicable",
+      "kind": "reference",
+      "endpoint": null,
+      "readout": "human adverse events",
+      "direction": null,
+      "threshold": null,
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13499347/",
+      "licence": "open access",
+      "notes": "Human adverse-event atlas for approved ASOs. Surfaced by the literature monitor and assessed: it records events per drug, not outcomes per sequence, so it cannot supply training rows. Useful as a reference for which endpoints matter clinically. Recorded so it is not re-assessed."
     }
   ]
 }

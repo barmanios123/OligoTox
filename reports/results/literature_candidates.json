@@ -1,7 +1,556 @@
 {
-  "checked": "2026-10-28T00:43:06.729574+00:00",
+  "checked": "2026-10-28T00:47:42.548983+00:00",
   "since": "2024-01-01",
   "min_score": 5,
   "note": "Leads, not sources. A candidate becomes ingestible only once its readout direction and label threshold are declared in data/registry/sources.json.",
-  "candidates": []
+  "new_this_run": [],
+  "candidates": [
+    {
+      "id": "42633286",
+      "score": 8,
+      "year": "2026",
+      "title": "SafeSense: An open-access safety atlas for antisense oligonucleotides adverse events in human.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2026.103035",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access",
+        "describes a panel or screen, not one compound"
+      ],
+      "url": "https://europepmc.org/article/MED/42633286"
+    },
+    {
+      "id": "42033225",
+      "score": 8,
+      "year": "2026",
+      "title": "Direct targeting of C9ORF72 repeat RNA with fluorinated antisense oligonucleotides.",
+      "journal": "",
+      "doi": "10.1093/nar/gkag343",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access",
+        "describes a panel or screen, not one compound"
+      ],
+      "url": "https://europepmc.org/article/MED/42033225"
+    },
+    {
+      "id": "42915543",
+      "score": 8,
+      "year": "2026",
+      "title": "Sequence-defined Digital Bottlebrush Polymers for Programmable Oligonucleotide Delivery.",
+      "journal": "",
+      "doi": "10.1021/jacs.6c09537",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access",
+        "describes a panel or screen, not one compound"
+      ],
+      "url": "https://europepmc.org/article/MED/42915543"
+    },
+    {
+      "id": "41323796",
+      "score": 8,
+      "year": "2025",
+      "title": "SCAD: A modular platform for efficient delivery of duplex RNA to the CNS and beyond.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2025.102757",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access",
+        "describes a panel or screen, not one compound"
+      ],
+      "url": "https://europepmc.org/article/MED/41323796"
+    },
+    {
+      "id": "42542598",
+      "score": 8,
+      "year": "2026",
+      "title": "Accurately modeling RNase H-mediated antisense oligonucleotide efficacy.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2026.103004",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access",
+        "describes a panel or screen, not one compound"
+      ],
+      "url": "https://europepmc.org/article/MED/42542598"
+    },
+    {
+      "id": "40214214",
+      "score": 7,
+      "year": "2025",
+      "title": "Multimodal glioma immunotherapy combining TLR9-targeted STAT3 antisense oligodeoxynucleotides with PD1 immune checkpoint blockade.",
+      "journal": "",
+      "doi": "10.1093/neuonc/noaf099",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access",
+        "names a readout (TLR9)"
+      ],
+      "url": "https://europepmc.org/article/MED/40214214"
+    },
+    {
+      "id": "42264034",
+      "score": 7,
+      "year": "2026",
+      "title": "Bepirovirsen induces innate immune activation in the liver potentially through TLR8 signaling.",
+      "journal": "",
+      "doi": "10.1016/j.jhepr.2026.101923",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access",
+        "names a readout (TLR8)"
+      ],
+      "url": "https://europepmc.org/article/MED/42264034"
+    },
+    {
+      "id": "42482706",
+      "score": 5,
+      "year": "2026",
+      "title": "Acyclic artificial nucleic acid substitution expands the safe design space of gapmer ASOs by preventing P54nrb mislocalization.",
+      "journal": "",
+      "doi": "10.1093/narmme/ugag036",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42482706"
+    },
+    {
+      "id": "42112101",
+      "score": 5,
+      "year": "2026",
+      "title": "ClinASO: An open-source platform for rapid drug discovery of gapmer antisense oligonucleotides.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2026.102933",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42112101"
+    },
+    {
+      "id": "42638560",
+      "score": 5,
+      "year": "2026",
+      "title": "ALG-020572, an Antisense Oligonucleotide for the Treatment of Chronic Hepatitis B Virus Infection Discontinued for Drug-Induced Liver Injury.",
+      "journal": "",
+      "doi": "10.1111/jvh.70224",
+      "open_access": false,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "names a readout (AMINOTRANSFERASE)"
+      ],
+      "url": "https://europepmc.org/article/MED/42638560"
+    },
+    {
+      "id": "42656569",
+      "score": 5,
+      "year": "2026",
+      "title": "An antisense oligonucleotide targeting STK25 as a long-acting therapeutic candidate for early MASLD.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2026.103038",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42656569"
+    },
+    {
+      "id": "42451651",
+      "score": 5,
+      "year": "2026",
+      "title": "Survivin-Targeting Antisense Oligonucleotides in Cancer Therapy.",
+      "journal": "",
+      "doi": "10.3390/molecules31132283",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42451651"
+    },
+    {
+      "id": "41169576",
+      "score": 5,
+      "year": "2025",
+      "title": "Cycloalkane Incorporation Into the 2',4'-Bridge of Locked Nucleic Acid: Enhancing Nuclease Stability, Reducing Phosphorothioate Modifications, and Lowering Hepatotoxicity in Antisense Oligonucleotides.",
+      "journal": "",
+      "doi": "10.1021/jacsau.5c01005",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/41169576"
+    },
+    {
+      "id": "PMC13669632",
+      "score": 5,
+      "year": "2026",
+      "title": "Chemically stabilized long antisense oligonucleotides perturb RNA exosome function",
+      "journal": "",
+      "doi": null,
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/PMC13669632"
+    },
+    {
+      "id": "42733805",
+      "score": 5,
+      "year": "2026",
+      "title": "To scramble or not: Steric blocking 2'-MOE/PS control antisense oligonucleotides across cellular models.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2026.103051",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42733805"
+    },
+    {
+      "id": "42508405",
+      "score": 5,
+      "year": "2026",
+      "title": "Therapeutic Gfral silencing via antisense oligonucleotides ameliorates cancer-associated cachexia and extends survival in tumor-bearing mice.",
+      "journal": "",
+      "doi": "10.1016/j.xcrm.2026.102939",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42508405"
+    },
+    {
+      "id": "41834403",
+      "score": 5,
+      "year": "2026",
+      "title": "Enzyme-Responsive Cyclic Gapmer Antisense Oligonucleotides via Thymidine &lt;i&gt;C&lt;/i&gt;5-&lt;i&gt;C&lt;/i&gt;5 Cross-Linking within the Gap Region Using a Galactosylated Branched Self-Immolative Linker.",
+      "journal": "",
+      "doi": "10.1021/acs.bioconjchem.6c00065",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/41834403"
+    },
+    {
+      "id": "42017312",
+      "score": 5,
+      "year": "2026",
+      "title": "Dynamics of an RNase H-Responsive Tetrahedral DNA Nanostructure for Efficient Intracellular microRNA Inhibition.",
+      "journal": "",
+      "doi": "10.1021/acs.bioconjchem.5c00563",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42017312"
+    },
+    {
+      "id": "41928909",
+      "score": 5,
+      "year": "2026",
+      "title": "Guanine base modifications in antisense oligonucleotides mitigate acute central nervous system toxicity.",
+      "journal": "",
+      "doi": "10.1039/d5cb00316d",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/41928909"
+    },
+    {
+      "id": "42327837",
+      "score": 5,
+      "year": "2026",
+      "title": "Single-base 2'OMe-modified LNA and MOE gapmers selectively silence &lt;i&gt;ACVR1&lt;/i&gt; &lt;sup&gt;&lt;i&gt;R206H&lt;/i&gt;&lt;/sup&gt; in fibrodysplasia ossificans progressiva.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2026.102937",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42327837"
+    },
+    {
+      "id": "PMC13659513",
+      "score": 5,
+      "year": "2026",
+      "title": "Advancing TCR-T cell therapy in hepatocellular carcinoma: lessons from the ADP-A2AFP trial",
+      "journal": "",
+      "doi": null,
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/PMC13659513"
+    },
+    {
+      "id": "42562700",
+      "score": 5,
+      "year": "2026",
+      "title": "Precise nanodelivery of screened compounds alleviates sepsis-associated encephalopathy by targeting microglial ANXA2.",
+      "journal": "",
+      "doi": "10.1016/j.scib.2026.07.059",
+      "open_access": false,
+      "has_supplementary": false,
+      "why": [
+        "describes a panel or screen, not one compound",
+        "names a readout (CYTOKINE RELEASE)"
+      ],
+      "url": "https://europepmc.org/article/MED/42562700"
+    },
+    {
+      "id": "42898723",
+      "score": 5,
+      "year": "2026",
+      "title": "Application of Dual-Targeting Carbon Dot Nanozymes in Improving Hypoxia and Enhancing Small Interfering RNA-Mediated Gene Silencing for Hepatocellular Carcinoma.",
+      "journal": "",
+      "doi": "10.34133/bmr.0430",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42898723"
+    },
+    {
+      "id": "42724647",
+      "score": 5,
+      "year": "2026",
+      "title": "Safety and toxicity assessment of antisense oligonucleotides in brain-relevant human cellular models.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2026.103062",
+      "open_access": true,
+      "has_supplementary": false,
+      "why": [
+        "open access",
+        "describes a panel or screen, not one compound"
+      ],
+      "url": "https://europepmc.org/article/MED/42724647"
+    },
+    {
+      "id": "42813369",
+      "score": 5,
+      "year": "2026",
+      "title": "Albumin-binding dendrimer-conjugated siRNA enables safe and effective gene silencing throughout the central nervous system.",
+      "journal": "",
+      "doi": "10.1093/nar/gkag926",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42813369"
+    },
+    {
+      "id": "39460376",
+      "score": 5,
+      "year": "2024",
+      "title": "Quantifying and mitigating motor phenotypes induced by antisense oligonucleotides in the central nervous system.",
+      "journal": "",
+      "doi": "10.1016/j.ymthe.2024.10.024",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/39460376"
+    },
+    {
+      "id": "42514975",
+      "score": 5,
+      "year": "2026",
+      "title": "Dorsal Root Ganglion-Targeted DNA Origami Delivery of IL1RN for Skeletal Growth and Repair.",
+      "journal": "",
+      "doi": "10.3390/pharmaceutics18070898",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42514975"
+    },
+    {
+      "id": "42756347",
+      "score": 5,
+      "year": "2026",
+      "title": "Bioengineered human brain organoids and organ-on-chip platforms for exposure-aware assessment of developmental neurotoxicity induced by general anesthetics and sedatives.",
+      "journal": "",
+      "doi": "10.3389/fbioe.2026.1909235",
+      "open_access": true,
+      "has_supplementary": false,
+      "why": [
+        "open access",
+        "describes a panel or screen, not one compound"
+      ],
+      "url": "https://europepmc.org/article/MED/42756347"
+    },
+    {
+      "id": "42278518",
+      "score": 5,
+      "year": "2026",
+      "title": "ZL006 Treatment Reduces Inflammation, Oxidative Stress, and Brain A\u03b2&lt;sub&gt;1-42&lt;/sub&gt; Accumulation and Rescues the Loss of PSD95 Synaptic Marker in Familial Alzheimer's Disease-Associated &lt;i&gt;psen1&lt;/i&gt;-Deficient Zebrafish Model.",
+      "journal": "",
+      "doi": "10.3390/ijms27114992",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42278518"
+    },
+    {
+      "id": "42458512",
+      "score": 5,
+      "year": "2026",
+      "title": "Targeting astrocyte-mediated neurotoxicity induced by ALS/FTD-associated RNA binding proteins.",
+      "journal": "",
+      "doi": "10.1186/s12964-026-03082-w",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42458512"
+    },
+    {
+      "id": "39554992",
+      "score": 5,
+      "year": "2024",
+      "title": "Preventing acute neurotoxicity of CNS therapeutic oligonucleotides with the addition of Ca&lt;sup&gt;2+&lt;/sup&gt; and Mg&lt;sup&gt;2+&lt;/sup&gt; in the formulation.",
+      "journal": "",
+      "doi": "10.1016/j.omtn.2024.102359",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/39554992"
+    },
+    {
+      "id": "42074318",
+      "score": 5,
+      "year": "2026",
+      "title": "ATF3/SLC31A1-Mediated Cuproptosis Contributes to Bortezomib-Induced Peripheral Neurotoxicity and Intervention by (-)-Epigallocatechin Gallate.",
+      "journal": "",
+      "doi": "10.3390/ijms27083680",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42074318"
+    },
+    {
+      "id": "PMC13651819",
+      "score": 5,
+      "year": "2026",
+      "title": "Gapmers targeting conserved SARS-CoV-2 single-stranded regions reduce viral load and reshape inflammatory macrophage responses",
+      "journal": "",
+      "doi": null,
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/PMC13651819"
+    },
+    {
+      "id": "42816419",
+      "score": 5,
+      "year": "2026",
+      "title": "The noncoding RNA GRAS1 interacts with NKAP and protects against DNA damage and cell death.",
+      "journal": "",
+      "doi": "10.26508/lsa.202403105",
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/42816419"
+    },
+    {
+      "id": "PMC13691374",
+      "score": 5,
+      "year": "2026",
+      "title": "NEAT1 remodeling rewires the MYC degradation pathway",
+      "journal": "",
+      "doi": null,
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/PMC13691374"
+    },
+    {
+      "id": "PMC12048806",
+      "score": 5,
+      "year": "2025",
+      "title": "Integrating datasets to dissect NFYC-AS1 RNA- and transcription-dependent functions: comparative transcriptome profiling of knockdown strategies",
+      "journal": "",
+      "doi": null,
+      "open_access": true,
+      "has_supplementary": true,
+      "why": [
+        "has supplementary data",
+        "open access"
+      ],
+      "url": "https://europepmc.org/article/MED/PMC12048806"
+    }
+  ]
 }
