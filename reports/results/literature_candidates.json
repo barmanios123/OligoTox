@@ -1,0 +1,7 @@
+{
+  "checked": "2026-10-28T00:43:06.729574+00:00",
+  "since": "2024-01-01",
+  "min_score": 5,
+  "note": "Leads, not sources. A candidate becomes ingestible only once its readout direction and label threshold are declared in data/registry/sources.json.",
+  "candidates": []
+}

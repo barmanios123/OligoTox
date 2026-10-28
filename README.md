@@ -294,6 +294,12 @@ One run does: normalize declared sources, retrain the internal endpoints, recomp
 
 **Nothing in the loop can promote an endpoint.** Tiers are recomputed by `derive_evidence_tiers.py` from the measurements, applying the same gates every time. Demotion is automatic and immediate: an endpoint that stops clearing its baselines loses its tier on the next run, with no grace period and no override. There is deliberately no `force_tier` and a test asserts nobody adds one.
 
+### The inbound stream
+
+A loop with no new data recomputes the same answer forever. `scripts/monitor_literature.py` queries Europe PMC weekly for papers that plausibly carry an ingestible dataset, and scores them on what makes a dataset usable rather than interesting: supplementary data, open access, panel or screen language rather than a single compound, and a named toxicity readout. Anything resembling a source already ingested is scored down, and every candidate is deduplicated against previous runs, so a quiet week reports nothing rather than the same papers again.
+
+It reports leads, never sources. A paper becomes ingestible only once someone reads it, establishes the readout direction and threshold, and declares it in `data/registry/sources.json`. That judgement is exactly what the registry exists to keep out of automation, and getting it wrong is how the shipped combined file ended up calling 83% of Hagedorn's compounds neurotoxic.
+
 ### Running while you are offline
 
 `.github/workflows/continuous-evaluation.yml` runs the chain weekly in GitHub's cloud, so it keeps going with no machine involved. The split matters:

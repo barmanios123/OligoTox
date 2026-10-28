@@ -48,6 +48,10 @@ jobs:
       - name: Inventory the declared datasets
         run: python scripts/fetch_datasets.py --fetch
 
+      - name: Watch the literature for new datasets
+        continue-on-error: true
+        run: python scripts/monitor_literature.py
+
       - name: Run the pipeline
         run: |
           python scripts/run_pipeline.py \

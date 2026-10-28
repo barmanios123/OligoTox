@@ -107,3 +107,21 @@ been public for a matter of hours, a force push breaks every clone, and
 GitHub retains unreferenced objects for a period regardless, so a rewrite
 would have been disruptive and incomplete. Recorded here so the decision is
 visible rather than looking like an oversight.
+
+---
+
+## 6. FDA pharmacology reviews do not contain sequences (checked, dead end)
+
+`data/raw/fda_reviews/` holds the mipomersen, inotersen and nusinersen
+pharmacology reviews, 495 pages in total. They were an obvious candidate for
+systematic extraction: public domain, already local, and full of real
+preclinical toxicity findings.
+
+**They contain no oligonucleotide sequences at all.** A full text scan of all
+495 pages found zero 15-25mers. FDA reviews identify a drug by name and
+application number, and assess one drug per review, so they cannot supply
+sequence-labelled training rows no matter how carefully they are parsed.
+
+Recorded so nobody repeats the scan. The route to the 31 positive sequences
+the stalled endpoints need is new published screens, which is what
+`scripts/monitor_literature.py` watches for.
