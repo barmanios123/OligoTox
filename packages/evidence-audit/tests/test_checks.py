@@ -1,9 +1,13 @@
-"""The audit harness must work on data that has nothing to do with OligoTox."""
+"""The checks must work on data that has nothing to do with any one project.
+
+These import `evidence_audit` directly, never through OligoTox, so that a
+dependency creeping back in fails here rather than at someone else's install.
+"""
 import numpy as np
 import pandas as pd
 import pytest
 
-from oligotox.audit import audit_dataset, audit_endpoint
+from evidence_audit import audit_dataset, audit_endpoint
 
 
 @pytest.fixture
@@ -34,7 +38,7 @@ def _features(df):
 def test_counts_sequences_not_rows(synthetic):
     a = audit_endpoint(_features(synthetic), synthetic["y"], synthetic["sequence"])
     assert a.rows == 240 and a.unique_groups == 60
-    assert any("unique sequences" in f for f in a.findings)
+    assert any("unique groups" in f for f in a.findings)
 
 
 def test_grouping_changes_the_answer():
@@ -112,7 +116,8 @@ def test_rna_and_dna_spellings_group_together():
         "gc_content": [0.5, 0.5, 1.0, 1.0],
         "y": [1, 1, 0, 0],
     })
-    a = audit_endpoint(df.drop(columns=["sequence", "y"]), df["y"], df["sequence"])
+    a = audit_endpoint(df.drop(columns=["sequence", "y"]), df["y"], df["sequence"],
+                       nucleotide_groups=True)
     assert a.unique_groups == 2, "AUGC and ATGC are the same sequence"
 
 
@@ -123,3 +128,54 @@ def test_audit_dataset_covers_every_label(synthetic):
                            df["sequence"], df["source"])
     assert {e.endpoint for e in report.endpoints} == {"y", "y2"}
     assert len(report.summary()) == 2
+
+
+def test_group_keys_are_left_alone_unless_asked():
+    """U is not T outside a nucleotide sequence.
+
+    The folding that makes an RNA and a DNA spelling one group would turn the
+    subject id "USER-1" into "TSER-1". It has to be opt-in, or the generic
+    case is silently wrong.
+    """
+    rng = np.random.default_rng(3)
+    rows = [{"group": g, "gc_content": rng.normal(), "seq_length": 20.0, "y": i % 2}
+            for i, g in enumerate(["USER-1", "TSER-1"] * 20)]
+    frame = pd.DataFrame(rows)
+    features = frame[["gc_content", "seq_length"]]
+
+    plain = audit_endpoint(features, frame["y"], frame["group"])
+    assert plain.unique_groups == 2, "distinct ids must stay distinct"
+
+    folded = audit_endpoint(features, frame["y"], frame["group"],
+                            nucleotide_groups=True)
+    assert folded.unique_groups == 1, "with folding on, U and T collapse"
+
+
+
+def test_a_calibration_verdict_needs_a_margin_not_a_sign():
+    """A threshold at exactly zero makes the verdict a coin flip on noise.
+
+    The same dataset scored Brier skill +0.002 on one machine and -0.009 on
+    another, which flipped it between "passes" and "ranks but uncalibrated"
+    while nothing about the model had changed. The threshold has to sit far
+    enough from zero that run-to-run variation cannot cross it.
+    """
+    from evidence_audit.checks import MIN_BRIER_SKILL, EndpointAudit, _verdict
+
+    assert MIN_BRIER_SKILL > 0, "a sign test is not a calibration test"
+
+    def verdict_at(skill: float) -> str:
+        audit = EndpointAudit(
+            endpoint="e", rows=400, unique_groups=400, positives=200,
+            positive_groups=200, base_rate=0.5,
+        )
+        audit.grouped_pr_auc = 0.80
+        audit.ungrouped_pr_auc = 0.80
+        audit.brier_skill = skill
+        return _verdict(audit)
+
+    # Barely-positive skill is not calibration.
+    assert verdict_at(0.002) == "ranks but uncalibrated"
+    assert verdict_at(-0.009) == "ranks but uncalibrated"
+    # Comfortably above the margin it passes.
+    assert verdict_at(MIN_BRIER_SKILL + 0.1) == "passes"

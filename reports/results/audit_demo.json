@@ -11,8 +11,8 @@
           "positive_groups": 19,
           "base_rate": 0.12577447335811648,
           "leaky_features": [],
-          "grouped_pr_auc": 0.2738542289846987,
-          "ungrouped_pr_auc": 0.5514620605291135,
+          "grouped_pr_auc": 0.27439804781132027,
+          "ungrouped_pr_auc": 0.5498664186541775,
           "source_only_pr_auc": 0.20118613381261027,
           "best_simple_pr_auc": 0.14855573114489531,
           "simple_baseline_used": "gc_content",
@@ -20,12 +20,12 @@
             "oligotox_main": 0.0125,
             "papargyri_2020": 0.25
           },
-          "brier": 0.1109291353990579,
-          "brier_skill": -0.008857059060946915,
+          "brier": 0.1097719294069975,
+          "brier_skill": 0.0016672764049154853,
           "verdict": "ranks but uncalibrated",
           "findings": [
-            "1614 rows cover 74 unique sequences; treat the smaller number as the sample size",
-            "Brier skill -0.01; it ranks but its probabilities are no better than quoting the base rate, so report it as a ranking"
+            "1614 rows cover 74 unique groups; treat the smaller number as the sample size",
+            "Brier skill +0.002, under the 0.02 needed to claim calibration; it ranks but its probabilities are no better than quoting the base rate, so report it as a ranking"
           ]
         },
         {
@@ -36,17 +36,17 @@
           "positive_groups": 27,
           "base_rate": 0.021065675340768277,
           "leaky_features": [],
-          "grouped_pr_auc": 0.4774011637850015,
-          "ungrouped_pr_auc": 0.7816754790897228,
+          "grouped_pr_auc": 0.4803555257519829,
+          "ungrouped_pr_auc": 0.7760036489349745,
           "source_only_pr_auc": 0.826968100673105,
           "best_simple_pr_auc": 0.1716116988951771,
           "simple_baseline_used": "gc_content",
           "within_source": {},
-          "brier": 0.013536187077354326,
-          "brier_skill": 0.3436017648592756,
+          "brier": 0.013542865386690408,
+          "brier_skill": 0.34327791956688436,
           "verdict": "source confounded",
           "findings": [
-            "1614 rows cover 74 unique sequences; treat the smaller number as the sample size",
+            "1614 rows cover 74 unique groups; treat the smaller number as the sample size",
             "a model seeing only the source scores 0.83 against 0.48; the model is recognising the dataset"
           ]
         },
@@ -58,20 +58,20 @@
           "positive_groups": 4,
           "base_rate": 0.0024783147459727386,
           "leaky_features": [],
-          "grouped_pr_auc": 0.048283684337618926,
-          "ungrouped_pr_auc": 0.2968137254901961,
+          "grouped_pr_auc": 0.10017298275494997,
+          "ungrouped_pr_auc": 0.17789492126308848,
           "source_only_pr_auc": 0.0031161510798106964,
           "best_simple_pr_auc": 0.10665954415954415,
           "simple_baseline_used": "seq_length",
           "within_source": {
             "oligotox_main": 0.00375
           },
-          "brier": 0.002465959507153177,
-          "brier_skill": 0.002513252749068662,
+          "brier": 0.002395846544929536,
+          "brier_skill": 0.03087412016222635,
           "verdict": "insufficient data",
           "findings": [
-            "1614 rows cover 74 unique sequences; treat the smaller number as the sample size",
-            "4 positive sequences; below 10 a PR-AUC is not a usable estimate"
+            "1614 rows cover 74 unique groups; treat the smaller number as the sample size",
+            "4 positive groups; below 10 a PR-AUC is not a usable estimate"
           ]
         }
       ]
@@ -86,8 +86,8 @@
           "positive_groups": 1375,
           "base_rate": 0.41192330736968247,
           "leaky_features": [],
-          "grouped_pr_auc": 0.7569616027773256,
-          "ungrouped_pr_auc": 0.7564722579712587,
+          "grouped_pr_auc": 0.7708561644043839,
+          "ungrouped_pr_auc": 0.7706619892580081,
           "source_only_pr_auc": 0.4236934953937676,
           "best_simple_pr_auc": 0.5619202388825526,
           "simple_baseline_used": "gc_content",
@@ -95,8 +95,8 @@
             "Hagedorn_2022": 0.3895946763460375,
             "MOE_Neurotox_2024": 0.4338278931750742
           },
-          "brier": 0.1717519393944246,
-          "brier_skill": 0.290991704272351,
+          "brier": 0.16952646606746505,
+          "brier_skill": 0.30017866924228565,
           "verdict": "passes",
           "findings": []
         }

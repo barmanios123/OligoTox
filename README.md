@@ -223,20 +223,23 @@ The models here are not better than PFRED, ASOptimizer or any proprietary platfo
 | External transfer | `scripts/evaluate_cns_external.py`, `evaluate_hepatotox_external.py` | Internal validity that does not generalise |
 | Gating | `scripts/derive_evidence_tiers.py` | Any of the above reaching the user as a prediction |
 
-The checks are modality-agnostic, and packaged to run on anyone's data:
+The checks are modality-agnostic, and they live in their own installable package, [`packages/evidence-audit`](packages/evidence-audit), because they need nothing from this project and nothing from biology:
 
 ```bash
-python -m oligotox.audit their_data.csv --label hepatotox --sequence seq --source study
+pip install -e packages/evidence-audit
+evidence-audit their_data.csv --label hepatotox --group subject_id --source study
 ```
 
-It needs a feature matrix, a label column, a sequence column to group on and optionally a source column, and it imports nothing else from this project. It exits non-zero when an endpoint fails a check, so it can gate a pipeline. Run blind against this repo's own training data it reproduces, unprompted, the three conclusions that took this project months to reach:
+It needs a feature matrix, a label column, a column to group on and optionally a source column. Group keys are compared as strings and otherwise left alone; `--nucleotide` additionally folds U onto T so RNA and DNA spellings of one sequence are one group, which is the default on this project's own import path (`python -m oligotox.audit`, kept as a thin wrapper). It exits non-zero when an endpoint fails a check, so it can gate a pipeline. Run blind against this repo's own training data it reproduces, unprompted, the three conclusions that took this project months to reach:
 
 ```
                endpoint                verdict  groups  pos_groups  grouped  ungrouped  source_only  brier_skill
-  hepatocellular_injury ranks but uncalibrated      74          19    0.274      0.551        0.201       -0.009
-kupffer_cell_activation      source confounded      74          27    0.477      0.782        0.827        0.344
-       thrombocytopenia      insufficient data      74           4    0.048      0.297        0.003        0.003
+  hepatocellular_injury ranks but uncalibrated      74          19    0.274      0.550        0.201        0.002
+kupffer_cell_activation      source confounded      74          27    0.480      0.776        0.827        0.343
+       thrombocytopenia      insufficient data      74           4    0.100      0.178        0.003        0.031
 ```
+
+These vary in the third decimal between platforms, which is why the calibration verdict requires a Brier skill of 0.02 rather than merely a positive one. Hepatocellular injury scored -0.009 on one machine and +0.002 on another, and under a sign test that inverted its published verdict; [`NEGATIVE_RESULTS` entry 14](docs/NEGATIVE_RESULTS.md) has the detail.
 
 Each verdict comes with its reasoning, for example *"a model seeing only the source scores 0.83 against 0.48; the model is recognising the dataset"*. Each result lands in `artifacts/config/endpoint_evidence.json`, which the app and the OSWG report read at runtime, so a failed check becomes a label in the interface rather than a footnote.
 

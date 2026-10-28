@@ -468,6 +468,42 @@ Script: `scripts/ingest_papargyri_design.py`.
 
 ---
 
+## 14. A threshold at exactly zero makes a verdict a coin flip
+
+**What happened.** The audit harness decided calibration by the sign of the
+Brier skill: at or below zero the probabilities are worth no more than
+quoting the base rate, so the endpoint "ranks but is uncalibrated".
+
+Hepatocellular injury sits almost exactly on that line. The committed run
+recorded **-0.009** and the verdict *ranks but uncalibrated*. Re-running the
+identical code on the pinned versions on a different machine gave **+0.002**
+and the verdict *passes*. Nothing about the model, the data or the features
+had changed. The endpoint had simply crossed zero by one hundredth, and the
+published claim about it inverted.
+
+**Why the sign test was wrong.** Zero is where the noise is. A metric that is
+genuinely indistinguishable from the base rate will scatter either side of
+zero across BLAS builds, library versions and platforms, so a test against
+zero resolves that scatter into a confident verdict in whichever direction
+the run happened to land. The question "are these probabilities better than
+the base rate" needs a margin wide enough to survive the variation, not a
+sign.
+
+**The fix.** `MIN_BRIER_SKILL = 0.02`, which is the threshold
+`scripts/derive_evidence_tiers.py` already used for the same decision. The
+two had drifted apart: the gate that decides what the app shows demanded a
+margin, while the harness that audits anyone's data accepted a sign. Both now
+require 0.02, hepatocellular injury reads *ranks but uncalibrated* again, and
+it does so for a reason that a rerun cannot flip.
+
+**Why it generalises.** A verdict is only as stable as the distance between
+its threshold and the noise floor. When a project defines the same threshold
+in two places, the looser one is the one that will eventually be quoted.
+
+Script: `packages/evidence-audit/src/evidence_audit/checks.py`.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
@@ -477,7 +513,9 @@ best mechanistic story carried no signal at all when measured in the wrong
 compartment. A second feature looked useful until a coverage bias was fixed,
 which cut its apparent benefit to a quarter. Every failure above was found by a cheap
 check that is not standard practice: a source-only baseline, a grouped split,
-an ablation, a calibration curve, an external set.
+an ablation, a calibration curve, an external set. The last of them was
+found by re-running a committed result on a second machine and watching the
+verdict change.
 
 The platform's honest position is not that its models are good. It is that it
 knows which of them are not.

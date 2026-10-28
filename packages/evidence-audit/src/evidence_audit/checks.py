@@ -4,7 +4,7 @@ Each one corresponds to a failure mode in docs/NEGATIVE_RESULTS.md and
 answers a question that a PR-AUC on its own cannot:
 
   leakage          is any feature a relabelled copy of the target?
-  grouping         how many independent sequences are behind the row count?
+  grouping         how many independent subjects are behind the row count?
   source_baseline  does a model that sees only the source do as well?
   within_source    does anything survive inside a single source?
   simple_baselines does one crude number do as well as the whole matrix?
@@ -29,6 +29,12 @@ from sklearn.model_selection import StratifiedGroupKFold, cross_val_predict
 LEAKAGE_CORRELATION = 0.9
 MIN_POSITIVE_GROUPS = 10
 N_BOOT = 1000
+# A Brier skill of zero means the probabilities are worth no more than quoting
+# the base rate. Testing against zero exactly puts the verdict where the noise
+# is: the same dataset scored +0.002 on one machine and -0.009 on another, and
+# flipped between "passes" and "ranks but uncalibrated". A calibration claim
+# needs a margin it can survive, not a sign.
+MIN_BRIER_SKILL = 0.02
 
 
 def _model():
@@ -36,12 +42,18 @@ def _model():
     return CalibratedClassifierCV(base, method="sigmoid", cv=2)
 
 
-def _normalise(values: Sequence[Any]) -> np.ndarray:
-    """RNA and DNA spellings of one sequence are the same group."""
-    return (
-        pd.Series(values).astype(str).str.upper()
-        .str.replace("U", "T", regex=False).str.strip().values
-    )
+def _normalise(values: Sequence[Any], nucleotide: bool = False) -> np.ndarray:
+    """Group keys as comparable strings.
+
+    `nucleotide` additionally folds U onto T, so RNA and DNA spellings of one
+    sequence count as one group. It is off by default because the same
+    substitution silently corrupts any other kind of key: a subject id of
+    "USER-1" would become "TSER-1" and stop matching itself.
+    """
+    out = pd.Series(values).astype(str).str.strip().str.upper()
+    if nucleotide:
+        out = out.str.replace("U", "T", regex=False)
+    return out.values
 
 
 @dataclass
@@ -124,10 +136,11 @@ def audit_endpoint(
     sources: Sequence[Any] | None = None,
     endpoint: str = "endpoint",
     simple_features: Sequence[str] = ("gc_content", "seq_length"),
+    nucleotide_groups: bool = False,
 ) -> EndpointAudit:
     """Run every check on one endpoint."""
     y = np.asarray(y).astype(int)
-    groups = _normalise(groups)
+    groups = _normalise(groups, nucleotide_groups)
     X = X.apply(pd.to_numeric, errors="coerce").fillna(0.0)
 
     positive_groups = len(set(groups[y == 1]))
@@ -147,7 +160,7 @@ def audit_endpoint(
 
     if audit.unique_groups < audit.rows:
         audit.findings.append(
-            f"{audit.rows} rows cover {audit.unique_groups} unique sequences; "
+            f"{audit.rows} rows cover {audit.unique_groups} unique groups; "
             "treat the smaller number as the sample size"
         )
 
@@ -199,7 +212,7 @@ def audit_endpoint(
 def _verdict(a: EndpointAudit) -> str:
     if a.positive_groups < MIN_POSITIVE_GROUPS:
         a.findings.append(
-            f"{a.positive_groups} positive sequences; below {MIN_POSITIVE_GROUPS} "
+            f"{a.positive_groups} positive groups; below {MIN_POSITIVE_GROUPS} "
             "a PR-AUC is not a usable estimate"
         )
         return "insufficient data"
@@ -215,10 +228,11 @@ def _verdict(a: EndpointAudit) -> str:
             f"{a.grouped_pr_auc:.2f}; the feature matrix adds nothing"
         )
         return "no better than a simple baseline"
-    if a.brier_skill is not None and a.brier_skill <= 0:
+    if a.brier_skill is not None and a.brier_skill < MIN_BRIER_SKILL:
         a.findings.append(
-            f"Brier skill {a.brier_skill:+.2f}; it ranks but its probabilities are no "
-            "better than quoting the base rate, so report it as a ranking"
+            f"Brier skill {a.brier_skill:+.3f}, under the {MIN_BRIER_SKILL} needed to "
+            "claim calibration; it ranks but its probabilities are no better than "
+            "quoting the base rate, so report it as a ranking"
         )
         return "ranks but uncalibrated"
     return "passes"
@@ -230,6 +244,7 @@ def audit_dataset(
     groups: Sequence[Any],
     sources: Sequence[Any] | None = None,
     simple_features: Sequence[str] = ("gc_content", "seq_length"),
+    nucleotide_groups: bool = False,
 ) -> AuditReport:
     """Audit every label column in Y."""
     if isinstance(Y, pd.Series):
@@ -237,5 +252,6 @@ def audit_dataset(
     reports = []
     for endpoint in Y.columns:
         y = pd.to_numeric(Y[endpoint], errors="coerce").fillna(0).astype(int).values
-        reports.append(audit_endpoint(X, y, groups, sources, endpoint, simple_features))
+        reports.append(audit_endpoint(X, y, groups, sources, endpoint,
+                                      simple_features, nucleotide_groups))
     return AuditReport(endpoints=reports)
