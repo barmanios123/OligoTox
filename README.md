@@ -342,7 +342,7 @@ Three mechanistic features, two of which were placeholders.
 
 It did not work: off-target burden alone scores **0.125 against a 0.126 base rate**. A dimensionality control makes the result honest — six random columns cost 0.030 and the off-target block costs 0.052, so most of the drop is the penalty of adding any six features to 19 positive sequences.
 
-**Target-site accessibility.** P(binding site unpaired) from ViennaRNA's local partition function. Pooled it helps: design features alone reach 0.100, with accessibility 0.157. It predicts almost nothing on its own (0.020), so it is complementary rather than independent, which is what the mechanism implies.
+**Target-site accessibility.** P(binding site unpaired) from ViennaRNA's local partition function. Measured against cDNA it looked worthwhile, 0.100 to 0.157. Measured against genomic spans, where 93% of oligos locate instead of 34%, the gain falls to **+0.014** and accessibility alone scores −0.023. The first number was inflated by a coverage bias: the oligos that happen to locate in a cDNA are exonic, which is a selected subset. See `NEGATIVE_RESULTS.md` entry 12.
 
 ### The finding that explains both
 
@@ -354,6 +354,8 @@ Only 34% of ASO Atlas oligos locate in a canonical cDNA. Orientation is not the 
 | **genomic span, 54,354 nt** | **400 of 400 (100%)** |
 
 Gapmers target pre-mRNA, and a cDNA has no introns. So the off-target burden above was measured against mature mRNA while the published mechanism implicates long pre-mRNAs — the wrong molecule, which is a different statement from the mechanism being wrong. `fetch_transcripts.py --genomic` fetches the right sequence and accessibility folds a bounded window around the site, so a megabase pre-mRNA stays tractable.
+
+Fixing it raised accessibility coverage from 34% to 93% across 59 genes, and in doing so **cut the measured benefit of accessibility from +0.057 to +0.014**. A missing-data problem that correlates with the feature being tested inflates that feature's apparent value, so low coverage was a bias problem rather than only a power problem.
 
 ## Continuous evaluation
 

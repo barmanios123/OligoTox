@@ -305,46 +305,43 @@ Scripts: `scripts/offtarget_transcriptome.py`,
 
 ---
 
-## 12. Accessibility helps, but only where it can be computed
+## 12. Fixing a coverage bias shrank the effect it was hiding
 
-**What happened.** Target-site accessibility, the probability that a binding
-site is unpaired, computed with ViennaRNA's local partition function
-(`pfl_fold_up`).
+**What happened.** Target-site accessibility, P(binding site unpaired), from
+ViennaRNA's local partition function.
 
-| Feature set | Spearman |
-|---|---|
-| Design only | 0.100 |
-| Design + accessibility | **0.157** |
-| Accessibility only | 0.020 |
+Measured first against canonical cDNA, where only 34% of oligos locate, it
+looked worthwhile: design features alone 0.100, with accessibility 0.157, a
+gain of **+0.057**. That number was reported as evidence accessibility helps.
 
-A gain of +0.057, and notably accessibility predicts almost nothing on its
-own. It is complementary rather than independent, which is what the
-mechanism implies: a useful oligo needs both good design and an open site.
+Then the coverage problem was fixed. Gapmers target pre-mRNA and a cDNA has
+no introns, so the same oligos were relocated against genomic spans:
 
-**The catch, and its fix.** Only 34% of ASO Atlas oligos locate in the
-canonical cDNA. Orientation is not the problem, since the reverse complement
-matches and the forward sequence does not.
+| Target sequence | Genes | Sequences located | Design | + accessibility | Gain |
+|---|---|---|---|---|---|
+| canonical cDNA | 17 | 34% | 0.100 | 0.157 | **+0.057** |
+| **genomic span** | **59** | **93%** | 0.155 | 0.169 | **+0.014** |
 
-The cause is now confirmed rather than suspected. Fetching the genomic span
-for DGAT2 (54,354 nt, against 2,407 nt of cDNA) and relocating the same 400
-ASOs:
+**The gain nearly vanished.** Accessibility alone scores **-0.023**, below
+zero. On the fuller, less biased sample it adds roughly a quarter of what it
+appeared to add.
 
-| Target sequence | ASOs located |
-|---|---|
-| canonical cDNA | 96 of 400 (24%) |
-| **genomic span, introns included** | **400 of 400 (100%)** |
+**Why the first number was wrong.** The 34% that located in a cDNA were
+exonic sites, which is a selected subset rather than a random one: they
+differ in local composition and structure from the intronic majority. The
+apparent benefit was partly that selection, and partly the instability of 17
+genes under gene-grouped folds. An earlier run on 4 genes gave +0.155, which
+should have been read as noise rather than a strong result.
 
-Gapmers target pre-mRNA. Any feature computed against a cDNA is measuring
-the wrong molecule for three quarters of them, which applies equally to the
-off-target burden in entry 11. `scripts/fetch_transcripts.py --genomic`
-fetches the right sequence, and accessibility folds a bounded window around
-the site so a megabase pre-mRNA stays tractable.
+**Why it generalises.** A missing-data problem that correlates with the
+feature being tested inflates that feature's apparent value. The instinct is
+to treat low coverage as a power problem to be apologised for; here it was a
+bias problem, and fixing it reversed the conclusion rather than sharpening
+it. If a feature can only be computed for a subset, establish why that
+subset is a subset before trusting anything measured on it.
 
-Within a single assay the result is unsettled: A431 gains +0.051, HepG2
-loses 0.012, on 4 to 5 genes each. Too few genes to call, which is itself
-worth recording rather than reporting the pooled number alone.
-
-Script: `scripts/evaluate_accessibility.py`.
+Scripts: `scripts/evaluate_accessibility.py`,
+`scripts/fetch_transcripts.py --genomic`.
 
 ---
 
@@ -354,7 +351,8 @@ Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
 demonstrated external validity. A 190,927-row corpus that looked like the
 obvious upgrade to the potency side made it worse, and the feature with the
 best mechanistic story carried no signal at all when measured in the wrong
-compartment. Every failure above was found by a cheap
+compartment. A second feature looked useful until a coverage bias was fixed,
+which cut its apparent benefit to a quarter. Every failure above was found by a cheap
 check that is not standard practice: a source-only baseline, a grouped split,
 an ablation, a calibration curve, an external set.
 
