@@ -322,6 +322,24 @@ in the wrong compartment, and the right measurement needs intronic
 sequence". Worth stating precisely, because the vaguer version would
 discourage the experiment that could still work.
 
+**The compartment was then tested, at the scale available.** Counting the
+same probes against pre-mRNA (32 genomic spans, 2.12 Mb, introns included)
+versus the same 32 genes' cDNA (0.14 Mb, exons only):
+
+| Background | Median gap hits | Design | + off-target | Off-target only |
+|---|---|---|---|---|
+| pre-mRNA | 2 | 0.274 | 0.224 | 0.116 |
+| cDNA, same genes | 0 | 0.274 | 0.236 | 0.111 |
+
+Introns do produce more hits, as expected, and the prediction does not
+improve. Switching compartment did not rescue it.
+
+**This still does not settle it.** 2.12 Mb of pre-mRNA is not a
+transcriptome; the cDNA test that produced the headline null used 1,276 Mb.
+A genome-scale pre-mRNA background remains the untested version, and the
+honest position is that the compartment hypothesis has been tested at small
+scale and failed there, not that it has been refuted.
+
 Scripts: `scripts/offtarget_transcriptome.py`,
 `scripts/evaluate_offtarget_hepatotox.py`.
 

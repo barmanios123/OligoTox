@@ -231,18 +231,57 @@
     "FUS": {
       "gene_id": "ENSG00000089280",
       "length": 16833
+    },
+    "FN1": {
+      "gene_id": "ENSG00000115414",
+      "length": 76653
+    },
+    "CD40": {
+      "gene_id": "ENSG00000101017",
+      "length": 12139
+    },
+    "NR3C1": {
+      "gene_id": "ENSG00000113580",
+      "length": 157582
+    },
+    "EIF4EBP2": {
+      "gene_id": "ENSG00000148730",
+      "length": 24489
+    },
+    "SCD": {
+      "gene_id": "ENSG00000099194",
+      "length": 18330
+    },
+    "STMN2": {
+      "gene_id": "ENSG00000104435",
+      "length": 55257
+    },
+    "CRP": {
+      "gene_id": "ENSG00000132693",
+      "length": 3158
+    },
+    "MECP2": {
+      "gene_id": "ENSG00000169057",
+      "length": 115531
     }
   },
   "misses": [
     "APP",
     "ATXN1",
+    "COASY",
+    "COMP",
+    "CTGF",
     "DMPK",
     "HSD17B13",
     "HTT",
+    "IL4R",
     "LRRK2",
     "MSH3",
     "NLRP3",
+    "NOX4",
     "PKK",
+    "PTPRU",
+    "SLC37A4",
     "YAP1"
   ]
 }
