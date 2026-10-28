@@ -95,6 +95,142 @@
     "AGT": {
       "gene_id": "ENSG00000135744",
       "length": 54801
+    },
+    "C9ORF72": {
+      "gene_id": "ENSG00000147894",
+      "length": 38256
+    },
+    "SMAD7": {
+      "gene_id": "ENSG00000101665",
+      "length": 32174
+    },
+    "GFAP": {
+      "gene_id": "ENSG00000131095",
+      "length": 13779
+    },
+    "STAT3": {
+      "gene_id": "ENSG00000168610",
+      "length": 75253
+    },
+    "PRNP": {
+      "gene_id": "ENSG00000171867",
+      "length": 15861
+    },
+    "APOL1": {
+      "gene_id": "ENSG00000100342",
+      "length": 14460
+    },
+    "F7": {
+      "gene_id": "ENSG00000057593",
+      "length": 14924
+    },
+    "IFNAR1": {
+      "gene_id": "ENSG00000142166",
+      "length": 35478
+    },
+    "APOE": {
+      "gene_id": "ENSG00000130203",
+      "length": 5610
+    },
+    "SPDEF": {
+      "gene_id": "ENSG00000124664",
+      "length": 18563
+    },
+    "KRAS": {
+      "gene_id": "ENSG00000133703",
+      "length": 121228
+    },
+    "SCN2A": {
+      "gene_id": "ENSG00000136531",
+      "length": 197318
+    },
+    "PLN": {
+      "gene_id": "ENSG00000198523",
+      "length": 56562
+    },
+    "SCNN1A": {
+      "gene_id": "ENSG00000111319",
+      "length": 38794
+    },
+    "GHR": {
+      "gene_id": "ENSG00000112964",
+      "length": 298440
+    },
+    "PNPLA3": {
+      "gene_id": "ENSG00000100344",
+      "length": 40728
+    },
+    "PCSK9": {
+      "gene_id": "ENSG00000169174",
+      "length": 25408
+    },
+    "PLP1": {
+      "gene_id": "ENSG00000123560",
+      "length": 50119
+    },
+    "EZH2": {
+      "gene_id": "ENSG00000106462",
+      "length": 77369
+    },
+    "IRF5": {
+      "gene_id": "ENSG00000128604",
+      "length": 16961
+    },
+    "CFB": {
+      "gene_id": "ENSG00000243649",
+      "length": 6437
+    },
+    "SOD1": {
+      "gene_id": "ENSG00000142168",
+      "length": 9315
+    },
+    "DUX4": {
+      "gene_id": "ENSG00000260596",
+      "length": 22360
+    },
+    "KCNQ2": {
+      "gene_id": "ENSG00000075043",
+      "length": 72482
+    },
+    "KLKB1": {
+      "gene_id": "ENSG00000164344",
+      "length": 33053
+    },
+    "SCN1A": {
+      "gene_id": "ENSG00000144285",
+      "length": 198166
+    },
+    "GRN": {
+      "gene_id": "ENSG00000030582",
+      "length": 7999
+    },
+    "GCGR": {
+      "gene_id": "ENSG00000215644",
+      "length": 10919
+    },
+    "APOB": {
+      "gene_id": "ENSG00000084674",
+      "length": 42771
+    },
+    "PTPN1": {
+      "gene_id": "ENSG00000196396",
+      "length": 74921
+    },
+    "FGFR4": {
+      "gene_id": "ENSG00000160867",
+      "length": 11701
+    },
+    "F11": {
+      "gene_id": "ENSG00000088926",
+      "length": 31587
+    },
+    "PTBP1": {
+      "gene_id": "ENSG00000011304",
+      "length": 15253
+    },
+    "FUS": {
+      "gene_id": "ENSG00000089280",
+      "length": 16833
     }
   },
   "misses": [
@@ -106,6 +242,7 @@
     "LRRK2",
     "MSH3",
     "NLRP3",
+    "PKK",
     "YAP1"
   ]
 }
