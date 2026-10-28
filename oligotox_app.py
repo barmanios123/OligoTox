@@ -422,8 +422,22 @@ with tabs[4]:
         if not eff["available"]:
             st.info(eff["reason"])
         else:
-            for name, pred in eff["predictions"].items():
+            ordered = sorted(eff["predictions"].items(),
+                             key=lambda kv: {"validated": 0, "weak": 1}.get(kv[1]["tier"], 2))
+            for name, pred in ordered:
                 label = name.replace("_", " ")
+                if pred["tier"] == "context":
+                    ctx = pred.get("context", {})
+                    st.metric(f"{ctx.get('cell_line', 'assay')} knockdown",
+                              f"{pred['score']:.0f}%", help=pred["units"])
+                    st.caption(
+                        f"{pred['readout']} in {ctx.get('cell_line')} "
+                        f"at dose {ctx.get('dose')}, {ctx.get('transfection_method')}. "
+                        f"{pred['evidence']}"
+                    )
+                    st.caption(f"Caveat: {pred['caveat']}")
+                    st.divider()
+                    continue
                 if pred["tier"] == "validated":
                     st.metric(label, f"{pred['score']:.1f}", help=pred["units"])
                 else:

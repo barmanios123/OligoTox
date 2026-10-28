@@ -64,6 +64,18 @@ def load_efficacy_config(config_dir: str | Path) -> dict:
     return json.loads(path.read_text()) if path.exists() else {}
 
 
+def load_context_models(config_dir: str | Path) -> dict:
+    """Per-assay potency models, from scripts/train_context_potency.py.
+
+    ASO Atlas pools percent inhibition across 81 cell lines, and pooled it
+    predicts worse than the far smaller single-study model. Each assay that
+    clears its own baselines gets a model instead, so a prediction always
+    names the assay it belongs to.
+    """
+    path = Path(config_dir) / "potency_contexts.json"
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
 def score_efficacy(
     sequence: str,
     modality: str,
@@ -108,6 +120,30 @@ def score_efficacy(
             "evidence": spec["evidence"],
             "caveat": spec.get("caveat", ""),
             "training_sequences": spec["training_sequences"],
+        }
+
+    # Per-assay models, each predicting knockdown in its own context only.
+    contexts = load_context_models(config_dir).get("contexts", {})
+    for name, spec in contexts.items():
+        if spec.get("modality", "ASO").lower() != str(modality).lower():
+            continue
+        path = model_dir / spec["model_file"]
+        if not path.exists():
+            continue
+        cols = spec["feature_columns"]
+        missing = [c for c in cols if c not in feats]
+        if missing:
+            continue
+        row = pd.DataFrame([[float(feats[c]) for c in cols]], columns=cols)
+        predictions[f"potency_{name}"] = {
+            "score": float(joblib.load(path).predict(row)[0]),
+            "units": spec["units"],
+            "readout": spec["readout"],
+            "tier": "context",
+            "context": spec["context"],
+            "evidence": spec["evidence"],
+            "caveat": spec.get("caveat", ""),
+            "training_sequences": spec["sequences"],
         }
 
     return {"available": bool(predictions), "reason": "", "predictions": predictions}

@@ -75,3 +75,61 @@ def test_scores_are_reported_in_training_units(root):
     # Percent knockdown, not a probability.
     assert "percent" in pred["units"]
     assert 0.0 <= pred["score"] <= 150.0
+
+
+def test_context_models_name_the_assay_they_predict(root):
+    """A per-assay model must never read as general potency."""
+    from oligotox.efficacy.potency import load_context_models
+
+    config = load_context_models(root / "artifacts/config")
+    contexts = config.get("contexts", {})
+    if not contexts:
+        pytest.skip("no context models trained in this checkout")
+
+    for name, spec in contexts.items():
+        assert spec["context"]["cell_line"], name
+        # The units say where the number applies.
+        assert spec["context"]["cell_line"] in spec["units"], name
+        # And the caveat says what it is not.
+        assert "general potency" in spec["caveat"].lower(), name
+
+
+def test_every_shipped_context_beat_its_own_baselines(root):
+    """The gate is per context, not an average over contexts."""
+    import csv
+
+    path = root / "reports/results/context_potency.csv"
+    if not path.exists():
+        pytest.skip("context potency not evaluated in this checkout")
+
+    with path.open() as fh:
+        rows = list(csv.DictReader(fh))
+    assert rows, "evaluation produced no contexts"
+    for row in rows:
+        if row["ships"].lower() != "true":
+            continue
+        rho = float(row["spearman"])
+        assert rho > float(row["gc_only"]), row["context"]
+        assert rho > float(row["gene_mean"]), row["context"]
+        assert rho >= 0.15, row["context"]
+
+
+def test_a_context_that_failed_is_not_shipped(root):
+    """Something must actually have been rejected, or the gate is decorative."""
+    import csv
+    import json
+
+    path = root / "reports/results/context_potency.csv"
+    if not path.exists():
+        pytest.skip("context potency not evaluated in this checkout")
+    with path.open() as fh:
+        rows = list(csv.DictReader(fh))
+
+    rejected = [r for r in rows if r["ships"].lower() != "true"]
+    assert rejected, "no context was rejected; check the gate still bites"
+    shipped = json.loads(
+        (root / "artifacts/config/potency_contexts.json").read_text()
+    )["contexts"]
+    for row in rejected:
+        assert row["context"] not in shipped, row["context"]
+        assert row["blocked_by"], row["context"]

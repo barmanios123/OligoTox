@@ -246,8 +246,15 @@ whatever was measured, and the pooling is invisible by the time it reaches a
 single column. Before treating a large dataset as one population, check
 whether a single experimental slice does better than the whole.
 
-Script: `scripts/evaluate_aso_atlas.py`. The data is Apache-2.0 at
-https://github.com/barneyhill/aso_atlas.
+**How it was resolved.** Not by discarding the data. One model per
+experimental context, each gated against its own gene-mean and GC baselines,
+reaches 0.33 in the best context against 0.26 for the single-study model.
+Five of seven contexts cleared the gate and two did not. A corpus that is
+useless pooled can be useful partitioned, so the finding is about the
+aggregation rather than the data.
+
+Scripts: `scripts/evaluate_aso_atlas.py`, `scripts/train_context_potency.py`.
+The data is Apache-2.0 at https://github.com/barneyhill/aso_atlas.
 
 ---
 

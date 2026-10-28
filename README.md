@@ -291,7 +291,25 @@ The literature monitor surfaced [ASO Atlas](https://github.com/barneyhill/aso_at
 
 The corpus pools percent inhibition across 81 cell lines and many dosages, extracted from patents spanning 2001-2025, so the readout is not commensurable. One cell line at one dose, on 8% of the data, beats the whole corpus. Adding cell line and dose as features made it *worse*, so the heterogeneity is not an offset a covariate can absorb.
 
-The data stays in the registry marked `evaluated_not_adopted` with the numbers attached. Adopting it needs per-context models, which is real work rather than a swap.
+Adopting it needed per-context models rather than a swap, so that is what it got.
+
+### Per-assay potency models
+
+`scripts/train_context_potency.py` trains one model per experimental context and gates each against its own baselines: it must beat a target-gene-mean baseline that ignores the sequence, beat GC alone, and clear a 0.15 floor. Folds are grouped by target gene inside each context.
+
+| Context | Sequences | Genes | Spearman | GC only | Gene mean | |
+|---|---|---|---|---|---|---|
+| A431, dose 2000, gymnosis | 15,236 | 9 | **0.33** | -0.22 | -0.33 | ships |
+| A431, dose 4000, gymnosis | 17,679 | 13 | **0.30** | 0.09 | -0.17 | ships |
+| SH-SY5Y, dose 4000, electroporation | 13,115 | 6 | 0.24 | -0.10 | -0.37 | ships |
+| HepG2, dose 1000, electroporation | 2,668 | 6 | 0.24 | -0.18 | -0.17 | ships |
+| T-24, any dose | 3,664 | 67 | 0.16 | 0.08 | -0.14 | ships |
+| HepG2, dose 4500, electroporation | 6,308 | 7 | 0.15 | -0.23 | -0.27 | below floor |
+| A549, any dose | 4,131 | 59 | -0.01 | -0.26 | -0.25 | below floor |
+
+**Five of seven ship, and the best reaches 0.33** against 0.26 for the single-study model and 0.18 for the same corpus pooled. Two are rejected, which is the point of having a gate.
+
+Each prediction names its assay: the app shows "A431 knockdown 32%", not a potency score. The caveat on every one says it is not general potency, and a test asserts both.
 
 ## Continuous evaluation
 
