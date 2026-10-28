@@ -17,7 +17,7 @@ if str(SRC) not in sys.path:
 from oligotox.features.candidate import candidate_features as build_candidate_features
 from oligotox.pipelines.score_candidate import score_candidate
 from oligotox.pkpd.bridge import compute_pkpd_enriched_features
-from oligotox.advice import explain, suggest
+from oligotox.advice import explain, suggest, summarize
 from oligotox.efficacy.potency import score_efficacy
 from oligotox.reporting.oswg_report import OSWGSafetyReport
 
@@ -461,6 +461,28 @@ with tabs[5]:
     else:
         seq = run["input"]["sequence"]
         modality = run["input"]["modality"]
+
+        # The full write-up first. The edit scan below says what to change;
+        # this says what the sequence is and what the models will and will not
+        # claim about it, which is the part a reader needs before any advice.
+        with st.expander("Full summary of this sequence", expanded=True):
+            with st.spinner("Summarising"):
+                full = summarize(seq, modality, run["input"]["chemistry"],
+                                 run["input"].get("ps_fraction", 1.0))
+            st.code(full["text"], language=None)
+            st.download_button(
+                "Download this summary",
+                data=full["text"],
+                file_name=f"oligotox_summary_{seq[:12]}.txt",
+                mime="text/plain",
+            )
+            if full["parameters_unavailable"]:
+                st.warning(
+                    "Some parameters this summary expects were not produced by "
+                    f"the feature pipeline: {full['parameters_unavailable']}. "
+                    "The summary is incomplete rather than wrong."
+                )
+
         st.caption(
             "Every single-base substitution is scored through the same models the "
             "other tabs use. Each number is the difference between two real "

@@ -13,8 +13,8 @@ the effect of an edit. Every suggestion here is measured: the sequence is
 actually mutated, actually re-scored through the same pipeline the app uses,
 and the reported change is the difference between two real predictions.
 
-    from oligotox.advice import explain, suggest
+    from oligotox.advice import explain, suggest, summarize
 """
-from .advisor import Edit, SequenceAdvice, explain, suggest
+from .advisor import Edit, SequenceAdvice, explain, suggest, summarize
 
-__all__ = ["explain", "suggest", "Edit", "SequenceAdvice"]
+__all__ = ["explain", "suggest", "summarize", "Edit", "SequenceAdvice"]

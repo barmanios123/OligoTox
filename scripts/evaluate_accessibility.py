@@ -50,6 +50,10 @@ MAX_PER_GENE = 250  # keeps the fold count tractable without favouring big genes
 RESULTS = ROOT / "reports" / "results"
 MIN_MAPPED_PER_GENE = 30
 CLIP = (0.0, 100.0)
+# A gain has to clear a margin, not just be positive, and a feature worth
+# calling signal should rank something by itself. See NEGATIVE_RESULTS 12/14.
+MIN_GAIN = 0.01
+MIN_ALONE = 0.05
 
 
 def _model():
@@ -159,10 +163,22 @@ def main() -> None:
 
     design = next(r for r in rows if r["model"] == "Design features only")["spearman"]
     combined = next(r for r in rows if r["model"] == "Design + accessibility")["spearman"]
+    alone = next(r for r in rows if r["model"] == "Accessibility only")["spearman"]
     gain = round(combined - design, 4)
-    verdict = ("accessibility adds signal" if gain > 0.01 else
-               "accessibility adds nothing here")
-    print(f"\n  gain from accessibility: {gain:+.4f} -> {verdict}")
+
+    # "adds signal" for a gain of +0.019 on a 0.206 baseline reads as a much
+    # stronger result than it is, especially while the feature scores about
+    # zero on its own. The verdict now has to clear a margin and the feature
+    # has to carry something by itself, and the wording says which case it is.
+    if gain <= MIN_GAIN:
+        verdict = "accessibility adds nothing here"
+    elif alone < MIN_ALONE:
+        verdict = ("accessibility adds a little in combination, but carries no "
+                   "signal on its own")
+    else:
+        verdict = "accessibility adds signal"
+    print(f"\n  gain {gain:+.4f}, accessibility alone {alone:+.4f}")
+    print(f"  -> {verdict}")
 
     RESULTS.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(rows).to_csv(RESULTS / "accessibility.csv", index=False)

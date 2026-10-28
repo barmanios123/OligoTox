@@ -194,3 +194,148 @@ def suggest(
         baseline_toxicity=base_tox, baseline_potency=base_potency,
         edits=edits[:top_n], notes=notes,
     )
+
+
+# --- Full written summary -------------------------------------------------
+#
+# `explain` returns the numbers. This turns them into something a person can
+# read without knowing the codebase, and it reports the sequence's measured
+# parameters next to the predictions so the two are never confused. Every
+# parameter here is computed from the sequence by the same functions training
+# used. Nothing is estimated and nothing is rounded into a claim.
+
+# What each parameter is, and why it is in the model at all. Shown with the
+# number so a reader is not left guessing what "dist_3p_to_g" means.
+PARAMETER_NOTES: dict[str, tuple[str, str]] = {
+    "seq_length":     ("length", "nucleotides"),
+    "gc_content":     ("GC content", "fraction of G or C"),
+    "seed_gc":        ("seed GC", "positions 2-8, which drive off-target load"),
+    "cpg_density":    ("CpG density", "CpG dinucleotides per position"),
+    "tlr7_score":     ("TLR7 score", "innate immune motif content"),
+    "g_count":        ("G count", "Hagedorn 2022 links G content to acute neurotoxicity"),
+    "g_fraction":     ("G fraction", "G nucleotides per position"),
+    "dist_3p_to_g":   ("3' distance to nearest G", "nucleotides from the 3' end"),
+    "longest_g_run":  ("longest G run", "consecutive Gs"),
+    "struct_mfe_proxy": ("folding energy", "kcal/mol, real ViennaRNA MFE"),
+    "struct_hairpin_score": ("hairpin score", "self-complementarity"),
+    "struct_palindrome_fraction": ("palindrome fraction",
+                                   "4-mers whose reverse complement is present"),
+    "struct_longest_homopolymer": ("longest homopolymer",
+                                   "consecutive identical bases"),
+    "struct_dinucleotide_repeats": ("dinucleotide repeats", "repeated 2-mers"),
+    "ps_fraction":    ("phosphorothioate fraction", "backbone linkages modified"),
+    "lna_fraction":   ("LNA fraction", "sugar-modified positions"),
+}
+
+
+def _format_probability(value: float) -> str:
+    """Small probabilities must not be rounded into zero.
+
+    An offtarget score of 8.5e-06 printed as "0.000" reads as impossible
+    rather than as very unlikely, which is a different claim.
+    """
+    return f"{value:.3f}" if value >= 0.001 else f"{value:.2e}"
+
+
+def _describe(features: dict[str, float]) -> tuple[list[dict[str, Any]], list[str]]:
+    """The parameters worth showing, plus any this function asked for and did
+    not get.
+
+    The missing list matters more than it looks. Three parameters were named
+    here with the wrong keys and simply never appeared in the output, which is
+    indistinguishable from a sequence that has no hairpin. A name that stops
+    matching the feature pipeline has to be visible, not silently dropped.
+    """
+    out, missing = [], []
+    for key, (label, meaning) in PARAMETER_NOTES.items():
+        if key in features:
+            out.append({
+                "key": key, "label": label, "meaning": meaning,
+                "value": round(float(features[key]), 4),
+            })
+        else:
+            missing.append(key)
+    return out, missing
+
+
+def summarize(
+    sequence: str,
+    modality: str = "ASO",
+    chemistry: str = "PS",
+    ps_fraction: float = 1.0,
+    model_dir: str | Path = "artifacts/models",
+    config_dir: str | Path = "artifacts/config",
+) -> dict[str, Any]:
+    """Everything known about one sequence, with a readable write-up.
+
+    Three parts, kept apart on purpose:
+
+      parameters   measured properties of the sequence itself. Descriptive,
+                   not predictive, and true regardless of any model.
+      predictions  only endpoints tiered `validated`. The other ten models
+                   run but are not shown, because a number the evidence does
+                   not support is worse than no number.
+      text         the same thing in prose, including what is missing.
+    """
+    model_dir, config_dir = Path(model_dir), Path(config_dir)
+    seq = sequence.strip().upper().replace("U", "T")
+    features = candidate_features(seq, modality, chemistry, ps_fraction=ps_fraction)
+    tox, potency = _score(seq, modality, chemistry, ps_fraction, model_dir, config_dir)
+    parameters, missing = _describe(features)
+
+    lines = [
+        f"Sequence: {seq}",
+        f"{len(seq)} nt, {modality}, {chemistry} backbone at "
+        f"{ps_fraction:.0%} phosphorothioate.",
+        "",
+        "Measured parameters of the sequence",
+    ]
+    for item in parameters:
+        lines.append(f"  {item['label']}: {item['value']} ({item['meaning']})")
+
+    lines += ["", "Predictions the evidence supports"]
+    if tox:
+        for name, prob in sorted(tox.items()):
+            lines.append(f"  {name}: {_format_probability(prob)}")
+        lines.append("  These are the only endpoints tiered validated. Ten other "
+                     "toxicity models run and are deliberately not shown.")
+    else:
+        lines.append("  None. No toxicity endpoint reached the validated tier for "
+                     "this input, so no toxicity prediction is presented.")
+
+    lines += ["", "Per-assay potency"]
+    if potency:
+        for name, score in sorted(potency.items()):
+            lines.append(f"  {name}: {score:.3f}")
+        lines.append("  Scored per assay rather than pooled, because pooling the "
+                     "assays made the prediction worse.")
+    else:
+        lines.append("  None available for this modality.")
+
+    if missing:
+        lines += ["", "Parameters this summary expected and did not find",
+                  f"  {', '.join(missing)}",
+                  "  These names no longer match the feature pipeline, so the "
+                  "summary is incomplete rather than wrong."]
+
+    lines += [
+        "",
+        "What this does not tell you",
+        "  The parameters above are properties of the oligo alone. Target-site "
+        "accessibility and off-target burden both need the target transcript, "
+        "which is not supplied here.",
+        "  A probability is only as good as its calibration. Endpoints that rank "
+        "but do not calibrate are labelled as such rather than quoted as risk.",
+    ]
+
+    return {
+        "sequence": seq,
+        "modality": modality,
+        "chemistry": chemistry,
+        "ps_fraction": ps_fraction,
+        "parameters": parameters,
+        "validated_toxicity": tox,
+        "per_assay_potency": potency,
+        "parameters_unavailable": missing,
+        "text": "\n".join(lines),
+    }

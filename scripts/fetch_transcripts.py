@@ -44,14 +44,55 @@ GENOMIC = [False]  # set by --genomic
 NETWORK_ERRORS = (urllib.error.HTTPError, urllib.error.URLError,
                   json.JSONDecodeError, TimeoutError, OSError)
 
+# Retries for a request Ensembl refused for a reason that will pass.
+MAX_ATTEMPTS = 4
+BACKOFF = 2.0
+
+
+class Unknown(Exception):
+    """Ensembl says there is no such thing. Permanent, so stop asking."""
+
+
+class Transient(Exception):
+    """Ensembl declined this time. Says nothing about the gene."""
+
 
 def _get(path: str, timeout: int = 45):
+    """Ensembl JSON, with the two failure kinds kept apart.
+
+    Treating these as one error is how 151 of 350 genes ended up permanently
+    blacklisted. A 404 means the symbol is not in Ensembl and asking again is
+    pointless. A 429, a 5xx or a timeout means the request lost, and the gene
+    is fine: APOC3 and BRCA1 were both recorded as unresolvable and both
+    resolve on the first try when asked again. Only the first kind may be
+    remembered as a miss.
+    """
     request = urllib.request.Request(
         f"{ENSEMBL}{path}",
         headers={"Content-Type": "application/json", "User-Agent": "oligotox"},
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        return json.loads(response.read())
+    last = "no attempt made"
+    for attempt in range(MAX_ATTEMPTS):
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                return json.loads(response.read())
+        except urllib.error.HTTPError as exc:
+            if exc.code in (400, 404):
+                raise Unknown(f"HTTP {exc.code}") from exc
+            if exc.code == 429:
+                # Ensembl sends Retry-After and means it.
+                wait = float(exc.headers.get("Retry-After") or BACKOFF * (attempt + 1))
+                time.sleep(min(wait, 30.0))
+                continue
+            if exc.code >= 500:
+                time.sleep(BACKOFF * (attempt + 1))
+                continue
+            raise Transient(f"HTTP {exc.code}") from exc
+        except (urllib.error.URLError, json.JSONDecodeError,
+                TimeoutError, OSError) as exc:
+            time.sleep(BACKOFF * (attempt + 1))
+            last = f"{type(exc).__name__}: {exc}"
+    raise Transient(f"gave up after {MAX_ATTEMPTS} attempts ({last})")
 
 
 def _candidate_symbols(symbol: str) -> list[str]:
@@ -64,12 +105,22 @@ def _candidate_symbols(symbol: str) -> list[str]:
     return out
 
 
-def resolve(symbol: str) -> dict | None:
-    """Symbol -> canonical transcript cDNA, or None if Ensembl cannot place it."""
+def resolve(symbol: str) -> tuple[dict | None, str | None]:
+    """Symbol -> sequence record, plus why it failed when it did.
+
+    Returns `(record, None)` on success, `(None, "unknown")` when Ensembl has
+    no such symbol, and `(None, "transient")` when the requests failed. Only
+    "unknown" may be remembered, since a transient failure says nothing about
+    the gene and blacklisting it loses data permanently.
+    """
+    transient = False
     for candidate in _candidate_symbols(symbol):
         try:
             gene = _get(f"/lookup/symbol/homo_sapiens/{urllib.parse.quote(candidate)}?expand=1")
-        except NETWORK_ERRORS:
+        except Unknown:
+            continue
+        except Transient:
+            transient = True
             continue
         time.sleep(PAUSE)
 
@@ -88,7 +139,10 @@ def resolve(symbol: str) -> dict | None:
             query = f"/sequence/id/{chosen['id']}?type=cdna"
         try:
             payload = _get(query, timeout=90)
-        except NETWORK_ERRORS:
+        except Unknown:
+            continue
+        except Transient:
+            transient = True
             continue
         time.sleep(PAUSE)
 
@@ -102,8 +156,8 @@ def resolve(symbol: str) -> dict | None:
             "length": len(sequence),
             "sequence": sequence[: (MAX_GENOMIC if GENOMIC[0] else MAX_CDNA)],
             "truncated": len(sequence) > (MAX_GENOMIC if GENOMIC[0] else MAX_CDNA),
-        }
-    return None
+        }, None
+    return None, ("transient" if transient else "unknown")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -135,32 +189,54 @@ def main(argv: list[str] | None = None) -> int:
     globals()["MANIFEST"] = manifest_path
     cache_dir.mkdir(parents=True, exist_ok=True)
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {"hits": {}, "misses": []}
+    # A manifest written before transient and unknown were told apart holds
+    # both kinds under "misses". Those entries are not trustworthy as
+    # permanent, so they are retried once and re-sorted by what happens.
     misses = set(manifest.get("misses", []))
+    unknown = set(manifest.get("unknown", []))
+    legacy = misses - unknown
+    if legacy:
+        print(f"{len(legacy)} earlier miss(es) recorded before transient failures "
+              "were separated; retrying them")
 
-    fetched = skipped = failed = 0
+    fetched = skipped = unknown_now = transient_now = 0
     for i, symbol in enumerate(symbols, 1):
         path = cache_dir / f"{symbol.replace('/', '_')}.json"
-        if path.exists() or (symbol in misses and not args.retry_misses):
+        # Only a confirmed unknown is worth skipping. Anything else gets
+        # another chance, which is the whole point of the change.
+        if path.exists() or (symbol in unknown and not args.retry_misses):
             skipped += 1
             continue
 
-        record = resolve(symbol)
+        record, reason = resolve(symbol)
         if record is None:
+            if reason == "unknown":
+                unknown.add(symbol)
+                unknown_now += 1
+            else:
+                transient_now += 1
             misses.add(symbol)
-            failed += 1
         else:
             path.write_text(json.dumps(record))
             manifest["hits"][symbol] = {"gene_id": record["gene_id"],
                                         "length": record["length"]}
+            misses.discard(symbol)
+            unknown.discard(symbol)
             fetched += 1
         if i % 25 == 0:
-            print(f"  {i}/{len(symbols)}  fetched={fetched} cached={skipped} missed={failed}")
+            print(f"  {i}/{len(symbols)}  fetched={fetched} cached={skipped} "
+                  f"unknown={unknown_now} transient={transient_now}")
             manifest["misses"] = sorted(misses)
+            manifest["unknown"] = sorted(unknown)
             manifest_path.write_text(json.dumps(manifest, indent=2))
 
     manifest["misses"] = sorted(misses)
+    manifest["unknown"] = sorted(unknown)
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
-    print(f"\nfetched {fetched}, already cached {skipped}, unresolved {failed}")
+    print(f"\nfetched {fetched}, already cached {skipped}, "
+          f"not in Ensembl {unknown_now}, failed transiently {transient_now}")
+    if transient_now:
+        print("Transient failures are not blacklisted. Run again to pick them up.")
     print(f"{len(manifest['hits'])} gene(s) have a sequence in {cache_dir.relative_to(ROOT)}")
     return 0
 
