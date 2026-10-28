@@ -1,3 +1,4 @@
 {"timestamp": "2026-10-28T00:28:59.300679+00:00", "trigger": "first pipeline run", "presented": ["cns_toxicity", "hepatocellular_injury", "offtarget_gene_silencing"], "promoted": [], "demoted": [], "transitions": []}
 {"timestamp": "2026-10-28T00:31:19.284613+00:00", "trigger": "check mode test", "presented": ["cns_toxicity", "hepatocellular_injury", "offtarget_gene_silencing"], "promoted": [], "demoted": [], "transitions": []}
 {"timestamp": "2026-10-28T00:38:34.913928+00:00", "trigger": "first cloud run", "presented": ["cns_toxicity", "hepatocellular_injury", "offtarget_gene_silencing"], "promoted": [], "demoted": [], "transitions": []}
+{"timestamp": "2026-10-28T01:50:44.260076+00:00", "trigger": "ViennaRNA real folding energies", "presented": ["cns_toxicity", "hepatocellular_injury", "offtarget_gene_silencing"], "promoted": [], "demoted": [], "transitions": []}

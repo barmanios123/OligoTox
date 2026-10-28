@@ -1,5 +1,5 @@
 {
-  "training_csv": "/home/runner/work/OligoTox/OligoTox/data/processed/training_dataset.csv",
+  "training_csv": "/Users/beshoyarmanios/github-cleanup/OligoTox/data/processed/training_dataset.csv",
   "rows": 1614,
   "n_features": 39,
   "n_labels": 13,

@@ -1,0 +1,35 @@
+{
+  "coverage": {
+    "genes_with_transcript": 17,
+    "candidate_sequences": 48021,
+    "sites_located": 16354,
+    "coverage": 0.3406,
+    "note": "Unlocated sites are mostly intronic: a cDNA has no introns, and gapmers frequently target pre-mRNA."
+  },
+  "gain_from_accessibility": 0.0566,
+  "verdict": "accessibility adds signal",
+  "method": "ViennaRNA pfl_fold_up (RNAplfold), window 80, max span 40. Folds grouped by target gene.",
+  "results": [
+    {
+      "model": "Design features only",
+      "n_features": 30,
+      "spearman": 0.1001,
+      "n": 16354,
+      "n_genes": 17
+    },
+    {
+      "model": "Design + accessibility",
+      "n_features": 34,
+      "spearman": 0.1567,
+      "n": 16354,
+      "n_genes": 17
+    },
+    {
+      "model": "Accessibility only",
+      "n_features": 4,
+      "spearman": 0.02,
+      "n": 16354,
+      "n_genes": 17
+    }
+  ]
+}

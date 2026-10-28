@@ -92,7 +92,7 @@ def _placeholder_mfe(seq: str) -> float:
 def build_structure_features(
     df: pd.DataFrame,
     cache_path: str | Path | None = "data/processed/structure_features_cache.csv",
-    use_viennarna: bool = False,
+    use_viennarna: bool = True,
 ) -> pd.DataFrame:
     seq_col = _find_sequence_column(df)
     out = pd.DataFrame(index=df.index)
@@ -121,8 +121,20 @@ def build_structure_features(
     out["struct_viennarna_used"] = 0.0
 
     if use_viennarna:
+        # No silent fallback. A placeholder MFE where real thermodynamics were
+        # expected is a feature drift nothing would catch: training and scoring
+        # would disagree while both looked fine.
         try:
             import RNA  # type: ignore
+        except ImportError as exc:  # pragma: no cover - requirements pin it
+            raise ImportError(
+                "ViennaRNA is required for structure features and is pinned in "
+                "requirements.txt. Without it struct_mfe_proxy silently becomes a "
+                "GC-derived placeholder, so training and scoring would drift apart. "
+                "Install it, or pass use_viennarna=False to accept the placeholder "
+                "deliberately."
+            ) from exc
+        try:
             out["struct_mfe_proxy"] = seqs.map(lambda s: float(RNA.fold(s.replace("T", "U"))[1]) if s else 0.0)
             out["struct_viennarna_used"] = 1.0
         except Exception:

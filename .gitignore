@@ -118,7 +118,7 @@ artifacts/metrics/
 artifacts/eval/
 artifacts/registry/
 data/processed/*
-external/
+external/*
 
 # Notebook noise
 notebooks/.ipynb_checkpoints/
@@ -138,3 +138,9 @@ data/preserved/
 
 # Unsent correspondence and other private working documents.
 drafts/
+
+# Converted ASO Atlas (2 MB, Apache-2.0, attribution in data/oligogym/ATTRIBUTION.md
+# and docs/DATA_REQUESTS.md). Tracked so the per-assay potency models are
+# reproducible from a clone rather than requiring a 69 MB pickle download.
+!data/external/aso_atlas.parquet
+!data/external/nar2022_hepatotox_screen.csv

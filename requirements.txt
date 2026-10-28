@@ -6,3 +6,6 @@ scikit-learn==1.9.1
 scipy==1.18.1
 joblib==1.6.0
 streamlit==1.66.1
+# Real folding energies. Without it struct_mfe_proxy falls back to a
+# GC-derived placeholder and training/scoring features drift apart.
+ViennaRNA==2.7.2

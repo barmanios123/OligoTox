@@ -1,0 +1,107 @@
+{
+  "hits": {
+    "F12": {
+      "gene_id": "ENSG00000131187",
+      "length": 2036
+    },
+    "DGAT2": {
+      "gene_id": "ENSG00000062282",
+      "length": 2407
+    },
+    "PMP22": {
+      "gene_id": "ENSG00000109099",
+      "length": 1828
+    },
+    "IRF4": {
+      "gene_id": "ENSG00000137265",
+      "length": 5314
+    },
+    "MSH3": {
+      "gene_id": "ENSG00000113318",
+      "length": 4443
+    },
+    "NLRP3": {
+      "gene_id": "ENSG00000162711",
+      "length": 4187
+    },
+    "HSD17B13": {
+      "gene_id": "ENSG00000170509",
+      "length": 2368
+    },
+    "HTT": {
+      "gene_id": "ENSG00000197386",
+      "length": 13472
+    },
+    "YAP1": {
+      "gene_id": "ENSG00000137693",
+      "length": 5401
+    },
+    "GHR": {
+      "gene_id": "ENSG00000112964",
+      "length": 4899
+    },
+    "PNPLA3": {
+      "gene_id": "ENSG00000100344",
+      "length": 2753
+    },
+    "PCSK9": {
+      "gene_id": "ENSG00000169174",
+      "length": 3637
+    },
+    "PLP1": {
+      "gene_id": "ENSG00000123560",
+      "length": 3011
+    },
+    "SOD1": {
+      "gene_id": "ENSG00000142168",
+      "length": 895
+    },
+    "DUX4": {
+      "gene_id": "ENSG00000260596",
+      "length": 1710
+    },
+    "KCNQ2": {
+      "gene_id": "ENSG00000075043",
+      "length": 9247
+    },
+    "KLKB1": {
+      "gene_id": "ENSG00000164344",
+      "length": 2258
+    }
+  },
+  "misses": [
+    "AGT",
+    "ANGPTL3",
+    "APOE",
+    "APOL1",
+    "APP",
+    "ATXN1",
+    "ATXN2",
+    "ATXN3",
+    "C9ORF72",
+    "CFB",
+    "DMPK",
+    "DNM2",
+    "EZH2",
+    "F7",
+    "FOXP3",
+    "GFAP",
+    "IFNAR1",
+    "IRF5",
+    "KCNT1",
+    "KRAS",
+    "LRRK2",
+    "MALAT1",
+    "MAPT",
+    "PLN",
+    "PRNP",
+    "PSD3",
+    "SCN2A",
+    "SCNN1A",
+    "SMAD7",
+    "SNCA",
+    "SPDEF",
+    "STAT3",
+    "UBE3A"
+  ]
+}
