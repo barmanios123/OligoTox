@@ -1,0 +1,38 @@
+{
+  "background": "whole human transcriptome (Ensembl cDNA)",
+  "caveat": "Counts are absolute occurrences across Ensembl cDNA.",
+  "mechanism": "Burel et al. and Kasuya et al.: gapmer hepatotoxicity is RNase H1 cleavage of complementary unintended transcripts.",
+  "verdict": "off-target burden adds nothing on this background",
+  "results": [
+    {
+      "endpoint": "hepatocellular_injury",
+      "base_rate": 0.1258,
+      "design_only": 0.2744,
+      "design_plus_offtarget": 0.2216,
+      "offtarget_only": 0.1246,
+      "gain": -0.0528,
+      "ci_low": 0.1656,
+      "ci_high": 0.4627
+    },
+    {
+      "endpoint": "offtarget_gene_silencing",
+      "base_rate": 0.0421,
+      "design_only": 0.1778,
+      "design_plus_offtarget": 0.0994,
+      "offtarget_only": 0.0363,
+      "gain": -0.0784,
+      "ci_low": 0.0427,
+      "ci_high": 0.5082
+    },
+    {
+      "endpoint": "kupffer_cell_activation",
+      "base_rate": 0.0211,
+      "design_only": 0.4804,
+      "design_plus_offtarget": 0.3777,
+      "offtarget_only": 0.3223,
+      "gain": -0.1026,
+      "ci_low": 0.2184,
+      "ci_high": 0.6171
+    }
+  ]
+}

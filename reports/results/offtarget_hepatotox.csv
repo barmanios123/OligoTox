@@ -1,0 +1,4 @@
+endpoint,base_rate,design_only,design_plus_offtarget,offtarget_only,gain,ci_low,ci_high
+hepatocellular_injury,0.1258,0.2744,0.2216,0.1246,-0.0528,0.1656,0.4627
+offtarget_gene_silencing,0.0421,0.1778,0.0994,0.0363,-0.0784,0.0427,0.5082
+kupffer_cell_activation,0.0211,0.4804,0.3777,0.3223,-0.1026,0.2184,0.6171

@@ -1,0 +1,24 @@
+{
+  "source": "cdna.fa.gz",
+  "megabases_scanned": 1276.8,
+  "sequences": 66,
+  "probes": 177,
+  "note": "Whole-transcriptome background. Counts are absolute occurrences of each reverse-complement probe across Ensembl cDNA.",
+  "summary": {
+    "full": {
+      "min": 0,
+      "median": 0.0,
+      "max": 151
+    },
+    "gap": {
+      "min": 0,
+      "median": 913.5,
+      "max": 10851
+    },
+    "seed": {
+      "min": 4053,
+      "median": 71166.0,
+      "max": 294266
+    }
+  }
+}

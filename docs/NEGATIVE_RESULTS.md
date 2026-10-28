@@ -258,11 +258,89 @@ The data is Apache-2.0 at https://github.com/barneyhill/aso_atlas.
 
 ---
 
+## 11. The mechanistic feature with the best story carried no signal
+
+**What happened.** Gapmer hepatotoxicity has a published mechanism: Burel et
+al. and Kasuya et al. showed it is RNase H1 cleaving unintended transcripts
+the oligo is complementary to, especially long pre-mRNAs. That makes
+off-target complementarity burden computable at design time, and it was the
+most promising feature this project could add.
+
+It was computed properly. Three reverse-complement probes per oligo (full
+length, the central DNA gap RNase H1 requires, and the seed), matched in one
+Aho-Corasick pass over the whole Ensembl human cDNA set: 465,769
+transcripts, 1,276 Mb. The counts have real spread, gap hits ranging 0 to
+10,851 with a median of 914.
+
+| Feature set | Features | PR-AUC |
+|---|---|---|
+| Design only | 39 | **0.274** |
+| Design + off-target | 45 | 0.222 |
+| Design + 6 random columns | 45 | 0.244 |
+| Off-target only | 6 | **0.125** |
+
+Base rate is 0.126. **Off-target burden alone scores the base rate**, and
+adding it costs more than adding six columns of noise.
+
+**The control is the point.** An earlier version of this test used the 26
+cached target transcripts as a background, 0.12 Mb against 1,280 Mb, and
+produced a similar null. That null meant nothing: at that size the counts
+are noise. Equally, without the random-feature control the drop would have
+looked like evidence the feature is actively harmful, when most of it is the
+dimensionality penalty of adding any six columns to 19 positive sequences.
+
+**Why it probably failed, and what would test it.** The mechanism implicates
+long **pre-mRNA**, and a cDNA set contains no introns. So the burden
+measured here is against mature mRNA, which is the wrong compartment for the
+published mechanism. This is the same limitation that caps target-site
+accessibility coverage at 34%: both need genomic sequence, not cDNA.
+
+So this is not "the mechanism is wrong". It is "the mechanism was measured
+in the wrong compartment, and the right measurement needs intronic
+sequence". Worth stating precisely, because the vaguer version would
+discourage the experiment that could still work.
+
+Scripts: `scripts/offtarget_transcriptome.py`,
+`scripts/evaluate_offtarget_hepatotox.py`.
+
+---
+
+## 12. Accessibility helps, but only where it can be computed
+
+**What happened.** Target-site accessibility, the probability that a binding
+site is unpaired, computed with ViennaRNA's local partition function
+(`pfl_fold_up`).
+
+| Feature set | Spearman |
+|---|---|
+| Design only | 0.100 |
+| Design + accessibility | **0.157** |
+| Accessibility only | 0.020 |
+
+A gain of +0.057, and notably accessibility predicts almost nothing on its
+own. It is complementary rather than independent, which is what the
+mechanism implies: a useful oligo needs both good design and an open site.
+
+**The catch.** Only 34% of ASO Atlas oligos locate in the canonical cDNA.
+Orientation is not the problem, since the reverse complement matches and the
+forward sequence does not. Gapmers frequently target pre-mRNA, and cDNA has
+no introns.
+
+Within a single assay the result is unsettled: A431 gains +0.051, HepG2
+loses 0.012, on 4 to 5 genes each. Too few genes to call, which is itself
+worth recording rather than reporting the pooled number alone.
+
+Script: `scripts/evaluate_accessibility.py`.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
 demonstrated external validity. A 190,927-row corpus that looked like the
-obvious upgrade to the potency side made it worse. Every failure above was found by a cheap
+obvious upgrade to the potency side made it worse, and the feature with the
+best mechanistic story carried no signal at all when measured in the wrong
+compartment. Every failure above was found by a cheap
 check that is not standard practice: a source-only baseline, a grouped split,
 an ablation, a calibration curve, an external set.
 
