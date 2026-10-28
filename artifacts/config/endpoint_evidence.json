@@ -26,8 +26,8 @@
         "external_transfer_above_chance": true,
         "beats_published_rule": false
       },
-      "brier_skill": 0.2982152887540376,
-      "calibration_mae": 0.00917291337752337,
+      "brier_skill": 0.2982200698462921,
+      "calibration_mae": 0.009200286845436365,
       "probabilities_calibrated": true
     },
     "hepatocellular_injury": {
@@ -47,8 +47,8 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.008857059060946915,
-      "calibration_mae": 0.06581980022567245,
+      "brier_skill": -0.008857054847663415,
+      "calibration_mae": 0.0645831494860137,
       "probabilities_calibrated": false,
       "external_check": {
         "source": "NAR 2022;50(13):7224 doi:10.1093/nar/gkac562 Supplementary Table S1",
@@ -79,8 +79,8 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": 0.025129341270145544,
-      "calibration_mae": 0.03709250264825961,
+      "brier_skill": 0.025130488997539113,
+      "calibration_mae": 0.03709257503513607,
       "probabilities_calibrated": true
     },
     "injection_site_reaction": {
@@ -100,8 +100,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -2.3666650296895373,
-      "calibration_mae": 0.02121162622797861,
+      "brier_skill": -2.366665029226545,
+      "calibration_mae": 0.0212116262326607,
       "probabilities_calibrated": false
     },
     "kupffer_cell_activation": {
@@ -121,8 +121,8 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": false
       },
-      "brier_skill": 0.3436017648592756,
-      "calibration_mae": 0.005853657633557722,
+      "brier_skill": 0.34360176490701133,
+      "calibration_mae": 0.005853657634805125,
       "probabilities_calibrated": true
     },
     "coagulation_effect": {
@@ -142,8 +142,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.58707826348085,
-      "calibration_mae": 0.005870172212459244,
+      "brier_skill": -0.5870782592145232,
+      "calibration_mae": 0.005870172249392708,
       "probabilities_calibrated": false
     },
     "complement_activation": {
@@ -163,8 +163,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.5514517851629546,
-      "calibration_mae": 0.009608035375180178,
+      "brier_skill": -0.5514517842793252,
+      "calibration_mae": 0.009608035154232522,
       "probabilities_calibrated": false
     },
     "cytokine_release": {
@@ -184,16 +184,16 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.4570207084195488,
-      "calibration_mae": 0.0076698358462257915,
+      "brier_skill": -0.4570207343512074,
+      "calibration_mae": 0.007669826217470816,
       "probabilities_calibrated": false
     },
     "hepatic_vacuolation": {
       "tier": "insufficient_data",
       "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -2.13 against the base rate, so read the score as a ranking, not as a percentage chance.",
-      "pr_auc": 0.1557,
+      "pr_auc": 0.1447,
       "ci_low": 0.0405,
-      "ci_high": 0.3363,
+      "ci_high": 0.3059,
       "base_rate": 0.0074,
       "positive_sequences": 6,
       "source_only_pr_auc": 0.1984,
@@ -205,8 +205,8 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -2.1283343318909256,
-      "calibration_mae": 0.017447925091272222,
+      "brier_skill": -2.1283320408170185,
+      "calibration_mae": 0.01744792340333674,
       "probabilities_calibrated": false
     },
     "innate_immune_activation": {
@@ -226,8 +226,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.4570207084195488,
-      "calibration_mae": 0.0076698358462257915,
+      "brier_skill": -0.4570207343512074,
+      "calibration_mae": 0.007669826217470816,
       "probabilities_calibrated": false
     },
     "renal_accumulation": {
@@ -247,8 +247,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.271090787268943,
-      "calibration_mae": 0.007144030184247985,
+      "brier_skill": -0.27109085424991175,
+      "calibration_mae": 0.007144040565570887,
       "probabilities_calibrated": false
     },
     "renal_tubular_injury": {
@@ -268,8 +268,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.24398617429728486,
-      "calibration_mae": 0.005187446192061205,
+      "brier_skill": -0.24398617538463996,
+      "calibration_mae": 0.005187446261380706,
       "probabilities_calibrated": false
     },
     "thrombocytopenia": {
@@ -289,8 +289,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": 0.002513252749068662,
-      "calibration_mae": 0.0026040271969322228,
+      "brier_skill": 0.002513251623428414,
+      "calibration_mae": 0.0026040271968114453,
       "probabilities_calibrated": true
     }
   }
