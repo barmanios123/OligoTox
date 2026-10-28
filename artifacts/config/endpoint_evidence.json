@@ -26,8 +26,8 @@
         "external_transfer_above_chance": true,
         "beats_published_rule": false
       },
-      "brier_skill": 0.2982200698462921,
-      "calibration_mae": 0.009200286845436365,
+      "brier_skill": 0.2982,
+      "calibration_mae": 0.0092,
       "probabilities_calibrated": true
     },
     "hepatocellular_injury": {
@@ -47,8 +47,8 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.008857054847663415,
-      "calibration_mae": 0.0645831494860137,
+      "brier_skill": -0.0089,
+      "calibration_mae": 0.0646,
       "probabilities_calibrated": false,
       "external_check": {
         "source": "NAR 2022;50(13):7224 doi:10.1093/nar/gkac562 Supplementary Table S1",
@@ -79,8 +79,8 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": 0.025130488997539113,
-      "calibration_mae": 0.03709257503513607,
+      "brier_skill": 0.0251,
+      "calibration_mae": 0.0371,
       "probabilities_calibrated": true
     },
     "injection_site_reaction": {
@@ -100,8 +100,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -2.366665029226545,
-      "calibration_mae": 0.0212116262326607,
+      "brier_skill": -2.3667,
+      "calibration_mae": 0.0212,
       "probabilities_calibrated": false
     },
     "kupffer_cell_activation": {
@@ -121,8 +121,8 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": false
       },
-      "brier_skill": 0.34360176490701133,
-      "calibration_mae": 0.005853657634805125,
+      "brier_skill": 0.3436,
+      "calibration_mae": 0.0059,
       "probabilities_calibrated": true
     },
     "coagulation_effect": {
@@ -142,8 +142,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.5870782592145232,
-      "calibration_mae": 0.005870172249392708,
+      "brier_skill": -0.5871,
+      "calibration_mae": 0.0059,
       "probabilities_calibrated": false
     },
     "complement_activation": {
@@ -163,8 +163,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.5514517842793252,
-      "calibration_mae": 0.009608035154232522,
+      "brier_skill": -0.5515,
+      "calibration_mae": 0.0096,
       "probabilities_calibrated": false
     },
     "cytokine_release": {
@@ -184,8 +184,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.4570207343512074,
-      "calibration_mae": 0.007669826217470816,
+      "brier_skill": -0.457,
+      "calibration_mae": 0.0077,
       "probabilities_calibrated": false
     },
     "hepatic_vacuolation": {
@@ -205,8 +205,8 @@
         "ci_clears_simple_baselines": true,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -2.1283320408170185,
-      "calibration_mae": 0.01744792340333674,
+      "brier_skill": -2.1283,
+      "calibration_mae": 0.0174,
       "probabilities_calibrated": false
     },
     "innate_immune_activation": {
@@ -226,8 +226,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.4570207343512074,
-      "calibration_mae": 0.007669826217470816,
+      "brier_skill": -0.457,
+      "calibration_mae": 0.0077,
       "probabilities_calibrated": false
     },
     "renal_accumulation": {
@@ -247,8 +247,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.27109085424991175,
-      "calibration_mae": 0.007144040565570887,
+      "brier_skill": -0.2711,
+      "calibration_mae": 0.0071,
       "probabilities_calibrated": false
     },
     "renal_tubular_injury": {
@@ -268,8 +268,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": -0.24398617538463996,
-      "calibration_mae": 0.005187446261380706,
+      "brier_skill": -0.244,
+      "calibration_mae": 0.0052,
       "probabilities_calibrated": false
     },
     "thrombocytopenia": {
@@ -289,8 +289,8 @@
         "ci_clears_simple_baselines": false,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": 0.002513251623428414,
-      "calibration_mae": 0.0026040271968114453,
+      "brier_skill": 0.0025,
+      "calibration_mae": 0.0026,
       "probabilities_calibrated": true
     }
   }

@@ -338,7 +338,7 @@ python -m oligotox.training.train       # retrains all 13 endpoint models
 python scripts/evaluate_baselines.py    # recomputes baselines and bootstrap CIs
 ```
 
-Verified in a clean clone of this commit: all 13 per-endpoint PR-AUCs reproduce to the published figure exactly, `baselines.csv` and `within_source.csv` reproduce with zero difference across all 60 and 36 rows, `endpoint_evidence.json` comes out byte-identical, and so do all 13 shipped `.joblib` models. The models in `artifacts/` are the ones this data and this script produce.
+Verified in a clean clone of this commit: all 13 per-endpoint PR-AUCs reproduce to the published figure exactly, `baselines.csv` and `within_source.csv` reproduce with zero difference across all 60 and 36 rows, `endpoint_evidence.json` comes out byte-identical, and so do all 13 shipped `.joblib` models when retrained on the same platform. Across platforms the models differ in bytes but not in behaviour: a scheduled Linux run reproduced macOS-built models to within 3e-9 in predicted probability, which is BLAS float noise rather than a different fit. The models in `artifacts/` are the ones this data and this script produce.
 
 ### Retrain and regenerate the figures
 

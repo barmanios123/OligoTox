@@ -196,9 +196,12 @@ def main() -> None:
                 entry = endpoints.get(row["endpoint"])
                 if not entry:
                     continue
-                skill = float(row["brier_skill"])
+                # Rounded: BLAS differences between platforms move these in the
+                # 5th decimal, which would otherwise rewrite the config on every
+                # run and bury real changes in noise.
+                skill = round(float(row["brier_skill"]), 4)
                 entry["brier_skill"] = skill
-                entry["calibration_mae"] = float(row["calibration_mae"])
+                entry["calibration_mae"] = round(float(row["calibration_mae"]), 4)
                 entry["probabilities_calibrated"] = skill > 0
                 if skill <= 0:
                     entry["reason"] += (
