@@ -97,22 +97,22 @@ systematic sources.
 ## FEATURES
 
 `build_training_dataset` assembles 191 candidate feature columns; training
-filters them to **55**. The filter is in `artifacts/metrics/dropped_features.json`:
+filters them to **39**. The filter is in `artifacts/metrics/dropped_features.json`:
 
 | Dropped | Count | Why |
 |---|---|---|
 | Outcome annotations (`label_*`, `endpoint_*`) | 23 | Curated annotations of the outcome. `label_kupffer_activation` correlated 0.98 with its own target. This was the leakage. |
 | Assay readouts (`cas_avg`, `kd_avg`) | 2 | Measured after dosing; they do not exist for a new design. |
+| Hash embedding (`embed_stub_hash_rna_*`) | 16 | A sha256 of the sequence. An ablation improved 9 of 12 endpoints when it was removed. |
 | Constant columns | 111 | No variance across rows, so no information. |
 
-### The 55 surviving features
+### The 39 surviving features
 
 | Block | Count | Contents |
 |---|---|---|
 | Design and chemistry | 9 | `ps_fraction`, `lna_fraction`, `seq_length`, `gc_content`, `seed_gc`, `cpg_density`, `tlr7_score`, `ps_x_len`, `lna_x_gc` |
 | `aso_*` | 22 | Chemistry and modality one-hots (LNA, MoE, 2'-OMe, PS, GalNAc; gapmer, siRNA, PMO, SSO, mRNA) and derived flags |
 | `struct_*` | 8 | Length, GC, uracil fraction, longest homopolymer, palindrome fraction, dinucleotide repeats, hairpin score, `struct_mfe_proxy` |
-| `embed_stub_hash_rna_00..15` | 16 | A hash of the sequence, not a learned embedding |
 
 Two caveats a reader should not have to discover from the code:
 
@@ -120,8 +120,11 @@ Two caveats a reader should not have to discover from the code:
   requested at build time (`viennarna_requested: true`) but never used
   (`struct_viennarna_used` is 0.0 for every row), so the structure block
   carries no thermodynamic information.
-- **16 of the 55 features (29%) are a hash stub.** The column names say so.
-  There is no trained sequence model behind them.
+- **The hash stub has been removed.** 16 columns named
+  `embed_stub_hash_rna_*` were a sha256 of the sequence, described in the
+  roadmap as integrated foundation model embeddings. Ablation showed they
+  helped nothing, and off-target gene silencing moved from weak to validated
+  once they stopped masking it.
 
 ### Omics features add nothing to the shipped models
 
@@ -131,7 +134,7 @@ Because the join is at candidate level, every one of those columns is constant
 across rows, and all 66 are dropped by the constant filter. **No omics, GSEA,
 pathway, sentinel-marker or Geneformer feature reaches any shipped model.**
 The modules under `src/oligotox/omics/` and `src/oligotox/integrations/` run
-and are reachable from the API, but they do not contribute to the 55 features
+and are reachable from the API, but they do not contribute to the 39 features
 the models are trained on.
 
 ---
@@ -176,7 +179,8 @@ or can raise a regulatory recommendation.
      features/structure_features.py       sequence structure (placeholder MFE)
      features/embedding_features.py       hash stub
      omics/ + integrations/               joined, then dropped as constant
-2. Drop outcome annotations, assay readouts and constant columns (55 remain)
+2. Drop outcome annotations, assay readouts, the hash block and constant
+   columns (39 remain)
 3. Recompute tlr7_score, ps_x_len, lna_x_gc, seed_gc, cpg_density from the
    sequence, so training features match what the app derives at scoring time
 4. Per endpoint: StratifiedGroupKFold on normalized sequence, out-of-fold
