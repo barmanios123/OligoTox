@@ -90,7 +90,7 @@
     },
     {
       "name": "aso_atlas_patent_gapmers",
-      "status": "available",
+      "status": "evaluated_not_adopted",
       "kind": "efficacy",
       "endpoint": "target_inhibition",
       "readout": "qRT-PCR knockdown",
@@ -99,7 +99,7 @@
       "url": "https://github.com/barneyhill/aso_atlas",
       "licence": "Apache-2.0 (repository LICENSE); permits redistribution with attribution",
       "sequences": 188521,
-      "notes": "Found by scripts/monitor_literature.py, which surfaced the published version of what this registry had listed as an unverified preprint. Efficacy, not toxicity: it would replace the 3,867-sequence ASO activity model, currently tiered weak at Spearman 0.26. It carries PS, 2'-MOE and cEt annotation, which no other source here has.",
+      "notes": "Converted and evaluated. Pooled it scores Spearman 0.18 under gene-grouped CV against the shipped model's 0.26, and transfers to McQuisten at -0.06. The readout is not commensurable across its 81 cell lines and many dosages: A431 at a single dose reaches 0.29 on 8% of the data. Adopting it needs per-context models, not more features. See docs/NEGATIVE_RESULTS.md entry 10.",
       "paper": "Accurately modeling RNase H-mediated antisense oligonucleotide efficacy. Mol Ther Nucleic Acids 2026, doi:10.1016/j.omtn.2026.103004",
       "local_path": "data/external/aso_atlas.parquet",
       "genes": 306,

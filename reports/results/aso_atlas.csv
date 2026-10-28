@@ -1,0 +1,7 @@
+dataset,evaluation,model,n_features,spearman,n,n_genes
+ASO Atlas,gene-grouped CV,All features (sequence + chemistry),38,0.1618616833977399,161832,340
+ASO Atlas,gene-grouped CV,Sequence features only,30,0.17642185471825675,161832,340
+ASO Atlas,gene-grouped CV,Chemistry only,8,-0.031453847689447846,161832,340
+ASO Atlas,gene-grouped CV,GC only,1,-0.12306546916228235,161832,340
+ASO Atlas,gene-grouped CV,Target gene mean (no sequence),0,-0.10716374013481579,161832,340
+ASO Atlas -> McQuisten_2007,cross-study transfer,Sequence features only,30,-0.06342663589302903,3867,85

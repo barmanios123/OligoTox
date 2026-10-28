@@ -253,7 +253,7 @@ Three failures for three different reasons, one pass, no tuning between runs. Th
 
 `scripts/check_deployment.py` is the companion for the deployed app: it compares the live deployment's branch against this checkout's evidence config and exits non-zero on drift. It exists because a push once left the container serving a stale config, labelling a calibrated endpoint as ranking-only, and nothing caught it until someone opened the app by hand.
 
-**[`docs/NEGATIVE_RESULTS.md`](docs/NEGATIVE_RESULTS.md)** records the nine failure modes this found, with numbers and the script for each. **[`docs/DATA_REQUESTS.md`](docs/DATA_REQUESTS.md)** lists what the platform is actually limited by, which is labelled data rather than method.
+**[`docs/NEGATIVE_RESULTS.md`](docs/NEGATIVE_RESULTS.md)** records the ten failure modes this found, with numbers and the script for each. **[`docs/DATA_REQUESTS.md`](docs/DATA_REQUESTS.md)** lists what the platform is actually limited by, which is labelled data rather than method.
 
 ## What each failing endpoint would need
 
@@ -277,6 +277,21 @@ The other two failures are different in kind:
 - **Injection site reaction** has a real estimate that is too noisy. Roughly 109 positive sequences, against 12 now, would be needed for its confidence interval to clear the length-only baseline — an order-of-magnitude estimate that assumes the point estimate holds, which more data may disprove.
 
 Shortfalls against the minimum are exact arithmetic. Sample sizes needed to narrow a confidence interval are flagged `estimate: true` in `reports/results/endpoint_requirements.json`.
+
+### A 190,927-row corpus that made things worse
+
+The literature monitor surfaced [ASO Atlas](https://github.com/barneyhill/aso_atlas) (Apache-2.0, 165,555 unique sequences, 343 genes, with chemistry). Replacing the 3,867-sequence ASO activity model with it should have been the easiest win here. It was not:
+
+| Setup | Spearman |
+|---|---|
+| McQuisten 2007, 3,867 sequences (shipped) | **0.26** |
+| ASO Atlas pooled, 161,832 pairs | 0.18 |
+| ASO Atlas transferred to McQuisten | **-0.06** |
+| **A431 cell line at a single dose**, 12,435 pairs | **0.29** |
+
+The corpus pools percent inhibition across 81 cell lines and many dosages, extracted from patents spanning 2001-2025, so the readout is not commensurable. One cell line at one dose, on 8% of the data, beats the whole corpus. Adding cell line and dose as features made it *worse*, so the heterogeneity is not an offset a covariate can absorb.
+
+The data stays in the registry marked `evaluated_not_adopted` with the numbers attached. Adopting it needs per-context models, which is real work rather than a swap.
 
 ## Continuous evaluation
 

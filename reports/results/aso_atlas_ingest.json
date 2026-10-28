@@ -1,0 +1,25 @@
+{
+  "source": "https://github.com/barneyhill/aso_atlas",
+  "paper_doi": "10.1016/j.omtn.2026.103004",
+  "licence": "Apache-2.0",
+  "rows": 190927,
+  "columns": [
+    "aso_sequence_5_to_3",
+    "inhibition_percent",
+    "chemistry",
+    "custom_id",
+    "target_mrna",
+    "target_gene",
+    "cell_line",
+    "cell_line_species",
+    "dosage",
+    "cells_per_well",
+    "transfection_method",
+    "steric_blocking"
+  ],
+  "foreign_classes_stubbed": [
+    "src.formats.Chemistry",
+    "src.formats.Modification"
+  ],
+  "note": "Converted with a restricted unpickler; no code from the archive was executed. The parquet is what the pipeline reads."
+}

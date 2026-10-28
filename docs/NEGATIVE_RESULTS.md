@@ -201,10 +201,61 @@ Script: `scripts/ingest_papargyri_design.py`.
 
 ---
 
+## 10. 49x more data made the model worse
+
+**What happened.** ASO Atlas is 190,927 patent-extracted measurements over
+165,555 unique sequences and 343 genes, with chemistry annotation. The
+shipped ASO activity model is trained on McQuisten 2007: 3,867 sequences,
+Spearman 0.26 under gene-grouped CV. Swapping one for the other should have
+been the easiest win in the project.
+
+| Setup | Spearman |
+|---|---|
+| McQuisten 2007, 3,867 sequences (shipped) | **0.26** |
+| ASO Atlas pooled, 161,832 pairs | 0.18 |
+| ASO Atlas + chemistry features | 0.16 |
+| ASO Atlas + cell line, dose, transfection as features | 0.15 |
+| ASO Atlas, transferred to McQuisten | **-0.06** |
+
+More data scored lower, adding chemistry made it worse, and the model
+transferred at *below chance* to the study the shipped model handles.
+
+**Why.** The readout is not commensurable. ASO Atlas pools percent
+inhibition across 81 cell lines, many dosages and several transfection
+methods, extracted from 417 patents spanning 2001-2025. Restricting to one
+experimental context recovers it:
+
+| Context | Sequences | Spearman |
+|---|---|---|
+| Pooled, 81 cell lines | 161,832 | 0.18 |
+| A431 only | 29,926 | 0.26 |
+| HepG2 only | 19,400 | 0.15 |
+| **A431 at a single dose** | 12,435 | **0.29** |
+
+A single cell line at a single dose, on 8% of the data, beats the whole
+corpus and beats the shipped model.
+
+**The part worth noting.** Adding cell line, dose and transfection as
+features made things *worse*, not better, and context alone predicts nothing
+(0.01). The heterogeneity is not an offset that a covariate can absorb: the
+relationship between sequence and potency differs between contexts. Fixing
+it needs per-context models or explicit interactions, not more features.
+
+**Why it generalises.** Aggregated public corpora are built by pooling
+whatever was measured, and the pooling is invisible by the time it reaches a
+single column. Before treating a large dataset as one population, check
+whether a single experimental slice does better than the whole.
+
+Script: `scripts/evaluate_aso_atlas.py`. The data is Apache-2.0 at
+https://github.com/barneyhill/aso_atlas.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
-demonstrated external validity. Every failure above was found by a cheap
+demonstrated external validity. A 190,927-row corpus that looked like the
+obvious upgrade to the potency side made it worse. Every failure above was found by a cheap
 check that is not standard practice: a source-only baseline, a grouped split,
 an ablation, a calibration curve, an external set.
 

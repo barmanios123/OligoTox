@@ -1,0 +1,65 @@
+{
+  "source": "https://github.com/barneyhill/aso_atlas (Apache-2.0)",
+  "clip": [
+    0.0,
+    100.0
+  ],
+  "min_sequences_per_gene": 20,
+  "note": "Percent inhibition, higher is more potent. Values outside 0-100 are clipped, which is a stated modelling choice.",
+  "results": [
+    {
+      "dataset": "ASO Atlas",
+      "evaluation": "gene-grouped CV",
+      "model": "All features (sequence + chemistry)",
+      "n_features": 38,
+      "spearman": 0.1618616833977399,
+      "n": 161832,
+      "n_genes": 340
+    },
+    {
+      "dataset": "ASO Atlas",
+      "evaluation": "gene-grouped CV",
+      "model": "Sequence features only",
+      "n_features": 30,
+      "spearman": 0.17642185471825675,
+      "n": 161832,
+      "n_genes": 340
+    },
+    {
+      "dataset": "ASO Atlas",
+      "evaluation": "gene-grouped CV",
+      "model": "Chemistry only",
+      "n_features": 8,
+      "spearman": -0.031453847689447846,
+      "n": 161832,
+      "n_genes": 340
+    },
+    {
+      "dataset": "ASO Atlas",
+      "evaluation": "gene-grouped CV",
+      "model": "GC only",
+      "n_features": 1,
+      "spearman": -0.12306546916228235,
+      "n": 161832,
+      "n_genes": 340
+    },
+    {
+      "dataset": "ASO Atlas",
+      "evaluation": "gene-grouped CV",
+      "model": "Target gene mean (no sequence)",
+      "n_features": 0,
+      "spearman": -0.10716374013481579,
+      "n": 161832,
+      "n_genes": 340
+    },
+    {
+      "dataset": "ASO Atlas -> McQuisten_2007",
+      "evaluation": "cross-study transfer",
+      "model": "Sequence features only",
+      "n_features": 30,
+      "spearman": -0.06342663589302903,
+      "n": 3867,
+      "n_genes": 85
+    }
+  ]
+}
