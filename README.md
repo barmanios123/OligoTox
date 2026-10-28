@@ -327,6 +327,12 @@ benchmarks/oligogym/     leakage-aware benchmark scripts
 docs/                    architecture and provenance notes
 ```
 
+## Citing this work
+
+`CITATION.cff` carries the metadata; GitHub's "Cite this repository" button renders it. If you use the evaluation findings rather than the code, the nine failure modes in [`docs/NEGATIVE_RESULTS.md`](docs/NEGATIVE_RESULTS.md) are the citable part, and each names the script that reproduces it.
+
+Cite the underlying studies and OligoGym for the data, not this repository; see `data/oligogym/ATTRIBUTION.md`.
+
 ## License
 
 MIT; see `LICENSE`.

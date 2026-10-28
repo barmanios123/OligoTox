@@ -1,0 +1,76 @@
+cff-version: 1.2.0
+title: "OligoTox: evidence-gated toxicity and potency models for oligonucleotides"
+message: "If you use this software or its findings, please cite it."
+type: software
+authors:
+  - family-names: Armanios
+    given-names: Beshoy
+    orcid: ""
+repository-code: "https://github.com/barmanios123/OligoTox"
+url: "https://oligotox.streamlit.app"
+license: MIT
+version: 0.2.0
+date-released: "2026-10-27"
+keywords:
+  - antisense oligonucleotide
+  - siRNA
+  - preclinical toxicology
+  - hepatotoxicity
+  - neurotoxicity
+  - model evaluation
+  - data leakage
+  - calibration
+  - negative results
+abstract: >-
+  Sequence-based models for 13 preclinical oligonucleotide toxicity endpoints
+  and for siRNA and ASO potency, each gated by the evidence that supports it.
+  Of the 13 toxicity endpoints, 3 are presented as predictions and only CNS
+  neurotoxicity has demonstrated external validity, having been validated by
+  training on one assay and testing on another with no shared sequences.
+
+  The project's main contribution is methodological rather than predictive.
+  An earlier version scored PR-AUC 0.93 on hepatocellular injury; after
+  removing curated annotations that leaked the outcome and grouping
+  cross-validation folds by sequence, the honest figure is 0.29. Baselines
+  then showed that the apparently strongest endpoint was recognising which
+  dataset a row came from rather than the molecule, and an independent screen
+  showed the headline endpoint does not transfer.
+
+  The repository ships the audit harness that found these failures as a
+  standalone tool applicable to any oligonucleotide dataset, and records nine
+  reproducible failure modes in docs/NEGATIVE_RESULTS.md. Every published
+  number is reproducible from the committed data.
+references:
+  - type: article
+    title: >-
+      Acute neurotoxicity of antisense oligonucleotides after
+      intracerebroventricular injection into mouse brain can be predicted from
+      sequence features
+    authors:
+      - family-names: Hagedorn
+        given-names: Peter H.
+    journal: "Nucleic Acid Therapeutics"
+    year: 2022
+    doi: "10.1089/nat.2021.0071"
+    notes: "Source of the in vitro calcium oscillation CNS dataset and of the G-count rule the CNS endpoint reproduces."
+  - type: article
+    title: >-
+      Identification of nucleobase chemical modifications that reduce the
+      hepatotoxicity of gapmer antisense oligonucleotides
+    journal: "Nucleic Acids Research"
+    year: 2022
+    volume: 50
+    issue: 13
+    start: 7224
+    doi: "10.1093/nar/gkac562"
+    notes: "Independent 149-gapmer screen used as the external hepatotoxicity check."
+  - type: conference-paper
+    title: "OligoGym: Curated Datasets and Benchmarks for Oligonucleotide Drug Discovery"
+    authors:
+      - family-names: Rotrattanadumrong
+        given-names: Ratthachat
+      - family-names: De Donno
+        given-names: Carlo
+    collection-title: "Advances in Neural Information Processing Systems, Datasets and Benchmarks Track"
+    year: 2025
+    notes: "Source of the external CNS and potency datasets, redistributed under CC BY 4.0; see data/oligogym/ATTRIBUTION.md."
