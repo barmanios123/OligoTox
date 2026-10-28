@@ -15,6 +15,86 @@
     "IRF4": {
       "gene_id": "ENSG00000137265",
       "length": 19705
+    },
+    "MSH3": {
+      "gene_id": "ENSG00000113318",
+      "length": 225683
+    },
+    "NLRP3": {
+      "gene_id": "ENSG00000162711",
+      "length": 117338
+    },
+    "HSD17B13": {
+      "gene_id": "ENSG00000170509",
+      "length": 20996
+    },
+    "LRRK2": {
+      "gene_id": "ENSG00000188906",
+      "length": 172542
+    },
+    "HTT": {
+      "gene_id": "ENSG00000197386",
+      "length": 202595
+    },
+    "YAP1": {
+      "gene_id": "ENSG00000137693",
+      "length": 123567
+    },
+    "DMPK": {
+      "gene_id": "ENSG00000104936",
+      "length": 13086
+    },
+    "APP": {
+      "gene_id": "ENSG00000142192",
+      "length": 290594
+    },
+    "ATXN1": {
+      "gene_id": "ENSG00000124788",
+      "length": 462380
+    },
+    "FOXP3": {
+      "gene_id": "ENSG00000049768",
+      "length": 14365
+    },
+    "PSD3": {
+      "gene_id": "ENSG00000156011",
+      "length": 557428
+    },
+    "ATXN2": {
+      "gene_id": "ENSG00000204842",
+      "length": 156192
+    },
+    "SNCA": {
+      "gene_id": "ENSG00000145335",
+      "length": 137977
+    },
+    "ATXN3": {
+      "gene_id": "ENSG00000066427",
+      "length": 62144
+    },
+    "DNM2": {
+      "gene_id": "ENSG00000079805",
+      "length": 116243
+    },
+    "UBE3A": {
+      "gene_id": "ENSG00000114062",
+      "length": 105395
+    },
+    "MAPT": {
+      "gene_id": "ENSG00000186868",
+      "length": 134057
+    },
+    "KCNT1": {
+      "gene_id": "ENSG00000107147",
+      "length": 93336
+    },
+    "MALAT1": {
+      "gene_id": "ENSG00000251562",
+      "length": 10468
+    },
+    "AGT": {
+      "gene_id": "ENSG00000135744",
+      "length": 54801
     }
   },
   "misses": [

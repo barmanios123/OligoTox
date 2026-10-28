@@ -35,6 +35,9 @@ MODEL_PREFIX = "Logistic ("
 SIMPLE_BASELINES = ("GC content only", "Length only")
 SOURCE_BASELINE = "Data source only"
 MIN_POSITIVE_SEQUENCES = 10
+# Calibration has to clear a margin, not merely beat zero. See the note where
+# this is applied: a gate at exactly zero flips on noise.
+MIN_BRIER_SKILL = 0.02
 
 TIER_ORDER = ("validated", "weak", "source_confounded", "insufficient_data")
 
@@ -202,12 +205,19 @@ def main() -> None:
                 skill = round(float(row["brier_skill"]), 4)
                 entry["brier_skill"] = skill
                 entry["calibration_mae"] = round(float(row["calibration_mae"]), 4)
-                entry["probabilities_calibrated"] = skill > 0
-                if skill <= 0:
+                # A bare skill > 0 is not a gate. Hepatocellular injury came in
+                # at +0.0017 after an unrelated feature change, which is a 0.2%
+                # improvement on quoting the base rate, and that was enough to
+                # flip its label from "ranking only" to "probability". A label
+                # that turns over in the third decimal is not a label, so a
+                # margin is required.
+                entry["probabilities_calibrated"] = skill >= MIN_BRIER_SKILL
+                if skill < MIN_BRIER_SKILL:
                     entry["reason"] += (
                         " Its probabilities are not calibrated: Brier skill "
-                        f"{skill:+.2f} against the base rate, so read the score as a "
-                        "ranking, not as a percentage chance."
+                        f"{skill:+.4f} against the base rate, below the "
+                        f"{MIN_BRIER_SKILL} needed to be worth reading as a "
+                        "percentage, so treat the score as a ranking."
                     )
 
     # A directional external check, too small to change a tier but not to report.

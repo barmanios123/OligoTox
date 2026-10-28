@@ -170,3 +170,27 @@ def test_a_report_with_no_validated_endpoint_supports_nothing():
     conclusions = json.loads(report.generate_report(format="json"))["conclusions"]
     assert conclusions["supports"] == []
     assert any("no endpoint met" in c.lower() for c in conclusions["does_not_support"])
+
+
+def test_calibration_gate_requires_a_margin_not_just_positive(root):
+    """A label that flips in the third decimal is not a label.
+
+    Hepatocellular injury measured +0.0017 Brier skill after an unrelated
+    feature change, which a bare `> 0` gate accepted as "calibrated".
+    """
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(root / "scripts"))
+    from derive_evidence_tiers import MIN_BRIER_SKILL
+
+    assert MIN_BRIER_SKILL > 0, "a gate at zero flips on noise"
+
+    evidence = json.loads(
+        (root / "artifacts/config/endpoint_evidence.json").read_text()
+    )["endpoints"]
+    for name, info in evidence.items():
+        skill = info.get("brier_skill")
+        if skill is None:
+            continue
+        assert info["probabilities_calibrated"] == (skill >= MIN_BRIER_SKILL), name

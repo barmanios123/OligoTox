@@ -32,7 +32,7 @@
     },
     "hepatocellular_injury": {
       "tier": "validated",
-      "reason": "PR-AUC 0.28 [0.21-0.56] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.40, CI 0.13-0.70). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
+      "reason": "PR-AUC 0.28 [0.21-0.56] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source Its probabilities are not calibrated: Brier skill +0.0017 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking. On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.40, CI 0.13-0.70). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
       "pr_auc": 0.2849,
       "ci_low": 0.2059,
       "ci_high": 0.5618,
@@ -49,7 +49,7 @@
       },
       "brier_skill": 0.0017,
       "calibration_mae": 0.0643,
-      "probabilities_calibrated": true,
+      "probabilities_calibrated": false,
       "external_check": {
         "source": "NAR 2022;50(13):7224 doi:10.1093/nar/gkac562 Supplementary Table S1",
         "sequences": 149,
@@ -85,7 +85,7 @@
     },
     "injection_site_reaction": {
       "tier": "weak",
-      "reason": "the model's 95% CI reaches 0.07, below the best simple baseline (0.20), so it is not distinguishable from one crude sequence number Its probabilities are not calibrated: Brier skill -2.84 against the base rate, so read the score as a ranking, not as a percentage chance.",
+      "reason": "the model's 95% CI reaches 0.07, below the best simple baseline (0.20), so it is not distinguishable from one crude sequence number Its probabilities are not calibrated: Brier skill -2.8385 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
       "pr_auc": 0.2087,
       "ci_low": 0.0715,
       "ci_high": 0.4122,
@@ -127,7 +127,7 @@
     },
     "coagulation_effect": {
       "tier": "insufficient_data",
-      "reason": "5 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.93 against the base rate, so read the score as a ranking, not as a percentage chance.",
+      "reason": "5 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.9319 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
       "pr_auc": 0.058,
       "ci_low": 0.0122,
       "ci_high": 0.1835,
@@ -148,7 +148,7 @@
     },
     "complement_activation": {
       "tier": "insufficient_data",
-      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.40 against the base rate, so read the score as a ranking, not as a percentage chance.",
+      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.3954 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
       "pr_auc": 0.0685,
       "ci_low": 0.0178,
       "ci_high": 0.213,
@@ -169,7 +169,7 @@
     },
     "cytokine_release": {
       "tier": "insufficient_data",
-      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.22 against the base rate, so read the score as a ranking, not as a percentage chance.",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.2245 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
       "pr_auc": 0.0422,
       "ci_low": 0.0161,
       "ci_high": 0.107,
@@ -190,7 +190,7 @@
     },
     "hepatic_vacuolation": {
       "tier": "insufficient_data",
-      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -2.16 against the base rate, so read the score as a ranking, not as a percentage chance.",
+      "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -2.1637 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
       "pr_auc": 0.1545,
       "ci_low": 0.0405,
       "ci_high": 0.3363,
@@ -211,7 +211,7 @@
     },
     "innate_immune_activation": {
       "tier": "insufficient_data",
-      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.22 against the base rate, so read the score as a ranking, not as a percentage chance.",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.2245 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
       "pr_auc": 0.0422,
       "ci_low": 0.0172,
       "ci_high": 0.1087,
@@ -232,7 +232,7 @@
     },
     "renal_accumulation": {
       "tier": "insufficient_data",
-      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.96 against the base rate, so read the score as a ranking, not as a percentage chance.",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.9611 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
       "pr_auc": 0.0413,
       "ci_low": 0.0095,
       "ci_high": 0.1381,
@@ -253,7 +253,7 @@
     },
     "renal_tubular_injury": {
       "tier": "insufficient_data",
-      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.02 against the base rate, so read the score as a ranking, not as a percentage chance.",
+      "reason": "7 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -0.0233 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
       "pr_auc": 0.1338,
       "ci_low": 0.03,
       "ci_high": 0.3695,
