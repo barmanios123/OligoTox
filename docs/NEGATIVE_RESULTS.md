@@ -185,18 +185,40 @@ the app displays says it.
 
 ---
 
-## 9. Provenance drift between published and ingested data
+## 9. A provenance discrepancy that was my own measurement error
 
-The project trains on 772 rows attributed to Papargyri 2020, and the
-published supplementary workbook for that study holds 772 rows. **Only 12 of
-74 unique training sequences match the published sequences.** The workbook
-also carries per-position LNA/DNA architecture that the pipeline never
-ingested, because the file is a legacy `.xls` despite its `.xlsx` extension
-and nothing had opened it.
+**What I reported.** That only 12 of 74 unique training sequences matched the
+published Papargyri supplementary sequences, though both held 772 rows, and
+that attribution in a curated dataset is not the same as derivation from the
+cited source.
 
-**Why it generalises.** Attribution in a curated dataset is not the same as
-derivation from the cited source. Check that what you ingested matches what
-the citation contains.
+**What was actually true.** The workbook's 772 gapmers collapse to **12
+unique base sequences**, because they are 12 sequences each carrying about 32
+distinct LNA/DNA architectures. The training data holds the same 772 rows and
+the same 12 sequences, and **all 12 match**. Joining on the gapmer identifier
+matches **772 of 772**.
+
+The 12-of-74 figure compared the workbook's sequences against every sequence
+in the training set from all sources, not against the Papargyri subset. It
+was a denominator error, and it described a provenance problem that does not
+exist.
+
+**What the investigation did find**, which matters more than the thing it
+disproved. Chemistry is the variable Papargyri screened: 290 distinct
+per-position LNA/DNA patterns over 12 sequences. Uppercasing a sequence
+destroys exactly that information, so the platform sees 12 sequences where
+the experiment ran 772 conditions. `lna_fraction` is recomputed from the
+sequence, which cannot recover an architecture the sequence does not encode.
+
+So the dataset that most deliberately varied chemistry contributes no
+chemistry signal, and the fix is a join that was available all along.
+
+**Why it generalises.** Check the denominator before reporting a mismatch,
+and check whether the identifier columns join before concluding two datasets
+disagree. A normalisation applied for good reasons elsewhere, uppercasing to
+make RNA and DNA spellings comparable, silently discarded the experimental
+variable here.
+
 Script: `scripts/ingest_papargyri_design.py`.
 
 ---
@@ -342,6 +364,58 @@ subset is a subset before trusting anything measured on it.
 
 Scripts: `scripts/evaluate_accessibility.py`,
 `scripts/fetch_transcripts.py --genomic`.
+
+---
+
+## 13. Zero-filling a feature turns it into a source indicator
+
+**What happened.** Entry 9 established that the Papargyri workbook carries
+real per-position LNA/DNA architecture for 772 training rows, joining 772 of
+772 on the gapmer identifier. That is the only genuine chemistry annotation
+in the project, on the dataset that deliberately varied chemistry.
+
+Adding it looked like the best single result the platform had produced:
+
+| Feature set | Hepatocellular injury PR-AUC |
+|---|---|
+| Sequence features (39) | 0.274 |
+| **+ chemistry architecture** | **0.564** |
+
+A doubling. It was entirely an artifact.
+
+**Why.** The chemistry columns exist for the 772 Papargyri rows and were
+filled with zeros for the other 842. A column that is zero exactly when a row
+is not Papargyri **is a source indicator**, and 193 of the 203 hepatocellular
+positives are Papargyri rows: P(positive | Papargyri) = 0.250 against
+P(positive | other) = 0.012.
+
+Dropping the explicit `design_available` flag did not help, because the
+zero-filled columns encode the same thing implicitly. The flag alone scores
+0.201, which is how the problem was spotted.
+
+**The clean test.** Evaluate inside Papargyri only, where chemistry varies
+across 16 LNA fractions and 10 gap lengths and the source is constant:
+
+| Feature set, within Papargyri | PR-AUC |
+|---|---|
+| Sequence features only | **0.541** |
+| + real chemistry | 0.435 |
+| Chemistry only | 0.449 |
+
+Chemistry makes it **worse** where it is the actual experimental variable.
+The entire apparent gain was provenance, not biology.
+
+**Why it generalises.** A feature available for one subset and imputed for
+the rest carries subset membership, whatever the imputation value. The usual
+defences do not catch it: the folds were grouped by sequence, no label was
+leaked, and the feature is mechanistically plausible. This is entry 3's
+failure mode arriving through a new door, found only by holding the source
+constant.
+
+Any future feature that covers part of the dataset should be evaluated
+within its covered subset before anyone looks at the pooled number.
+
+Script: `scripts/ingest_papargyri_design.py`.
 
 ---
 
