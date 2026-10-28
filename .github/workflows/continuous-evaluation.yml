@@ -25,6 +25,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write   # the health check opens an issue when the loop goes wrong
 
 jobs:
   evaluate:
@@ -84,6 +85,54 @@ jobs:
           print(f"promoted={','.join(promoted)}")
           print(f"demoted={','.join(demoted)}")
           PY
+
+      # The loop is built to run unwatched, which means silence has to mean
+      # something. Every step above either continues on error or exits 0 on a
+      # blocked source, and the evidence commit lands weekly regardless
+      # because the history log gains a line every run. Without this a loop
+      # that stopped learning looks exactly like a healthy one.
+      - name: Is the loop still healthy?
+        id: health
+        continue-on-error: true
+        run: python scripts/loop_health.py
+
+      - name: Say so when it is not
+        if: steps.health.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = 'The scheduled evaluation reported an unhealthy loop, '
+              + 'but reports/results/loop_health.json could not be read.';
+            try {
+              const h = JSON.parse(fs.readFileSync('reports/results/loop_health.json', 'utf8'));
+              const lines = Object.entries(h.checks).map(
+                ([name, c]) => `- ${c.ok ? 'ok' : '**FAIL**'} \`${name}\`: ${c.detail}`);
+              body = [
+                `Checked at ${h.checked_at}.`, '',
+                `Failing: ${h.failed.map(f => '`' + f + '`').join(', ')}`, '',
+                ...lines, '',
+                `[Run log](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              ].join('\n');
+            } catch (e) {}
+
+            const title = 'Continuous evaluation: the loop is unhealthy';
+            // Reuse one issue rather than filing a new one every week.
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'loop-health',
+            });
+            if (open.data.length) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: open.data[0].number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['loop-health'],
+              });
+            }
 
       - name: Commit refreshed evidence
         if: steps.lifecycle.outputs.changed == 'false'

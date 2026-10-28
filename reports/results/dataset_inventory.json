@@ -47,10 +47,11 @@
       "status": "fetchable",
       "kind": "toxicity",
       "endpoint": "hepatocellular_injury",
-      "on_disk": true,
+      "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "status fetchable",
-      "sequences": 149
+      "sequences": 149,
+      "remote": "HTTP 403"
     },
     {
       "name": "asoptimizer_rodent_alt_ast",
@@ -60,16 +61,17 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "no label threshold declared",
-      "sequences": 6000
+      "sequences": 6000,
+      "remote": "HTTP 403"
     },
     {
       "name": "aso_atlas_patent_gapmers",
-      "status": "available",
+      "status": "adopted_per_context",
       "kind": "efficacy",
       "endpoint": "target_inhibition",
-      "on_disk": false,
+      "on_disk": true,
       "usable_for_training": false,
-      "blocked_by": "status available",
+      "blocked_by": "status adopted_per_context",
       "sequences": 188521
     },
     {
@@ -80,7 +82,8 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "status deferred",
-      "sequences": null
+      "sequences": null,
+      "remote": "unreachable (URLError)"
     },
     {
       "name": "safesense_human_adverse_events",
@@ -90,6 +93,27 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "status not_applicable",
+      "sequences": null,
+      "remote": "reachable (200)"
+    },
+    {
+      "name": "gallo_sarscov2_shape_gapmers",
+      "status": "not_applicable",
+      "kind": "efficacy",
+      "endpoint": "none",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "status not_applicable",
+      "sequences": null
+    },
+    {
+      "name": "shape_human_transcripts",
+      "status": "wanted",
+      "kind": "feature",
+      "endpoint": "none",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "status wanted",
       "sequences": null
     }
   ]

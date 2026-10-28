@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-28T15:16:13.797535Z",
+  "healthy": true,
+  "failed": [],
+  "note": "A loop that has quietly stopped learning commits exactly like a healthy one, because the history log gains a line every run. These are the signs that distinguish them.",
+  "checks": {
+    "history_fresh": {
+      "ok": true,
+      "detail": "last run 0d 13h ago (4 runs logged)"
+    },
+    "sources_on_disk": {
+      "ok": true,
+      "detail": "all 4 present source(s) on disk; waiting on a human or a third party: ['nar2022_gapmer_hepatotox_screen']"
+    },
+    "training_ran": {
+      "ok": true,
+      "detail": "4 usable source(s), 9,637 sequences"
+    },
+    "triage_clear": {
+      "ok": true,
+      "detail": "all 36 monitored paper(s) assessed"
+    },
+    "evidence_consistent": {
+      "ok": true,
+      "detail": "3 validated endpoint(s), log agrees: ['cns_toxicity', 'hepatocellular_injury', 'offtarget_gene_silencing']"
+    }
+  }
+}
