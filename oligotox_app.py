@@ -17,6 +17,7 @@ if str(SRC) not in sys.path:
 from oligotox.features.candidate import candidate_features as build_candidate_features
 from oligotox.pipelines.score_candidate import score_candidate
 from oligotox.pkpd.bridge import compute_pkpd_enriched_features
+from oligotox.advice import explain, suggest
 from oligotox.efficacy.potency import score_efficacy
 from oligotox.reporting.oswg_report import OSWGSafetyReport
 
@@ -270,6 +271,7 @@ tabs = st.tabs([
     "PK/PD",
     "Regulatory Report",
     "Efficacy",
+    "Design advice",
     "Saved Runs",
     "Build Info",
 ])
@@ -451,7 +453,60 @@ with tabs[4]:
                 "probabilities, and they are not comparable across modalities."
             )
 
+
 with tabs[5]:
+    st.subheader("Design advice")
+    if not run:
+        st.info("Run an analysis to see which edits change the prediction.")
+    else:
+        seq = run["input"]["sequence"]
+        modality = run["input"]["modality"]
+        st.caption(
+            "Every single-base substitution is scored through the same models the "
+            "other tabs use. Each number is the difference between two real "
+            "predictions, not a coefficient. Only endpoints tiered validated are "
+            "used, because an edit recommended to move an unsupported number is "
+            "worse than no advice."
+        )
+        with st.spinner("Scanning substitutions..."):
+            advice = suggest(seq, modality, run["input"]["chemistry"],
+                             ps_fraction=run["input"]["candidate_features"].get("ps_fraction", 1.0),
+                             model_dir=MODEL_DIR, config_dir=CONFIG_DIR, top_n=12)
+
+        if not advice.validated_endpoints:
+            st.warning(
+                "No validated toxicity endpoint applies to this candidate, so no edit "
+                "can be recommended on toxicity grounds."
+            )
+        else:
+            st.write("**Starting point**")
+            st.json({k: round(v, 4) for k, v in advice.baseline_toxicity.items()})
+
+        if advice.edits:
+            rows = []
+            for e in advice.edits:
+                free = e.total_toxicity_reduction > 0 and e.mean_potency_change >= 0
+                rows.append({
+                    "edit": f"{e.from_base}{e.position}{e.to_base}",
+                    "risk reduction": round(e.total_toxicity_reduction, 4),
+                    "knockdown change %": round(e.mean_potency_change, 1),
+                    "trade-off": "none, improves both" if free else "costs potency",
+                    "sequence": e.sequence,
+                })
+            st.write("**Suggested single-base edits**, best risk reduction first")
+            st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+            free_wins = [r for r in rows if r["trade-off"].startswith("none")]
+            if free_wins:
+                st.success(
+                    f"{len(free_wins)} edit(s) lower predicted risk without costing "
+                    f"predicted knockdown, best being {free_wins[0]['edit']}."
+                )
+        else:
+            st.info("No single substitution moved a validated score meaningfully.")
+
+        for note in advice.notes:
+            st.caption(note)
+with tabs[6]:
     st.subheader("Saved runs")
     st.caption(
         "Runs from this browser session only. They are not written to the server "
@@ -476,7 +531,7 @@ with tabs[5]:
             )
             st.json(chosen)
 
-with tabs[6]:
+with tabs[7]:
     st.subheader("Build info")
     st.write({
         "app_file": str(ROOT / "oligotox_app.py"),

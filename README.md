@@ -311,6 +311,27 @@ Adopting it needed per-context models rather than a swap, so that is what it got
 
 Each prediction names its assay: the app shows "A431 knockdown 32%", not a potency score. The caveat on every one says it is not general potency, and a test asserts both.
 
+## Design advice
+
+Scoring a candidate tells you where it stands. The Design advice tab tells you what to change.
+
+Every single-base substitution is applied, re-scored through the same gated models the rest of the app uses, and ranked by how much predicted risk it removes. For a G-rich 20-mer starting at 0.66 predicted CNS risk:
+
+| Edit | Risk reduction | Knockdown change | Trade-off |
+|---|---|---|---|
+| G17C | 0.172 | -0.1% | none worth speaking of |
+| G17A | **0.174** | -3.7% | costs potency |
+| G11T | 0.148 | **+0.8%** | improves both |
+| G4C | 0.135 | +0.1% | improves both |
+
+Two design decisions behind it.
+
+**Advice comes only from validated endpoints.** Ten of the thirteen toxicity models are not presented as predictions, and an edit recommended to move a number that means nothing is worse than no advice. A test asserts the advised set equals the validated set.
+
+**Nothing is read off a coefficient.** The models are linear, so coefficients exist, but with correlated features they describe the fit rather than the effect of an edit. Every number here is the difference between two real predictions, and a test re-scores the edited sequence to confirm the claimed change is the one that actually occurs.
+
+Trade-offs are shown rather than hidden: an edit that lowers risk at the cost of knockdown says so, and the few that improve both are called out. As a sanity check the advice targets G residues, which is what the published rule the CNS endpoint reproduces would predict.
+
 ## Continuous evaluation
 
 The platform is meant to absorb new data without anyone watching, which is dangerous in the obvious way: a loop that retrains and promotes on its own is how the original PR-AUC 0.93 happened. So the loop is built as a ratchet. Evidence can promote an endpoint and evidence can demote it, but the gates never loosen and nothing can pin a tier.
@@ -401,7 +422,8 @@ The last step is what the app reads, so rerun it after any change to the baselin
 | Toxicity Results | Predictions for the validated endpoints, a composite over those only, and the remaining model outputs behind an expander with the reason each is excluded | Gated by evidence tier |
 | PK/PD | Liver AUC, Cmax and half-life from a GalNAc-siRNA compartment simulator | Mechanistic simulator, not fitted to this data |
 | Regulatory Report | OSWG-style JSON safety summary, with an evidence block and recommendations raised only from validated endpoints | Report formatting |
-| Efficacy | Potency for the candidate's modality, with its units, evidence and caveat | siRNA validated, ASO weak |
+| Efficacy | Potency for the candidate's modality, with units, evidence and caveat, plus per-assay knockdown models | siRNA validated, ASO per-assay |
+| Design advice | Single-base edits ranked by predicted risk reduction, with their potency cost | Validated endpoints only |
 | Saved Runs | Runs kept during the session | — |
 | Build Info | Model versions, feature count and config provenance | — |
 
