@@ -267,9 +267,10 @@ The suite checks that leaky columns can't re-enter training, that published metr
 
 The data every published number is computed from is in the repo, so the evaluation is checkable rather than claimed. Four files, 1.2 MB total: `feature_matrix.csv` (1,614 x 39), `label_matrix.csv`, `training_dataset.csv` (sequences, source and curated labels) and `dataset_metadata.json`. Every source in them is public literature, a PMID/PMC paper or an FDA label; the other contents of `data/processed/` are intermediates and stay out, as does `data/raw/`, which holds source papers and third-party datasets this repository has no right to redistribute.
 
-From a fresh clone, training takes about 10 seconds and the baselines about 95 seconds:
+From a fresh clone, training takes about 10 seconds and the baselines about 95 seconds. The scripts need a few libraries the app does not, kept in a separate extra so the deployed app stays small:
 
 ```bash
+pip install -e ".[scripts]"             # matplotlib, pypdf, xlrd, openpyxl
 python -m oligotox.training.train       # retrains all 13 endpoint models
 python scripts/evaluate_baselines.py    # recomputes baselines and bootstrap CIs
 ```
@@ -279,6 +280,7 @@ Verified in a clean clone of this commit: all 13 per-endpoint PR-AUCs reproduce 
 ### Retrain and regenerate the figures
 
 ```bash
+pip install -e ".[scripts]"              # figures and parsers need this extra
 python -m oligotox.training.train
 cp artifacts/metrics/training_summary.json reports/results/training_summary_after.json
 python scripts/make_results_figure.py

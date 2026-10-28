@@ -18,6 +18,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Needed by the scripts the README documents, not by the app or the tests.
+# Keeping them out of requirements.txt keeps the deployed app small.
+scripts = [
+    "matplotlib>=3.8",   # the results, baselines and calibration figures
+    "pypdf>=5.0",        # parsing the NAR 2022 hepatotoxicity supplement
+    "xlrd>=2.0",         # the Papargyri workbook, a legacy .xls
+    "openpyxl>=3.1",     # any modern .xlsx
+]
 efficacy = [
     "torch>=2.0",
 ]
