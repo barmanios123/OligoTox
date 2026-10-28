@@ -332,6 +332,29 @@ Two design decisions behind it.
 
 Trade-offs are shown rather than hidden: an edit that lowers risk at the cost of knockdown says so, and the few that improve both are called out. As a sanity check the advice targets G residues, which is what the published rule the CNS endpoint reproduces would predict.
 
+## Structure, accessibility and off-target burden
+
+Three mechanistic features, two of which were placeholders.
+
+**Real folding energies.** `struct_mfe_proxy` was computed from GC content and `struct_viennarna_used` was 0.0 on every row, so the shipped structure block contained no thermodynamics at all. ViennaRNA is now a pinned runtime requirement, and the code raises rather than falling back silently, because a placeholder where real values are expected is drift that nothing would catch.
+
+**Off-target complementarity.** The published mechanism for gapmer hepatotoxicity is RNase H1 cleaving unintended transcripts, so complementarity burden should predict it. `scripts/offtarget_transcriptome.py` matches three reverse-complement probes per oligo in one Aho-Corasick pass over the whole Ensembl cDNA set, 465,769 transcripts and 1,276 Mb. The previous implementation returned `0.01 + gc * 0.02` — GC content rescaled and labelled a hit count.
+
+It did not work: off-target burden alone scores **0.125 against a 0.126 base rate**. A dimensionality control makes the result honest — six random columns cost 0.030 and the off-target block costs 0.052, so most of the drop is the penalty of adding any six features to 19 positive sequences.
+
+**Target-site accessibility.** P(binding site unpaired) from ViennaRNA's local partition function. Pooled it helps: design features alone reach 0.100, with accessibility 0.157. It predicts almost nothing on its own (0.020), so it is complementary rather than independent, which is what the mechanism implies.
+
+### The finding that explains both
+
+Only 34% of ASO Atlas oligos locate in a canonical cDNA. Orientation is not the problem: the reverse complement matches and the forward sequence does not. Fetching the genomic span for DGAT2 and relocating the same 400 ASOs:
+
+| Target sequence | ASOs located |
+|---|---|
+| canonical cDNA, 2,407 nt | 96 of 400 (24%) |
+| **genomic span, 54,354 nt** | **400 of 400 (100%)** |
+
+Gapmers target pre-mRNA, and a cDNA has no introns. So the off-target burden above was measured against mature mRNA while the published mechanism implicates long pre-mRNAs — the wrong molecule, which is a different statement from the mechanism being wrong. `fetch_transcripts.py --genomic` fetches the right sequence and accessibility folds a bounded window around the site, so a megabase pre-mRNA stays tractable.
+
 ## Continuous evaluation
 
 The platform is meant to absorb new data without anyone watching, which is dangerous in the obvious way: a loop that retrains and promotes on its own is how the original PR-AUC 0.93 happened. So the loop is built as a ratchet. Evidence can promote an endpoint and evidence can demote it, but the gates never loosen and nothing can pin a tier.
