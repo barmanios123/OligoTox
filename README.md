@@ -255,6 +255,29 @@ Three failures for three different reasons, one pass, no tuning between runs. Th
 
 **[`docs/NEGATIVE_RESULTS.md`](docs/NEGATIVE_RESULTS.md)** records the nine failure modes this found, with numbers and the script for each. **[`docs/DATA_REQUESTS.md`](docs/DATA_REQUESTS.md)** lists what the platform is actually limited by, which is labelled data rather than method.
 
+## What each failing endpoint would need
+
+"Insufficient data" is true but useless on its own. `scripts/endpoint_requirements.py` works out the binding constraint per endpoint and what would clear it.
+
+The headline is more encouraging than the verdicts suggest. **Eight endpoints are blocked only on count, and 31 additional positive sequences in total would move all eight past the minimum** — 3 to 6 each:
+
+| Endpoint | Positive sequences | Needs |
+|---|---|---|
+| thrombocytopenia | 4 | 6 more |
+| coagulation effect | 5 | 5 more |
+| complement activation | 6 | 4 more |
+| hepatic vacuolation | 6 | 4 more |
+| cytokine release, innate immune activation, renal accumulation, renal tubular injury | 7 each | 3 more each |
+
+Clearing the count is necessary, not sufficient — most also need those positives to come from a *second* source, since all of their current ones sit in a single dataset.
+
+The other two failures are different in kind:
+
+- **Kupffer cell activation** is not short of data: it has 27 positive sequences, all 27 in `curated_other`. It needs positives from a systematic screen rather than hand-curated literature examples, because curated rows exist *because* a finding was published about them.
+- **Injection site reaction** has a real estimate that is too noisy. Roughly 109 positive sequences, against 12 now, would be needed for its confidence interval to clear the length-only baseline — an order-of-magnitude estimate that assumes the point estimate holds, which more data may disprove.
+
+Shortfalls against the minimum are exact arithmetic. Sample sizes needed to narrow a confidence interval are flagged `estimate: true` in `reports/results/endpoint_requirements.json`.
+
 ## Run it
 
 ```bash

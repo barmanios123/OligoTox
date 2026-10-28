@@ -1,0 +1,153 @@
+{
+  "min_positive_sequences": 10,
+  "note": "Shortfalls against the minimum are exact. Sample sizes needed to narrow a confidence interval are order-of-magnitude estimates and are flagged with estimate: true.",
+  "endpoints": [
+    {
+      "endpoint": "cns_toxicity",
+      "tier": "validated",
+      "positive_sequences": 1375,
+      "blocking_constraint": "none",
+      "needs": [
+        "Nothing. It is presented as a prediction."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "hepatocellular_injury",
+      "tier": "validated",
+      "positive_sequences": 19,
+      "blocking_constraint": "uncalibrated probabilities",
+      "needs": [
+        "Calibration: Brier skill -0.01 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "offtarget_gene_silencing",
+      "tier": "validated",
+      "positive_sequences": 12,
+      "blocking_constraint": "none",
+      "needs": [
+        "Nothing. It is presented as a prediction."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "injection_site_reaction",
+      "tier": "weak",
+      "positive_sequences": 12,
+      "blocking_constraint": "estimate too noisy to clear a baseline",
+      "needs": [
+        "Roughly 109 positive sequences, against 12 now, for the CI lower bound (0.07) to clear the best simple baseline (0.20). An order-of-magnitude estimate assuming the point estimate holds, which more data may disprove.",
+        "Calibration: Brier skill -2.37 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": true
+    },
+    {
+      "endpoint": "kupffer_cell_activation",
+      "tier": "source_confounded",
+      "positive_sequences": 27,
+      "blocking_constraint": "positives come from one source",
+      "needs": [
+        "Positive sequences from a source other than curated_other, which holds 27 of its 27. While every positive sits in one bucket, a model that recognises the bucket scores better than one that reads the molecule.",
+        "A systematic screen rather than hand-curated literature examples, since curated rows exist because a finding was published about them."
+      ],
+      "estimate": false,
+      "source_breakdown": {
+        "curated_other": 27
+      }
+    },
+    {
+      "endpoint": "coagulation_effect",
+      "tier": "insufficient_data",
+      "positive_sequences": 5,
+      "blocking_constraint": "too few positive sequences",
+      "needs": [
+        "5 more positive sequences to reach the minimum of 10, which is where a PR-AUC becomes a usable estimate. It has 5.",
+        "They should not all come from oligotox_main: positives from a second independent source are what separate biology from curation.",
+        "Calibration: Brier skill -0.59 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "complement_activation",
+      "tier": "insufficient_data",
+      "positive_sequences": 6,
+      "blocking_constraint": "too few positive sequences",
+      "needs": [
+        "4 more positive sequences to reach the minimum of 10, which is where a PR-AUC becomes a usable estimate. It has 6.",
+        "Calibration: Brier skill -0.55 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "cytokine_release",
+      "tier": "insufficient_data",
+      "positive_sequences": 7,
+      "blocking_constraint": "too few positive sequences",
+      "needs": [
+        "3 more positive sequences to reach the minimum of 10, which is where a PR-AUC becomes a usable estimate. It has 7.",
+        "They should not all come from oligotox_main: positives from a second independent source are what separate biology from curation.",
+        "Calibration: Brier skill -0.46 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "hepatic_vacuolation",
+      "tier": "insufficient_data",
+      "positive_sequences": 6,
+      "blocking_constraint": "too few positive sequences",
+      "needs": [
+        "4 more positive sequences to reach the minimum of 10, which is where a PR-AUC becomes a usable estimate. It has 6.",
+        "They should not all come from curated_other: positives from a second independent source are what separate biology from curation.",
+        "Calibration: Brier skill -2.13 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "innate_immune_activation",
+      "tier": "insufficient_data",
+      "positive_sequences": 7,
+      "blocking_constraint": "too few positive sequences",
+      "needs": [
+        "3 more positive sequences to reach the minimum of 10, which is where a PR-AUC becomes a usable estimate. It has 7.",
+        "They should not all come from oligotox_main: positives from a second independent source are what separate biology from curation.",
+        "Calibration: Brier skill -0.46 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "renal_accumulation",
+      "tier": "insufficient_data",
+      "positive_sequences": 7,
+      "blocking_constraint": "too few positive sequences",
+      "needs": [
+        "3 more positive sequences to reach the minimum of 10, which is where a PR-AUC becomes a usable estimate. It has 7.",
+        "They should not all come from oligotox_main: positives from a second independent source are what separate biology from curation.",
+        "Calibration: Brier skill -0.27 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "renal_tubular_injury",
+      "tier": "insufficient_data",
+      "positive_sequences": 7,
+      "blocking_constraint": "too few positive sequences",
+      "needs": [
+        "3 more positive sequences to reach the minimum of 10, which is where a PR-AUC becomes a usable estimate. It has 7.",
+        "Calibration: Brier skill -0.24 means the probabilities are no better than quoting the base rate. Ranking and calibration are separate problems, and this one is not fixed by a better model. It needs more labelled examples across the probability range."
+      ],
+      "estimate": false
+    },
+    {
+      "endpoint": "thrombocytopenia",
+      "tier": "insufficient_data",
+      "positive_sequences": 4,
+      "blocking_constraint": "too few positive sequences",
+      "needs": [
+        "6 more positive sequences to reach the minimum of 10, which is where a PR-AUC becomes a usable estimate. It has 4."
+      ],
+      "estimate": false
+    }
+  ]
+}
