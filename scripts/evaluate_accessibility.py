@@ -45,6 +45,8 @@ from oligotox.features.accessibility import site_accessibility  # noqa: E402
 
 ATLAS = ROOT / "data" / "external" / "aso_atlas.parquet"
 TRANSCRIPTS = ROOT / "data" / "external" / "transcripts"
+GENOMIC = ROOT / "data" / "external" / "genomic"
+MAX_PER_GENE = 250  # keeps the fold count tractable without favouring big genes
 RESULTS = ROOT / "reports" / "results"
 MIN_MAPPED_PER_GENE = 30
 CLIP = (0.0, 100.0)
@@ -54,9 +56,9 @@ def _model():
     return make_pipeline(StandardScaler(), Ridge(alpha=1.0))
 
 
-def load_transcripts() -> dict[str, str]:
+def load_sequences(directory: Path) -> dict[str, str]:
     out = {}
-    for path in sorted(TRANSCRIPTS.glob("*.json")):
+    for path in sorted(directory.glob("*.json")):
         if path.name.startswith("_"):
             continue
         try:
@@ -69,10 +71,17 @@ def load_transcripts() -> dict[str, str]:
     return out
 
 
-def build() -> tuple[pd.DataFrame, dict]:
-    transcripts = load_transcripts()
+def build(use_genomic: bool = True) -> tuple[pd.DataFrame, dict]:
+    # Gapmers target pre-mRNA, and only ~30% of them locate in a cDNA. Genomic
+    # spans are preferred where available; see NEGATIVE_RESULTS entry 12.
+    directory = GENOMIC if (use_genomic and any(GENOMIC.glob("*.json"))) else TRANSCRIPTS
+    transcripts = load_sequences(directory)
     if not transcripts:
-        raise SystemExit("no transcripts cached; run scripts/fetch_transcripts.py")
+        raise SystemExit(
+            "no sequences cached; run scripts/fetch_transcripts.py --genomic"
+        )
+    kind = "genomic span" if directory is GENOMIC else "canonical cDNA"
+    print(f"using {len(transcripts)} {kind}(s)")
 
     raw = pd.read_parquet(ATLAS).dropna(
         subset=["aso_sequence_5_to_3", "inhibition_percent", "target_gene"]
@@ -82,6 +91,12 @@ def build() -> tuple[pd.DataFrame, dict]:
     raw = raw[raw["target_gene"].isin(transcripts)]
     raw["y"] = raw["inhibition_percent"].clip(*CLIP)
     agg = raw.groupby(["sequence", "target_gene"], as_index=False).agg(y=("y", "mean"))
+    # Cap per gene so one large gene cannot dominate the sample.
+    agg = pd.concat(
+        [g.sample(min(len(g), MAX_PER_GENE), random_state=42)
+         for _, g in agg.groupby("target_gene")],
+        ignore_index=True,
+    )
 
     rows, mapped = [], 0
     for sequence, gene, y in agg[["sequence", "target_gene", "y"]].itertuples(index=False):
@@ -99,8 +114,10 @@ def build() -> tuple[pd.DataFrame, dict]:
         "candidate_sequences": int(len(agg)),
         "sites_located": mapped,
         "coverage": round(mapped / max(len(agg), 1), 4),
+        "sequence_kind": kind,
         "note": "Unlocated sites are mostly intronic: a cDNA has no introns, and "
-                "gapmers frequently target pre-mRNA.",
+                "gapmers frequently target pre-mRNA. Against a genomic span the "
+                "same oligos locate at close to 100%.",
     }
     return pd.DataFrame(rows), coverage
 
