@@ -1,0 +1,38 @@
+{
+  "42033225": {
+    "verdict": "single_study",
+    "reason": "a panel of fluorinated ASOs against one C9ORF72 repeat target, read out as reporter translation and foci burden. One target and a non-gapmer chemistry; no toxicity readout to train on."
+  },
+  "41323796": {
+    "verdict": "method",
+    "reason": "the SCAD conjugate delivery platform. Its screening optimises the accessory oligo architecture, not the sequence of a therapeutic oligo, so nothing maps onto a per-sequence endpoint."
+  },
+  "42562700": {
+    "verdict": "single_study",
+    "reason": "small-molecule screening against microglial ANXA2, with siRNA used only to confirm the target. Not an oligonucleotide screen."
+  },
+  "42724647": {
+    "verdict": "review",
+    "reason": "a review of in vitro CNS safety assays. Useful for choosing a readout for the CNS endpoint, but it reports no measurements of its own."
+  },
+  "PMC13651819": {
+    "verdict": "single_study",
+    "reason": "24 gapmers designed against single-stranded SARS-CoV-2 regions, ~10 assayed. Read in full. Too few rows and a viral target, so not ingestible, but it is the one external result bearing on accessibility and is registered as gallo_sarscov2_shape_gapmers and cited in NEGATIVE_RESULTS entry 12."
+  },
+  "PMC13669632": {
+    "verdict": "single_study",
+    "reason": "title only; long ASOs perturbing the RNA exosome is a mechanism study of one construct class, with no per-sequence endpoint."
+  },
+  "PMC13659513": {
+    "verdict": "review",
+    "reason": "title only; TCR-T cell therapy in hepatocellular carcinoma. Not an oligonucleotide paper at all, matched on the liver vocabulary."
+  },
+  "PMC13691374": {
+    "verdict": "single_study",
+    "reason": "title only; NEAT1 and MYC degradation is target biology, not an oligo screen."
+  },
+  "PMC12048806": {
+    "verdict": "single_study",
+    "reason": "title only; dissects one lncRNA locus. 'Integrating datasets' refers to public transcriptomics, not oligonucleotide measurements."
+  }
+}

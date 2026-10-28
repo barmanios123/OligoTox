@@ -52,6 +52,13 @@ jobs:
         continue-on-error: true
         run: python scripts/monitor_literature.py
 
+      # Without this the monitor is a backlog generator: it found 36 papers and
+      # 34 sat unread. Triage classifies each one and leaves only real dataset
+      # candidates open.
+      - name: Triage what the monitor found
+        continue-on-error: true
+        run: python scripts/triage_literature.py
+
       - name: Run the pipeline
         run: |
           python scripts/run_pipeline.py \

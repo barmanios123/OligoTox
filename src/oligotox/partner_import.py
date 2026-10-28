@@ -81,7 +81,7 @@ def validate_partner_dataset(df: pd.DataFrame, partner_id: str) -> dict:
         "||".join(sorted(df["sequence"].dropna().astype(str))).encode()
     ).hexdigest()[:16]
     stats["dataset_fingerprint"] = fingerprint
-    stats["timestamp"] = datetime.datetime.utcnow().isoformat() + "Z"
+    stats["timestamp"] = datetime.datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z")
 
     status = "FAILED" if errors else ("WARNING" if warnings_list else "PASSED")
     return {
@@ -106,7 +106,7 @@ def register_partner_import(validation_report: dict, run_registry_path: str,
                              partner_id: str, file_path: str = None) -> str:
     """Log a validated partner import to the run registry. Returns the run_id."""
     import uuid
-    run_id = f"partner_import_{partner_id}_{datetime.datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+    run_id = f"partner_import_{partner_id}_{datetime.datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
     record = {
         "run_id":       run_id,
         "job_name":     "partner_dataset_import",

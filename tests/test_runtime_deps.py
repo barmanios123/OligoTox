@@ -9,7 +9,11 @@ import sys
 
 import pytest
 
-OPTIONAL = ("torch", "RNA", "transformers", "plotly", "fastapi")
+# ViennaRNA (`RNA`) used to be here. It is required now: structure_features
+# raises without it rather than falling back to a GC placeholder, so blocking
+# it no longer tests anything real, and leaving it listed as optional is how
+# its absence from pyproject went unnoticed.
+OPTIONAL = ("torch", "transformers", "plotly", "fastapi")
 
 # Everything oligotox_app.py imports at module level.
 APP_IMPORTS = (
@@ -63,3 +67,36 @@ def test_the_untrained_stubs_say_what_they_need(without_optional_extras):
         efficacy.OligoFormer
     # The shipped path is unaffected.
     assert callable(efficacy.score_efficacy)
+
+
+def test_pyproject_declares_everything_requirements_pins():
+    """`pip install .` must give a working package, not one missing a hard dep.
+
+    requirements.txt pins what the deployed app and CI install; pyproject's
+    core dependencies are what anyone installing the package gets. When a
+    requirement is added to only the first, both environments keep working and
+    nothing fails until someone installs the package on its own. That is how
+    ViennaRNA came to be pinned in requirements.txt and absent from pyproject
+    while the feature path hard-required it.
+    """
+    import re
+    import tomllib
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    pinned = {
+        re.split(r"[=<>!~]", line, maxsplit=1)[0].strip().lower()
+        for line in (root / "requirements.txt").read_text().splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    }
+    project = tomllib.loads((root / "pyproject.toml").read_text())["project"]
+    declared = {
+        re.split(r"[=<>!~\[;]", dep, maxsplit=1)[0].strip().lower()
+        for group in [project.get("dependencies", [])]
+        + list(project.get("optional-dependencies", {}).values())
+        for dep in group
+    }
+    assert not (pinned - declared), (
+        f"pinned in requirements.txt but undeclared in pyproject: "
+        f"{sorted(pinned - declared)}"
+    )

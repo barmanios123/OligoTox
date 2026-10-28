@@ -15,6 +15,11 @@ dependencies = [
     "scikit-learn>=1.3",
     "joblib>=1.3",
     "streamlit>=1.30",
+    # Not optional. structure_features raises without it rather than falling
+    # back to a GC placeholder, so a `pip install .` that omitted it would
+    # give a package whose feature path cannot run. requirements.txt pinned it
+    # and this file did not, which is only invisible while both are installed.
+    "ViennaRNA>=2.7",
 ]
 
 [project.optional-dependencies]
@@ -22,9 +27,11 @@ dependencies = [
 # Keeping them out of requirements.txt keeps the deployed app small.
 scripts = [
     "matplotlib>=3.8",   # the results, baselines and calibration figures
+    "scipy>=1.11",       # spearmanr in the accessibility and potency evaluations
     "pypdf>=5.0",        # parsing the NAR 2022 hepatotoxicity supplement
     "xlrd>=2.0",         # the Papargyri workbook, a legacy .xls
     "openpyxl>=3.1",     # any modern .xlsx
+    "pyahocorasick>=2.0",  # multi-pattern transcriptome scan in offtarget_transcriptome
 ]
 efficacy = [
     "torch>=2.0",

@@ -3,7 +3,7 @@ import os
 import sys
 import json
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -146,9 +146,9 @@ def _build_report(seq, chemistry, toxicity_result, pkpd_result):
     }
 
     report = OSWGSafetyReport(
-        compound_id=f"RUN-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+        compound_id=f"RUN-{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}",
         sequence=seq,
-        assessment_date=datetime.utcnow().strftime("%Y-%m-%d"),
+        assessment_date=datetime.now(UTC).strftime("%Y-%m-%d"),
         toxicity_predictions=toxicity_predictions,
         pkpd_summary=pkpd_summary,
         evidence_tiers=evidence_tiers,
@@ -174,7 +174,7 @@ def _save_run(payload: dict):
     """
     run_id = payload.get("run_id") or str(uuid.uuid4())
     payload["run_id"] = run_id
-    payload["saved_at"] = datetime.utcnow().isoformat() + "Z"
+    payload["saved_at"] = datetime.now(UTC).isoformat().replace("+00:00", "Z")
     st.session_state.setdefault("runs", []).insert(0, payload)
     return run_id
 

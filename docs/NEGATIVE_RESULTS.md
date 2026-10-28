@@ -380,6 +380,37 @@ bias problem, and fixing it reversed the conclusion rather than sharpening
 it. If a feature can only be computed for a subset, establish why that
 subset is a subset before trusting anything measured on it.
 
+**What this does not settle: predicted is not measured.** The literature
+monitor later surfaced Gallo et al. 2026 (iScience, PMC13651819), who
+designed 24 gapmers against SARS-CoV-2 regions chosen for single-strandedness
+and report a significant Pearson correlation between target SHAPE-MaP
+reactivity and gapmer efficacy.
+
+That is a claim in the opposite direction, and it is not in conflict with the
+null above, because the two measure different things:
+
+| | here | Gallo et al. |
+|---|---|---|
+| accessibility from | ViennaRNA prediction | SHAPE-MaP chemical probing |
+| target | human pre-mRNA | SARS-CoV-2 genome |
+| oligos | ~5,000 over 59 genes | ~10 assayed, of 24 designed |
+| accessibility range | whatever the sites happened to be | pre-selected to be accessible |
+
+Their result is small-n and range-restricted, since every candidate was
+chosen for accessibility before efficacy was measured, so the correlation is
+within an already-accessible set. It cannot carry much weight on its own. But
+it does isolate the one variable this repository has never tested: whether
+the null here is about accessibility, or only about *predicted* accessibility.
+ViennaRNA's local partition function and a chemical probing experiment are
+not interchangeable, and conflating them is the kind of substitution this
+document exists to catch.
+
+What would settle it is per-nucleotide probing data for human transcripts
+these oligos target, scored the same way. That is tracked as
+`shape_human_transcripts` in `data/registry/sources.json`. Until then the
+honest claim is narrow: **predicted** accessibility adds +0.014 here, and
+measured accessibility is untested.
+
 Scripts: `scripts/evaluate_accessibility.py`,
 `scripts/fetch_transcripts.py --genomic`.
 
