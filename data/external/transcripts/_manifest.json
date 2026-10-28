@@ -2,7 +2,7 @@
   "hits": {
     "F12": {
       "gene_id": "ENSG00000131187",
-      "length": 2036
+      "length": 14451
     },
     "DGAT2": {
       "gene_id": "ENSG00000062282",
@@ -68,73 +68,53 @@
       "gene_id": "ENSG00000164344",
       "length": 2258
     },
-    "SCN1A": {
-      "gene_id": "ENSG00000144285",
-      "length": 11940
+    "GCGR": {
+      "gene_id": "ENSG00000215644",
+      "length": 2030
     },
-    "GRN": {
-      "gene_id": "ENSG00000030582",
-      "length": 2130
+    "F11": {
+      "gene_id": "ENSG00000088926",
+      "length": 3053
     },
-    "APOB": {
-      "gene_id": "ENSG00000084674",
-      "length": 14121
+    "PTBP1": {
+      "gene_id": "ENSG00000011304",
+      "length": 3206
     },
-    "PTPN1": {
-      "gene_id": "ENSG00000196396",
-      "length": 3979
+    "FUS": {
+      "gene_id": "ENSG00000089280",
+      "length": 1824
     },
-    "FGFR4": {
-      "gene_id": "ENSG00000160867",
-      "length": 3093
+    "FN1": {
+      "gene_id": "ENSG00000115414",
+      "length": 8390
     },
-    "SCD": {
-      "gene_id": "ENSG00000099194",
-      "length": 5245
+    "CD40": {
+      "gene_id": "ENSG00000101017",
+      "length": 1682
     },
-    "STMN2": {
-      "gene_id": "ENSG00000104435",
-      "length": 1903
+    "PLA2G2A": {
+      "gene_id": "ENSG00000188257",
+      "length": 846
     },
-    "CRP": {
-      "gene_id": "ENSG00000132693",
-      "length": 2015
+    "PPARD": {
+      "gene_id": "ENSG00000112033",
+      "length": 3734
     },
-    "MECP2": {
-      "gene_id": "ENSG00000169057",
-      "length": 10343
+    "LIPG": {
+      "gene_id": "ENSG00000101670",
+      "length": 10418
     },
-    "IL4R": {
-      "gene_id": "ENSG00000077238",
-      "length": 3624
+    "ANGPT2": {
+      "gene_id": "ENSG00000091879",
+      "length": 5268
     },
-    "HMGCR": {
-      "gene_id": "ENSG00000113161",
-      "length": 4530
+    "PPARA": {
+      "gene_id": "ENSG00000186951",
+      "length": 10118
     },
-    "EIF4E": {
-      "gene_id": "ENSG00000151247",
-      "length": 2427
-    },
-    "PLSCR1": {
-      "gene_id": "ENSG00000188313",
-      "length": 1976
-    },
-    "C3": {
-      "gene_id": "ENSG00000125730",
-      "length": 5231
-    },
-    "TGFB3": {
-      "gene_id": "ENSG00000119699",
-      "length": 3431
-    },
-    "MMP11": {
-      "gene_id": "ENSG00000099953",
-      "length": 2261
-    },
-    "DGAT1": {
-      "gene_id": "ENSG00000185000",
-      "length": 3653
+    "TGFB2": {
+      "gene_id": "ENSG00000092969",
+      "length": 5868
     },
     "C9orf72": {
       "gene_id": "ENSG00000147894",
@@ -144,17 +124,21 @@
       "gene_id": "ENSG00000135446",
       "length": 1865
     },
-    "SREBF1": {
-      "gene_id": "ENSG00000072310",
-      "length": 4901
+    "F9": {
+      "gene_id": "ENSG00000101981",
+      "length": 2800
     },
-    "LPA": {
-      "gene_id": "ENSG00000198670",
-      "length": 6431
+    "PCK2": {
+      "gene_id": "ENSG00000100889",
+      "length": 2179
     },
-    "RHO": {
-      "gene_id": "ENSG00000163914",
-      "length": 2768
+    "RAF1": {
+      "gene_id": "ENSG00000132155",
+      "length": 3191
+    },
+    "CSNK2A1": {
+      "gene_id": "ENSG00000101266",
+      "length": 12984
     },
     "FGFR2": {
       "gene_id": "ENSG00000066468",
@@ -172,9 +156,37 @@
       "gene_id": "ENSG00000116016",
       "length": 5155
     },
-    "RETN": {
-      "gene_id": "ENSG00000104918",
-      "length": 516
+    "PTPRA": {
+      "gene_id": "ENSG00000132670",
+      "length": 3353
+    },
+    "TMPRSS6": {
+      "gene_id": "ENSG00000187045",
+      "length": 3265
+    },
+    "TYR": {
+      "gene_id": "ENSG00000077498",
+      "length": 2062
+    },
+    "PLIN1": {
+      "gene_id": "ENSG00000166819",
+      "length": 2916
+    },
+    "ACAT2": {
+      "gene_id": "ENSG00000120437",
+      "length": 1520
+    },
+    "TLN1": {
+      "gene_id": "ENSG00000137076",
+      "length": 8623
+    },
+    "CYTH1": {
+      "gene_id": "ENSG00000108669",
+      "length": 3290
+    },
+    "CALR": {
+      "gene_id": "ENSG00000179218",
+      "length": 1901
     }
   },
   "misses": [
@@ -191,30 +203,29 @@
     "ATXN3",
     "BAX",
     "BIRC5",
+    "C3",
     "C9ORF72",
-    "CD40",
     "CFB",
     "COASY",
     "COMP",
-    "CSNK2A1",
     "CTGF",
+    "DGAT1",
+    "DGAT2",
     "DMPK",
     "DNM2",
     "EIF4EBP2",
     "EZH2",
-    "F11",
     "F7",
-    "F9",
     "FLT1",
-    "FN1",
     "FOXP3",
-    "FUS",
-    "GCGR",
     "GFAP",
     "HBXIP",
     "HIF1A",
     "HSD11B1",
+    "HSD17B13",
+    "HTT",
     "IFNAR1",
+    "IRF4",
     "IRF5",
     "KCNT1",
     "KDR",
@@ -223,18 +234,19 @@
     "LRRK2",
     "MALAT1",
     "MAPT",
+    "MMP11",
+    "MSH3",
+    "NLRP3",
     "NOX4",
     "NR3C1",
     "ODC1",
-    "PCK2",
     "PKK",
     "PLN",
+    "PLSCR1",
+    "PMP22",
     "PRNP",
     "PSD3",
-    "PTBP1",
-    "PTPRA",
     "PTPRU",
-    "RAF1",
     "SCN2A",
     "SCNN1A",
     "SLC37A4",
@@ -242,11 +254,11 @@
     "SNCA",
     "SPDEF",
     "STAT3",
+    "TGFB3",
     "TGFBR2",
-    "TMPRSS6",
     "TPO",
     "TTR",
-    "TYR",
-    "UBE3A"
+    "UBE3A",
+    "YAP1"
   ]
 }

@@ -1,0 +1,31 @@
+{
+  "hits": {
+    "DGAT2": {
+      "gene_id": "ENSG00000062282",
+      "length": 54354
+    },
+    "PMP22": {
+      "gene_id": "ENSG00000109099",
+      "length": 95977
+    },
+    "ANGPTL3": {
+      "gene_id": "ENSG00000132855",
+      "length": 10236
+    },
+    "IRF4": {
+      "gene_id": "ENSG00000137265",
+      "length": 19705
+    }
+  },
+  "misses": [
+    "APP",
+    "ATXN1",
+    "DMPK",
+    "HSD17B13",
+    "HTT",
+    "LRRK2",
+    "MSH3",
+    "NLRP3",
+    "YAP1"
+  ]
+}

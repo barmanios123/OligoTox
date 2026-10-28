@@ -33,10 +33,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ATLAS = ROOT / "data" / "external" / "aso_atlas.parquet"
 CACHE = ROOT / "data" / "external" / "transcripts"
+GENOMIC_CACHE = ROOT / "data" / "external" / "genomic"
 MANIFEST = CACHE / "_manifest.json"
 ENSEMBL = "https://rest.ensembl.org"
 PAUSE = 0.12
 MAX_CDNA = 25_000
+MAX_GENOMIC = 400_000
+GENOMIC = [False]  # set by --genomic
 
 NETWORK_ERRORS = (urllib.error.HTTPError, urllib.error.URLError,
                   json.JSONDecodeError, TimeoutError, OSError)
@@ -76,8 +79,15 @@ def resolve(symbol: str) -> dict | None:
         canonical = next((x for x in transcripts if x.get("is_canonical")), None)
         chosen = canonical or max(transcripts, key=lambda x: x.get("length") or 0)
 
+        # Gapmers frequently target pre-mRNA, and a cDNA has no introns: for
+        # DGAT2, 24% of its ASOs locate in the cDNA and 100% in the genomic
+        # span. Genomic is the right target unless cDNA is asked for.
+        if GENOMIC[0]:
+            query = f"/sequence/id/{gene.get('id')}?type=genomic"
+        else:
+            query = f"/sequence/id/{chosen['id']}?type=cdna"
         try:
-            payload = _get(f"/sequence/id/{chosen['id']}?type=cdna")
+            payload = _get(query, timeout=90)
         except NETWORK_ERRORS:
             continue
         time.sleep(PAUSE)
@@ -88,8 +98,10 @@ def resolve(symbol: str) -> dict | None:
         return {
             "symbol": symbol, "resolved_as": candidate, "gene_id": gene.get("id"),
             "transcript_id": chosen["id"], "canonical": bool(canonical),
-            "length": len(sequence), "sequence": sequence[:MAX_CDNA],
-            "truncated": len(sequence) > MAX_CDNA,
+            "kind": "genomic" if GENOMIC[0] else "cdna",
+            "length": len(sequence),
+            "sequence": sequence[: (MAX_GENOMIC if GENOMIC[0] else MAX_CDNA)],
+            "truncated": len(sequence) > (MAX_GENOMIC if GENOMIC[0] else MAX_CDNA),
         }
     return None
 
@@ -98,7 +110,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--retry-misses", action="store_true")
+    parser.add_argument("--genomic", action="store_true",
+                        help="fetch the genomic span including introns, which is "
+                             "what gapmers target")
     args = parser.parse_args(argv)
+    GENOMIC[0] = args.genomic
 
     if not ATLAS.exists():
         raise SystemExit(f"missing {ATLAS}; run scripts/ingest_aso_atlas.py first")
@@ -111,13 +127,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     symbols = list(genes.index)[: args.limit] if args.limit else list(genes.index)
 
-    CACHE.mkdir(parents=True, exist_ok=True)
-    manifest = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {"hits": {}, "misses": []}
+    # cDNA and genomic are different caches and must not share a manifest,
+    # or a gene fetched as cDNA is skipped when genomic is asked for.
+    cache_dir = GENOMIC_CACHE if args.genomic else CACHE
+    globals()["CACHE"] = cache_dir
+    manifest_path = cache_dir / "_manifest.json"
+    globals()["MANIFEST"] = manifest_path
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {"hits": {}, "misses": []}
     misses = set(manifest.get("misses", []))
 
     fetched = skipped = failed = 0
     for i, symbol in enumerate(symbols, 1):
-        path = CACHE / f"{symbol.replace('/', '_')}.json"
+        path = cache_dir / f"{symbol.replace('/', '_')}.json"
         if path.exists() or (symbol in misses and not args.retry_misses):
             skipped += 1
             continue
@@ -134,12 +156,12 @@ def main(argv: list[str] | None = None) -> int:
         if i % 25 == 0:
             print(f"  {i}/{len(symbols)}  fetched={fetched} cached={skipped} missed={failed}")
             manifest["misses"] = sorted(misses)
-            MANIFEST.write_text(json.dumps(manifest, indent=2))
+            manifest_path.write_text(json.dumps(manifest, indent=2))
 
     manifest["misses"] = sorted(misses)
-    MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"\nfetched {fetched}, already cached {skipped}, unresolved {failed}")
-    print(f"{len(manifest['hits'])} gene(s) have a transcript in {CACHE.relative_to(ROOT)}")
+    print(f"{len(manifest['hits'])} gene(s) have a sequence in {cache_dir.relative_to(ROOT)}")
     return 0
 
 

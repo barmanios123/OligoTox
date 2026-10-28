@@ -87,9 +87,15 @@ def find_site(oligo: str, transcript: str) -> int:
     return -1
 
 
-@lru_cache(maxsize=64)
+# Only the neighbourhood of a site matters for local accessibility, and a
+# pre-mRNA can be megabases. Folding a bounded window keeps genomic targets
+# tractable without changing what is being measured.
+CONTEXT = 400
+
+
+@lru_cache(maxsize=256)
 def _unpaired_profile(transcript: str) -> tuple:
-    """Local unpaired probabilities for a transcript, cached per sequence."""
+    """Local unpaired probabilities for a sequence, cached."""
     import RNA
 
     rna = transcript.upper().replace("T", "U")
@@ -120,9 +126,15 @@ def site_accessibility(oligo: str, transcript: str) -> SiteAccessibility:
         return SiteAccessibility(False, -1, len(oligo), 0.0, 0.0, 0.0, 0.0, len(transcript))
 
     length = min(len(oligo), MAX_UNPAIRED)
-    profile = _unpaired_profile(transcript)
 
-    end = start + length  # 1-based end index into the profile
+    # Fold a bounded window around the site rather than the whole molecule.
+    left = max(start - CONTEXT, 0)
+    right = min(start + len(oligo) + CONTEXT, len(transcript))
+    window_seq = transcript[left:right]
+    local_start = start - left
+
+    profile = _unpaired_profile(window_seq)
+    end = local_start + length  # 1-based end index into the profile
     probability = _window_probability(profile, end, length)
     flank = _window_probability(profile, max(end - FLANK_OFFSET, length), length)
 

@@ -321,10 +321,24 @@ A gain of +0.057, and notably accessibility predicts almost nothing on its
 own. It is complementary rather than independent, which is what the
 mechanism implies: a useful oligo needs both good design and an open site.
 
-**The catch.** Only 34% of ASO Atlas oligos locate in the canonical cDNA.
-Orientation is not the problem, since the reverse complement matches and the
-forward sequence does not. Gapmers frequently target pre-mRNA, and cDNA has
-no introns.
+**The catch, and its fix.** Only 34% of ASO Atlas oligos locate in the
+canonical cDNA. Orientation is not the problem, since the reverse complement
+matches and the forward sequence does not.
+
+The cause is now confirmed rather than suspected. Fetching the genomic span
+for DGAT2 (54,354 nt, against 2,407 nt of cDNA) and relocating the same 400
+ASOs:
+
+| Target sequence | ASOs located |
+|---|---|
+| canonical cDNA | 96 of 400 (24%) |
+| **genomic span, introns included** | **400 of 400 (100%)** |
+
+Gapmers target pre-mRNA. Any feature computed against a cDNA is measuring
+the wrong molecule for three quarters of them, which applies equally to the
+off-target burden in entry 11. `scripts/fetch_transcripts.py --genomic`
+fetches the right sequence, and accessibility folds a bounded window around
+the site so a megabase pre-mRNA stays tractable.
 
 Within a single assay the result is unsettled: A431 gains +0.051, HepG2
 loses 0.012, on 4 to 5 genes each. Too few genes to call, which is itself
