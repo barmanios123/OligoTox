@@ -1,0 +1,117 @@
+{
+  "description": "Datasets the continuous pipeline may ingest. A source is only fetched and used if it is declared here with a readout direction and a label threshold, because turning a continuous readout into a toxic/not label is a modelling decision and must not be made by a downloader.",
+  "rules": {
+    "direction_required": "Every toxicity source states higher_is_toxic or lower_is_toxic. A source without one is skipped, not guessed.",
+    "efficacy_never_labelled_toxic": "Potency readouts carry kind=efficacy and are excluded from toxicity training.",
+    "licence_required": "A source is only fetched when redistribution or local use is permitted and stated here.",
+    "no_auto_promotion": "Fetching data cannot promote an endpoint. Tiers are recomputed by scripts/derive_evidence_tiers.py from the evidence, every run."
+  },
+  "sources": [
+    {
+      "name": "oligogym_cns_moe_neurotox",
+      "status": "present",
+      "kind": "toxicity",
+      "endpoint": "cns_toxicity",
+      "readout": "FOB_score_3h",
+      "direction": "higher_is_toxic",
+      "threshold": 3.0,
+      "local_path": "data/oligogym/MOE_Neurotox_1_processed.csv.gz",
+      "licence": "CC BY 4.0 via OligoGym; see data/oligogym/ATTRIBUTION.md",
+      "sequences": 1685,
+      "notes": "In vivo functional observational battery. Half of the CNS endpoint."
+    },
+    {
+      "name": "oligogym_cns_hagedorn_calcium",
+      "status": "present",
+      "kind": "toxicity",
+      "endpoint": "cns_toxicity",
+      "readout": "calcium_oscillation_score",
+      "direction": "lower_is_toxic",
+      "threshold": 50.0,
+      "local_path": "data/oligogym/Hagedorn_2022_1_processed.csv.gz",
+      "licence": "CC BY 4.0 via OligoGym; see data/oligogym/ATTRIBUTION.md",
+      "sequences": 1653,
+      "notes": "In vitro calcium oscillation, LNA gapmers. Toxicity REDUCES oscillation, so the direction is inverted relative to the shipped combined file."
+    },
+    {
+      "name": "oligogym_mcquisten_activity",
+      "status": "present",
+      "kind": "efficacy",
+      "endpoint": "target_inhibition",
+      "readout": "activity_range_0to1",
+      "direction": null,
+      "threshold": null,
+      "local_path": "data/oligogym/McQuisten_2007_1_processed.csv.gz",
+      "licence": "CC BY 4.0 via OligoGym",
+      "sequences": 3868,
+      "notes": "Potency, not toxicity. Trains the ASO activity model only."
+    },
+    {
+      "name": "oligogym_ichihara_potency",
+      "status": "present",
+      "kind": "efficacy",
+      "endpoint": "target_inhibition",
+      "readout": "pct_inhibition",
+      "direction": null,
+      "threshold": null,
+      "local_path": "data/oligogym/Ichihara_2007_1_processed.csv.gz",
+      "licence": "CC BY 4.0 via OligoGym",
+      "sequences": 2431,
+      "notes": "siRNA duplexes written sense.antisense in one field; the normalizer splits them."
+    },
+    {
+      "name": "nar2022_gapmer_hepatotox_screen",
+      "status": "fetchable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "readout": "ALT_U_per_L",
+      "direction": "higher_is_toxic",
+      "threshold": 100.0,
+      "url": "https://academic.oup.com/nar/article/50/13/7224/6633893",
+      "fetch_note": "Supplementary Table S1 is a PDF behind a signed URL that expires. Open the article page, download the supplement, then run scripts/evaluate_hepatotox_external.py against it.",
+      "local_path": "data/external/nar2022_hepatotox_screen.csv",
+      "licence": "Open access article; the extracted table is a small factual dataset redistributed with citation",
+      "sequences": 149,
+      "positives": 5,
+      "notes": "External check only. 5 positives cannot validate an endpoint, and the pipeline treats it as directional."
+    },
+    {
+      "name": "asoptimizer_rodent_alt_ast",
+      "status": "requested",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "readout": "ALT/AST",
+      "direction": "higher_is_toxic",
+      "threshold": null,
+      "url": "https://doi.org/10.1093/nar/gkaf379",
+      "licence": "unknown",
+      "sequences": 6000,
+      "notes": "Roughly 6,000 curated rodent experiments, described as a future release. The single highest-value source for this platform; see docs/DATA_REQUESTS.md. Threshold to be set once the readout scale is known."
+    },
+    {
+      "name": "aso_atlas_patent_gapmers",
+      "status": "unverified",
+      "kind": "efficacy",
+      "endpoint": "target_inhibition",
+      "readout": "knockdown",
+      "direction": null,
+      "threshold": null,
+      "url": "https://www.biorxiv.org/content/10.1101/2025.10.29.685292v1",
+      "licence": "unknown",
+      "sequences": 188521,
+      "notes": "188,521 gapmer sequences from USPTO patents. Availability not confirmed; a landing-page check returned HTTP 429."
+    },
+    {
+      "name": "open_tggates_liver",
+      "status": "deferred",
+      "kind": "prior",
+      "endpoint": "hepatocellular_injury",
+      "readout": "clinical chemistry and histopathology",
+      "direction": "higher_is_toxic",
+      "threshold": null,
+      "url": "https://toxico.nibiohn.go.jp/english/",
+      "licence": "public",
+      "notes": "Small molecules, not oligonucleotides. Usable only as a hepatotoxicity prior, which needs enough oligo labels to fine-tune against. Deferred behind asoptimizer_rodent_alt_ast."
+    }
+  ]
+}

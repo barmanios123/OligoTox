@@ -1,0 +1,124 @@
+name: Continuous evaluation
+
+# Runs the whole evaluation chain on a schedule, in GitHub's cloud, so it
+# keeps working while nobody is at a machine.
+#
+# What it may do on its own: re-normalise declared data, retrain, recompute
+# baselines, calibration and tiers, and commit the resulting evidence.
+#
+# What it may NOT do on its own: change which endpoints are presented as
+# predictions. If any endpoint's tier moves, the run opens a pull request
+# instead of committing, because a promotion is a claim about what the
+# platform can predict and that gets a human.
+
+on:
+  schedule:
+    # Mondays at 06:00 UTC.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: "Recorded in the endpoint history log"
+        required: false
+        default: "manual dispatch"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e ".[scripts]" --no-deps
+          pip install matplotlib pypdf xlrd openpyxl pytest
+
+      - name: Inventory the declared datasets
+        run: python scripts/fetch_datasets.py --fetch
+
+      - name: Run the pipeline
+        run: |
+          python scripts/run_pipeline.py \
+            --trigger "${{ github.event.inputs.trigger || 'scheduled weekly run' }}"
+
+      - name: Tests must still pass
+        run: pytest -q
+
+      - name: Did any endpoint change tier?
+        id: lifecycle
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, pathlib
+          log = pathlib.Path("reports/results/endpoint_history.jsonl")
+          lines = [l for l in log.read_text().splitlines() if l.strip()]
+          latest = json.loads(lines[-1]) if lines else {}
+          promoted, demoted = latest.get("promoted", []), latest.get("demoted", [])
+          changed = bool(promoted or demoted)
+          print(f"changed={'true' if changed else 'false'}")
+          print(f"promoted={','.join(promoted)}")
+          print(f"demoted={','.join(demoted)}")
+          PY
+
+      - name: Commit refreshed evidence
+        if: steps.lifecycle.outputs.changed == 'false'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+            exit 0
+          fi
+          git commit -m "Continuous evaluation: refresh evidence
+
+          No endpoint changed tier. Evidence, calibration and requirements
+          recomputed from the declared datasets.
+
+          Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+          git push
+
+      - name: Open a pull request when a tier moved
+        if: steps.lifecycle.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: continuous-evaluation/tier-change
+          title: "Endpoint tier change from continuous evaluation"
+          commit-message: |
+            Continuous evaluation: endpoint tier change
+
+            Promoted: ${{ steps.lifecycle.outputs.promoted }}
+            Demoted:  ${{ steps.lifecycle.outputs.demoted }}
+
+            Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+          body: |
+            A scheduled evaluation changed what the platform would present.
+
+            **Promoted:** `${{ steps.lifecycle.outputs.promoted }}`
+            **Demoted:** `${{ steps.lifecycle.outputs.demoted }}`
+
+            This is a pull request rather than a commit because a tier change
+            alters which endpoints read as predictions, and that is a claim
+            about what the platform can predict.
+
+            Before merging, check in `reports/results/`:
+
+            - `endpoint_history.jsonl` — the transition and its reason
+            - `baselines.csv` — does it still clear the source-only baseline?
+            - `calibration.csv` — is the Brier skill still positive?
+            - `endpoint_requirements.json` — what changed about the constraint
+
+            A promotion driven by more data is the point. A promotion driven
+            by a new feature that happens to fit 74 sequences is the failure
+            this project exists to catch.

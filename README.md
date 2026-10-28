@@ -278,6 +278,33 @@ The other two failures are different in kind:
 
 Shortfalls against the minimum are exact arithmetic. Sample sizes needed to narrow a confidence interval are flagged `estimate: true` in `reports/results/endpoint_requirements.json`.
 
+## Continuous evaluation
+
+The platform is meant to absorb new data without anyone watching, which is dangerous in the obvious way: a loop that retrains and promotes on its own is how the original PR-AUC 0.93 happened. So the loop is built as a ratchet. Evidence can promote an endpoint and evidence can demote it, but the gates never loosen and nothing can pin a tier.
+
+```bash
+python scripts/fetch_datasets.py          # what is declared and usable
+python scripts/run_pipeline.py            # normalize, train, evaluate, re-tier
+python scripts/run_pipeline.py --check    # non-zero if any tier moved
+```
+
+One run does: normalize declared sources, retrain the internal endpoints, recompute baselines and calibration, re-derive every tier from that evidence, compare against the previous run, and append what changed to `reports/results/endpoint_history.jsonl`.
+
+**A source is only ingested if `data/registry/sources.json` declares its readout direction and label threshold.** A downloader must not decide what counts as toxic, so a dataset without a declared direction is reported as blocked rather than guessed at. Four sources are usable today, 9,637 sequences; four are blocked, each with the reason.
+
+**Nothing in the loop can promote an endpoint.** Tiers are recomputed by `derive_evidence_tiers.py` from the measurements, applying the same gates every time. Demotion is automatic and immediate: an endpoint that stops clearing its baselines loses its tier on the next run, with no grace period and no override. There is deliberately no `force_tier` and a test asserts nobody adds one.
+
+### Running while you are offline
+
+`.github/workflows/continuous-evaluation.yml` runs the chain weekly in GitHub's cloud, so it keeps going with no machine involved. The split matters:
+
+| Outcome | What the workflow does |
+|---|---|
+| No tier changed | Commits the refreshed evidence directly |
+| Any tier moved | Opens a **pull request** instead |
+
+A tier change alters which endpoints read as predictions, which is a claim about what the platform can predict, so it gets a human. The PR body says what to check and names the distinction worth catching: a promotion driven by more data is the point, a promotion driven by a new feature that happens to fit 74 sequences is the failure this project exists to catch.
+
 ## Run it
 
 ```bash

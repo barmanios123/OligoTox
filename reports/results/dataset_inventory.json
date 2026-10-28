@@ -1,0 +1,86 @@
+{
+  "usable_sources": 4,
+  "usable_sequences": 9637,
+  "sources": [
+    {
+      "name": "oligogym_cns_moe_neurotox",
+      "status": "present",
+      "kind": "toxicity",
+      "endpoint": "cns_toxicity",
+      "on_disk": true,
+      "usable_for_training": true,
+      "blocked_by": null,
+      "sequences": 1685
+    },
+    {
+      "name": "oligogym_cns_hagedorn_calcium",
+      "status": "present",
+      "kind": "toxicity",
+      "endpoint": "cns_toxicity",
+      "on_disk": true,
+      "usable_for_training": true,
+      "blocked_by": null,
+      "sequences": 1653
+    },
+    {
+      "name": "oligogym_mcquisten_activity",
+      "status": "present",
+      "kind": "efficacy",
+      "endpoint": "target_inhibition",
+      "on_disk": true,
+      "usable_for_training": true,
+      "blocked_by": null,
+      "sequences": 3868
+    },
+    {
+      "name": "oligogym_ichihara_potency",
+      "status": "present",
+      "kind": "efficacy",
+      "endpoint": "target_inhibition",
+      "on_disk": true,
+      "usable_for_training": true,
+      "blocked_by": null,
+      "sequences": 2431
+    },
+    {
+      "name": "nar2022_gapmer_hepatotox_screen",
+      "status": "fetchable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "on_disk": true,
+      "usable_for_training": false,
+      "blocked_by": "status fetchable",
+      "sequences": 149
+    },
+    {
+      "name": "asoptimizer_rodent_alt_ast",
+      "status": "requested",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "no label threshold declared",
+      "sequences": 6000
+    },
+    {
+      "name": "aso_atlas_patent_gapmers",
+      "status": "unverified",
+      "kind": "efficacy",
+      "endpoint": "target_inhibition",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "status unverified",
+      "sequences": 188521
+    },
+    {
+      "name": "open_tggates_liver",
+      "status": "deferred",
+      "kind": "prior",
+      "endpoint": "hepatocellular_injury",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "status deferred",
+      "sequences": null
+    }
+  ]
+}

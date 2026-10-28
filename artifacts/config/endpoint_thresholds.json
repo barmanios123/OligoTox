@@ -94,9 +94,5 @@
     "f1": 0.12698412698412698,
     "support": 12,
     "method": "f1"
-  },
-  "cns_toxicity": {
-    "threshold": 0.3499999999999999,
-    "source": "external CNS assays, F1 on pooled OOF"
   }
 }
