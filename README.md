@@ -240,6 +240,19 @@ kupffer_cell_activation      source confounded      74          27    0.477     
 
 Each verdict comes with its reasoning, for example *"a model seeing only the source scores 0.83 against 0.48; the model is recognising the dataset"*. Each result lands in `artifacts/config/endpoint_evidence.json`, which the app and the OSWG report read at runtime, so a failed check becomes a label in the interface rather than a footnote.
 
+A checker that fails everything is not a checker. `scripts/demo_audit.py` runs it unchanged over this project's own data and over the external CNS set:
+
+| Dataset | Endpoint | Verdict |
+|---|---|---|
+| internal, curated | hepatocellular injury | ranks but uncalibrated |
+| internal, curated | kupffer cell activation | source confounded |
+| internal, curated | thrombocytopenia | insufficient data |
+| **external, two published assays** | cns toxicity | **passes** |
+
+Three failures for three different reasons, one pass, no tuning between runs. The verdicts track the data, not the tool's disposition.
+
+`scripts/check_deployment.py` is the companion for the deployed app: it compares the live deployment's branch against this checkout's evidence config and exits non-zero on drift. It exists because a push once left the container serving a stale config, labelling a calibrated endpoint as ranking-only, and nothing caught it until someone opened the app by hand.
+
 **[`docs/NEGATIVE_RESULTS.md`](docs/NEGATIVE_RESULTS.md)** records the nine failure modes this found, with numbers and the script for each. **[`docs/DATA_REQUESTS.md`](docs/DATA_REQUESTS.md)** lists what the platform is actually limited by, which is labelled data rather than method.
 
 ## Run it
