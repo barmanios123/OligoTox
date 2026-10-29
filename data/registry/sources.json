@@ -154,6 +154,18 @@
       "threshold": null,
       "licence": "unknown; depends on source",
       "notes": "Measured accessibility for human transcripts the corpus targets, to test whether the accessibility null is about accessibility or only about ViennaRNA's prediction of it. Candidate sources: RMDB, the SHAPE entries in RNAcentral, published icSHAPE/DMS-MaPseq in human cell lines. Blocked on finding probing data that overlaps the corpus's target genes; a mismatched cell line may be worse than prediction."
+    },
+    {
+      "name": "ionis_patent_hepatotox",
+      "status": "feasible_not_built",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "readout": "serum_ALT_AST_IU_per_L",
+      "direction": "higher_is_toxic",
+      "threshold": null,
+      "url": "https://patents.google.com/?q=antisense+oligonucleotide+hepatotoxicity+ALT+gapmer",
+      "licence": "patent text is public; extracted factual measurements, cite each publication number",
+      "notes": "Probed 2026-10-29, not built. Google Patents' public query endpoint needs no key and returns 1,175 matches, overwhelmingly Ionis/Isis, which is the right source: ASO Atlas's 188k efficacy rows came from the same corpus. What the probe established on CA2786071C (ANGPTL3): 8 distinct ISIS compound numbers, 11 places where a compound number sits within 160 characters of a sequence or SEQ ID, and 50 twenty-mers, so compound-to-sequence mapping is possible. What makes it harder than the efficacy mining: toxicity is reported per treatment group, two to five compounds, not per sequence across a library, so the yield is single-digit compounds per patent rather than hundreds. Many readouts are qualitative ('levels associated with liver toxicity were not observed') rather than numeric. And the tables are flattened into running text in the HTML and visibly truncated: Table 8 in that patent shows only its Saline row before the prose resumes, so the ISIS rows have to come from somewhere else. Rough ceiling if it worked: a few thousand sequences with a liver readout, against 74 unique sequences today. Worth building, but it is an extractor with a validation step, not a fetch."
     }
   ]
 }
