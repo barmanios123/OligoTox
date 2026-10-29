@@ -6,19 +6,6 @@
   "verdict": "accessibility clears +0.01 in 6 of 7 context(s)",
   "results": [
     {
-      "context": "a431_4000_gymnosis",
-      "rows_located": 1010,
-      "rows_sampled": 1200,
-      "sampled": true,
-      "coverage": 0.842,
-      "genes": 12,
-      "design_only": 0.1941,
-      "design_plus_accessibility": 0.2439,
-      "accessibility_only": 0.1428,
-      "gain": 0.0499,
-      "helps": true
-    },
-    {
       "context": "a431_2000_gymnosis",
       "rows_located": 1092,
       "rows_sampled": 1200,
@@ -30,19 +17,6 @@
       "accessibility_only": 0.2439,
       "gain": 0.104,
       "helps": true
-    },
-    {
-      "context": "shsy5y_4000_electroporat",
-      "rows_located": 1196,
-      "rows_sampled": 1200,
-      "sampled": true,
-      "coverage": 0.997,
-      "genes": 6,
-      "design_only": 0.207,
-      "design_plus_accessibility": 0.1432,
-      "accessibility_only": -0.2325,
-      "gain": -0.0638,
-      "helps": false
     },
     {
       "context": "hepg2_4500_electroporat",
@@ -71,6 +45,19 @@
       "helps": true
     },
     {
+      "context": "a431_4000_gymnosis",
+      "rows_located": 1010,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.842,
+      "genes": 12,
+      "design_only": 0.1941,
+      "design_plus_accessibility": 0.2439,
+      "accessibility_only": 0.1428,
+      "gain": 0.0499,
+      "helps": true
+    },
+    {
       "context": "t24_anydose_other",
       "rows_located": 986,
       "rows_sampled": 1200,
@@ -95,6 +82,19 @@
       "accessibility_only": -0.0306,
       "gain": 0.0119,
       "helps": true
+    },
+    {
+      "context": "shsy5y_4000_electroporat",
+      "rows_located": 1196,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.997,
+      "genes": 6,
+      "design_only": 0.207,
+      "design_plus_accessibility": 0.1432,
+      "accessibility_only": -0.2325,
+      "gain": -0.0638,
+      "helps": false
     }
   ]
 }

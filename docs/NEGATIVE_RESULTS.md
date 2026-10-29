@@ -576,6 +576,74 @@ Script: `scripts/fetch_transcripts.py`.
 
 ---
 
+## 16. Six of seven contexts gained, and one seed was doing most of the work
+
+**What happened.** Target-site accessibility helps pooled across assays
+(entry 12, +0.019 on 282 genes). The shipped potency models are per-assay, so
+the question is whether it improves them individually. Seven contexts, each
+restricted to rows whose binding site actually locates, nothing zero-filled.
+
+The first pass looked emphatic: six of seven gained, median about +0.05, two
+of them above +0.08. Written up at that point it would have read as a clear
+result.
+
+**Then the same runs were repeated with different row samples.** Three seeds,
+all seven contexts, same code:
+
+| Context | Genes | seed 42 | seed 7 | seed 1234 | Alone |
+|---|---|---|---|---|---|
+| a431_2000_gymnosis | 9 | +0.104 | +0.069 | +0.075 | always + |
+| a431_4000_gymnosis | 12 | +0.050 | +0.045 | +0.085 | always + |
+| hepg2_4500_electroporat | 7 | +0.087 | +0.075 | +0.081 | always - |
+| hepg2_1000_electroporat | 5 | +0.012 | +0.021 | +0.002 | ~0 |
+| t24_anydose_other | 59 | +0.018 | +0.006 | +0.000 | ~0 |
+| a549_anydose_other | 54 | +0.082 | +0.031 | +0.011 | unstable |
+| shsy5y_4000_electroporat | 6 | -0.064 | -0.047 | -0.035 | stable - |
+
+**Seed 42 produced the most favourable number in five of the seven.** That is
+not a coincidence to shrug at. The first table was the luckiest draw of the
+three, and it was the one written down. T24 collapses from +0.018 to exactly
+zero. A549 swings sevenfold, and its own design baseline swings from -0.058
+to +0.082, so the thing the gain is measured against is no steadier than the
+gain.
+
+**What survives.** Three contexts hold across every seed. The two A431
+gymnosis contexts gain +0.045 to +0.104 *and* accessibility ranks positively
+on its own every time. HepG2 at 4500 gains just as steadily, +0.075 to
++0.087, but accessibility is negative alone in all three runs, so there it is
+correcting the design block rather than carrying signal. Those are different
+strengths of evidence and should not be reported as one.
+
+SH-SY5Y is negative at every seed, with accessibility strongly negative alone
+(-0.233, -0.289, -0.342). That is reproducible harm, not instability.
+
+**Two mechanisms proposed, both wrong.** First: accessibility should matter
+under gymnosis, where an oligo finds its target unaided, and not under
+electroporation, which forces entry. HepG2 at 4500 is electroporation and
+gains as reliably as either gymnosis context. Second, after that: the
+small-gene contexts would prove unstable and the well-powered ones would
+hold. The opposite happened. HepG2 4500 on 7 genes is the steadiest row in
+the table, while T24 and A549 on 54 and 59 genes are the emptiest. Gene count
+did not predict stability, and neither did delivery method.
+
+**Why it generalises.** A single cross-validated number is one draw from a
+distribution nobody looked at. Repeating a cheap evaluation under a different
+sample seed costs minutes and is the difference between a finding and a
+coincidence. The failure mode is specific and seductive: run it once, get a
+good number, write it down. Everything above was produced by code that was
+already correct. The only thing that changed was running it three times.
+
+A second rule follows. Four of seven contexts were stability-tested first,
+chosen because they were the interesting ones. That is the same selection
+problem one level up, and testing the remaining three is what revealed HepG2
+4500 as the steadiest result rather than the throwaway it was assumed to be.
+Scrutiny has to be applied to the whole table or it manufactures the answer
+it was looking for.
+
+Script: `scripts/evaluate_context_accessibility.py --only <context> --seed <n>`.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has

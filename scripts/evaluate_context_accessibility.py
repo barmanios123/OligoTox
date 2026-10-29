@@ -96,6 +96,12 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--only", default=None, help="run a single context by slug")
     parser.add_argument("--list", action="store_true", help="print context slugs and exit")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="row-sample seed. Rerunning with a different seed "
+                             "is the cheapest test of whether a gain is stable "
+                             "or an artefact of which rows were drawn.")
+    parser.add_argument("--no-write", action="store_true",
+                        help="print only, leave the recorded results alone")
     args = parser.parse_args(argv)
 
     transcripts = load_sequences()
@@ -120,7 +126,7 @@ def main(argv: list[str] | None = None) -> None:
         if frame.empty:
             continue
         if len(frame) > MAX_ROWS_PER_CONTEXT:
-            frame = frame.sample(MAX_ROWS_PER_CONTEXT, random_state=42)
+            frame = frame.sample(MAX_ROWS_PER_CONTEXT, random_state=args.seed)
 
         # Keep only rows whose site actually locates. Nothing is zero-filled,
         # so no column can encode "this one was not computable".
@@ -196,6 +202,8 @@ def main(argv: list[str] | None = None) -> None:
         print("  Worth wiring into those contexts, for rows where a site locates. "
               "Rows without one must stay unscored rather than zero-filled.")
 
+    if args.no_write:
+        return
     RESULTS.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(rows).to_csv(RESULTS / "context_accessibility.csv", index=False)
     (RESULTS / "context_accessibility.json").write_text(json.dumps({
