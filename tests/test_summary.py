@@ -75,3 +75,25 @@ def test_parameters_are_separated_from_predictions(result):
 def test_sequence_is_normalised(result):
     assert result["sequence"] == SEQ
     assert summarize("gcauuggu acgucauugcaa".replace(" ", ""))["sequence"] == SEQ
+
+
+def test_no_line_is_long_enough_to_be_clipped(result):
+    """The summary renders in a block that scrolls rather than wraps.
+
+    A long line is silently cut at the right edge, which is how a screenshot
+    of this panel came out looking broken, with sentences ending mid-word.
+    Wrapping at the source fixes the app, the downloaded file and any
+    screenshot together.
+    """
+    from oligotox.advice.advisor import WRAP_WIDTH
+
+    too_long = [l for l in result["text"].split("\n") if len(l) > WRAP_WIDTH]
+    assert not too_long, f"lines exceed {WRAP_WIDTH} chars: {too_long[:3]}"
+
+
+def test_wrapping_keeps_the_indentation_that_carries_structure(result):
+    """Parameters are indented under their heading; wrapping must not flatten that."""
+    lines = result["text"].split("\n")
+    start = lines.index("Measured parameters of the sequence")
+    following = [l for l in lines[start + 1:start + 6] if l.strip()]
+    assert all(l.startswith("  ") for l in following), following

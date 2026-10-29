@@ -228,6 +228,26 @@ PARAMETER_NOTES: dict[str, tuple[str, str]] = {
 }
 
 
+# Rendered in a fixed-width block that scrolls rather than wraps, so a long
+# line is simply cut off at the right edge. Wrapping here fixes the app, the
+# downloaded file and any screenshot at once.
+WRAP_WIDTH = 76
+
+
+def _wrap(line: str) -> list[str]:
+    """Wrap one line, keeping its indentation and its hanging indent."""
+    import textwrap
+
+    if len(line) <= WRAP_WIDTH:
+        return [line]
+    indent = " " * (len(line) - len(line.lstrip()))
+    return textwrap.wrap(
+        line, width=WRAP_WIDTH, initial_indent=indent,
+        subsequent_indent=indent + "  ", break_long_words=False,
+        break_on_hyphens=False,
+    ) or [line]
+
+
 def _format_probability(value: float) -> str:
     """Small probabilities must not be rounded into zero.
 
@@ -337,5 +357,5 @@ def summarize(
         "validated_toxicity": tox,
         "per_assay_potency": potency,
         "parameters_unavailable": missing,
-        "text": "\n".join(lines),
+        "text": "\n".join(w for line in lines for w in _wrap(line)),
     }

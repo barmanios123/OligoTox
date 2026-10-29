@@ -60,7 +60,7 @@ MIN_GAIN = 0.01
 # before it wrote anything. A seeded sample per context keeps the run bounded.
 # This costs precision on the gain, not direction, and the sample is large
 # enough that a +0.01 effect is still visible.
-MAX_ROWS_PER_CONTEXT = 4000
+MAX_ROWS_PER_CONTEXT = 1200
 
 
 def load_sequences() -> dict[str, str]:
@@ -88,10 +88,13 @@ def main() -> None:
     transcripts = load_sequences()
     if not transcripts:
         raise SystemExit("no genomic spans cached; run scripts/fetch_transcripts.py --genomic")
-    print(f"{len(transcripts)} genomic span(s) cached\n")
+    print(f"{len(transcripts)} genomic span(s) cached", flush=True)
+    contexts = load_contexts()
+    print(f"{len(contexts)} context(s) to test, "
+          f"up to {MAX_ROWS_PER_CONTEXT} rows each\n", flush=True)
 
     rows = []
-    for slug, frame, _meta in load_contexts():
+    for slug, frame, _meta in contexts:
         frame = frame[frame["target_gene"].isin(transcripts)]
         if frame.empty:
             continue
@@ -141,7 +144,7 @@ def main() -> None:
         })
         print(f"  {slug:32s} n={len(subset):6,} genes={subset['target_gene'].nunique():3d}  "
               f"design={base:+.3f} +access={combined:+.3f} alone={alone:+.3f} "
-              f"gain={gain:+.4f}")
+              f"gain={gain:+.4f}", flush=True)
 
     if not rows:
         raise SystemExit("no context had enough located rows to evaluate")
