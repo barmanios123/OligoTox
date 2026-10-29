@@ -1,4 +1,4 @@
 model,n_features,spearman,n,n_genes
-Design features only,30,0.1001,16354,17
-Design + accessibility,34,0.1567,16354,17
-Accessibility only,4,0.02,16354,17
+Design features only,30,0.2293,29669,282
+Design + accessibility,34,0.2479,29669,282
+Accessibility only,4,0.0619,29669,282

@@ -357,14 +357,19 @@ gain of **+0.057**. That number was reported as evidence accessibility helps.
 Then the coverage problem was fixed. Gapmers target pre-mRNA and a cDNA has
 no introns, so the same oligos were relocated against genomic spans:
 
-| Target sequence | Genes | Sequences located | Design | + accessibility | Gain |
-|---|---|---|---|---|---|
-| canonical cDNA | 17 | 34% | 0.100 | 0.157 | **+0.057** |
-| **genomic span** | **59** | **93%** | 0.155 | 0.169 | **+0.014** |
+| Target sequence | Genes | Located | Design | + accessibility | Gain | Alone |
+|---|---|---|---|---|---|---|
+| canonical cDNA | 17 | 34% | 0.100 | 0.157 | **+0.057** | +0.020 |
+| genomic span | 59 | 93% | 0.155 | 0.169 | **+0.014** | -0.023 |
+| genomic span | 122 | 83% | 0.193 | 0.211 | **+0.018** | -0.004 |
+| genomic span | 178 | 83% | 0.206 | 0.225 | **+0.019** | +0.032 |
+| **genomic span** | **282** | **82%** | **0.229** | **0.248** | **+0.019** | **+0.062** |
 
-**The gain nearly vanished.** Accessibility alone scores **-0.023**, below
-zero. On the fuller, less biased sample it adds roughly a quarter of what it
-appeared to add.
+**The gain nearly vanished, and then stayed put.** The correction from +0.057
+to +0.014 held: against the cDNA sample the feature looked four times as
+useful as it is. But the gain has not moved since, across a near fivefold
+increase in genes, which is the behaviour of a small real effect rather than
+noise.
 
 **Why the first number was wrong.** The 34% that located in a cDNA were
 exonic sites, which is a selected subset rather than a random one: they
@@ -372,6 +377,21 @@ differ in local composition and structure from the intronic majority. The
 apparent benefit was partly that selection, and partly the instability of 17
 genes under gene-grouped folds. An earlier run on 4 genes gave +0.155, which
 should have been read as noise rather than a strong result.
+
+**A claim in this entry was itself undersampled.** The line above used to
+read "accessibility alone scores -0.023, below zero", offered as evidence the
+feature carries nothing by itself. That number came from 59 genes, and those
+59 were not a sample anyone chose: entry 15 describes the error handler that
+had silently discarded 44% of the gene set. On 282 genes accessibility alone
+scores **+0.062**, above the 0.05 the evaluation now requires before calling
+a feature standalone signal.
+
+So the verdict moved from "adds a little in combination, but carries no
+signal on its own" to "adds signal", and it moved because the sample grew,
+not because a threshold did. Both thresholds were set while the number was
++0.032 and failing. The correction here is narrower than the one it sits
+inside: the coverage-bias finding stands, and a secondary claim made from the
+truncated remainder did not.
 
 **Why it generalises.** A missing-data problem that correlates with the
 feature being tested inflates that feature's apparent value. The instinct is
@@ -501,6 +521,58 @@ its threshold and the noise floor. When a project defines the same threshold
 in two places, the looser one is the one that will eventually be quoted.
 
 Script: `packages/evidence-audit/src/evidence_audit/checks.py`.
+
+---
+
+## 15. An error handler deleted 44% of the dataset
+
+**What happened.** The genomic fetch reported 151 of 350 target genes as
+unresolvable. That number was accepted and the accessibility evaluation ran
+on the 199 that remained.
+
+The 151 were not unresolvable. APOC3 and BRCA1 were both on the list, and
+both resolve on the first attempt when asked again.
+
+**The cause.** `_get` caught five exception types in one tuple:
+
+```python
+NETWORK_ERRORS = (urllib.error.HTTPError, urllib.error.URLError,
+                  json.JSONDecodeError, TimeoutError, OSError)
+```
+
+and the caller turned any of them into "Ensembl cannot place this gene",
+which was written to a blacklist that later runs skip. A 404 means the symbol
+does not exist. A 429, a 5xx or a timeout means the request lost and says
+nothing whatsoever about the gene. One rate-limited window therefore removed
+44% of the corpus permanently, and `--retry-misses` was the only way back.
+
+**Why the first hypothesis was wrong, and worth recording.** The obvious
+guess was that large genes were timing out, since the genomic request
+downloads an entire span and APP is ~290kb. That is a tidy story and it is
+false. The resolved genes run up to 582kb, and the "failures" include APOC3
+at about 3kb. Size had no part in it. The temptation was to write the
+plausible mechanism into the fix; the data refused it.
+
+**What it cost.** Nothing was wrong with the recorded numbers, but they were
+computed on an arbitrary 57% of the intended genes, and nothing in the output
+said so. The coverage field read 83% located, which describes the oligos that
+mapped within the genes that happened to survive, not the genes themselves. A
+sample can be silently truncated upstream of the number that reports
+coverage.
+
+**The fix.** Unknown and transient are separate exceptions. Only unknown is
+remembered. Transient retries with backoff that honours `Retry-After`, and
+the manifest keeps the two in different keys so the distinction survives a
+restart. Of the original 151, **17** are genuinely absent from Ensembl.
+
+**Why it generalises.** An exception handler is a claim about what a failure
+means. Catching several kinds together asserts they mean the same thing, and
+when one of them is "try again later" and another is "this does not exist",
+that assertion quietly destroys data. The blast radius is set by what the
+handler writes down, and a handler that writes to a skip-list is making
+permanent decisions from transient evidence.
+
+Script: `scripts/fetch_transcripts.py`.
 
 ---
 
