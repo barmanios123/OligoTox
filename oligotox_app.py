@@ -85,6 +85,29 @@ def _validate_sequence(seq: str):
         return False, "Sequence is too short for meaningful analysis; use at least 8 nt."
     return True, seq
 
+GENOMIC_DIR = ROOT / "data" / "external" / "genomic"
+
+
+@st.cache_data(show_spinner=False)
+def _target_transcript(symbol: str) -> str | None:
+    """The cached genomic span for a gene symbol, or None.
+
+    None is a real answer here and is reported as such. Scoring falls back to
+    the design-only model rather than inventing accessibility values.
+    """
+    if not symbol:
+        return None
+    path = GENOMIC_DIR / f"{symbol.replace('/', '_')}.json"
+    if not path.exists():
+        return None
+    try:
+        record = json.loads(path.read_text())
+    except json.JSONDecodeError:
+        return None
+    seq = (record.get("sequence") or "").upper().replace("U", "T")
+    return seq or None
+
+
 def _ps_fraction(chemistry: str) -> float:
     """The one place this is decided.
 
@@ -272,6 +295,13 @@ with st.sidebar:
     chemistry = st.selectbox("Chemistry", ["PS", "PO", "mixed_PS_PO"], index=0)
     modality = st.selectbox("Modality", ["siRNA", "ASO"], index=0)
     dose_mg_kg = st.number_input("Dose (mg/kg)", min_value=0.0, max_value=100.0, value=3.0, step=0.5)
+    target_gene = st.text_input(
+        "Target gene (optional)",
+        value="",
+        help="A gene symbol such as DGAT2. When its genomic span is cached and "
+             "the oligo's binding site locates in it, assays with an "
+             "accessibility model use that model instead.",
+    ).strip().upper()
     analyst_note = st.text_input("Analyst note", value="")
     run_btn = st.button("Run analysis", type="primary", width="stretch")
 
@@ -318,6 +348,7 @@ if run_btn:
                 "modality": modality,
                 "dose_mg_kg": dose_mg_kg,
                 "ps_fraction": _ps_fraction(chemistry),
+                "target_gene": target_gene,
                 "analyst_note": analyst_note,
                 "candidate_features": candidate_features,
             },
@@ -473,7 +504,28 @@ with tabs[2]:
     else:
         seq = run["input"]["sequence"]
         modality = run["input"]["modality"]
-        eff = score_efficacy(seq, modality, MODEL_DIR, CONFIG_DIR)
+        transcript = _target_transcript(run["input"].get("target_gene", ""))
+        eff = score_efficacy(seq, modality, MODEL_DIR, CONFIG_DIR,
+                             target_transcript=transcript)
+
+        gene = run["input"].get("target_gene", "")
+        if gene and transcript is None:
+            st.warning(
+                f"No cached genomic span for {gene}, so accessibility was not "
+                "used. The design-only models ran instead. Fetch it with "
+                "`python scripts/fetch_transcripts.py --genomic`."
+            )
+        elif gene and not any(p.get("used_accessibility")
+                              for p in eff.get("predictions", {}).values()):
+            st.info(
+                f"{gene} is cached, but this oligo's binding site was not found "
+                "in it, so the design-only models ran. A site that cannot be "
+                "located is unknown, not inaccessible."
+            )
+        elif gene:
+            st.success(f"Target-site accessibility in {gene} was used where an "
+                       "assay has a model for it.")
+
         if not eff["available"]:
             st.info(eff["reason"])
         else:
@@ -490,6 +542,8 @@ with tabs[2]:
                         f"at dose {ctx.get('dose')}, {ctx.get('transfection_method')}. "
                         f"{pred['evidence']}"
                     )
+                    if pred.get("used_accessibility"):
+                        st.caption("Scored with target-site accessibility.")
                     st.caption(f"Caveat: {pred['caveat']}")
                     st.divider()
                     continue

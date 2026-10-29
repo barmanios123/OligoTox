@@ -46,6 +46,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from oligotox.efficacy.potency import guide_features  # noqa: E402
+from oligotox.features.accessibility import site_accessibility  # noqa: E402
 
 ATLAS = ROOT / "data" / "external" / "aso_atlas.parquet"
 MODELS = ROOT / "artifacts" / "models"
@@ -55,6 +56,26 @@ RESULTS = ROOT / "reports" / "results"
 MIN_ROWS = 2000
 MIN_GENES = 5
 FLOOR = 0.15
+
+# Target-site accessibility is trained as a *second* model per context, used
+# only when the caller supplies a target gene. It is never merged into the
+# design-only model, because a sequence with no locatable site would then need
+# its accessibility columns filled with zeros, and a zero that means "not
+# computable" is the source indicator of NEGATIVE_RESULTS entry 13.
+#
+# Only the contexts whose gain held across three sample seeds are considered
+# (entry 16). The others gained once and did not survive a reseed.
+ACCESS_CANDIDATES = {
+    "a431_2000_gymnosis", "a431_4000_gymnosis", "hepg2_4500_electroporat",
+}
+ACCESS_COLS = ["site_accessibility", "site_log_accessibility",
+               "site_flank_accessibility", "site_relative_position"]
+MIN_ACCESS_GAIN = 0.01
+# Folding an 800nt window per row is the expensive part. A cap keeps the
+# training run bounded; the gate below still compares like with like, because
+# both models see exactly these rows.
+MAX_ACCESS_ROWS = 4000
+GENOMIC = ROOT / "data" / "external" / "genomic"
 CLIP = (0.0, 100.0)
 N_SPLITS = 5
 
@@ -125,6 +146,70 @@ def evaluate(frame: pd.DataFrame) -> dict:
     }
 
 
+def _load_spans() -> dict[str, str]:
+    """Cached genomic spans, keyed by gene symbol."""
+    out = {}
+    for path in sorted(GENOMIC.glob("*.json")):
+        if path.name.startswith("_"):
+            continue
+        try:
+            record = json.loads(path.read_text())
+        except json.JSONDecodeError:
+            continue
+        seq = (record.get("sequence") or "").upper().replace("U", "T")
+        if seq:
+            out[record.get("symbol", path.stem)] = seq
+    return out
+
+
+def evaluate_accessibility(frame: pd.DataFrame, spans: dict[str, str]) -> dict | None:
+    """Design-only against design-plus-accessibility, on located rows only.
+
+    Returns None when too little of the context locates to judge. Both models
+    see identical rows, so the comparison cannot be won by the subset itself.
+    """
+    frame = frame[frame["target_gene"].isin(spans)]
+    if frame.empty:
+        return None
+    if len(frame) > MAX_ACCESS_ROWS:
+        frame = frame.sample(MAX_ACCESS_ROWS, random_state=42)
+
+    keep, access = [], []
+    for seq, gene in frame[["sequence", "target_gene"]].itertuples(index=False):
+        site = site_accessibility(seq, spans[gene])
+        keep.append(site.site_found)
+        if site.site_found:
+            access.append({c: site.as_features()[c] for c in ACCESS_COLS})
+    subset = frame[pd.Series(keep, index=frame.index)]
+    if len(subset) < MIN_ROWS // 4 or subset["target_gene"].nunique() < MIN_GENES:
+        return None
+
+    design = pd.DataFrame([guide_features(x) for x in subset["sequence"]],
+                          index=subset.index)
+    acc = pd.DataFrame(access, index=subset.index)
+    combined = pd.concat([design, acc], axis=1)
+    y = subset["y"].values
+    genes = subset["target_gene"].values
+    cv = GroupKFold(n_splits=min(N_SPLITS, subset["target_gene"].nunique()))
+
+    def rho(X):
+        pred = cross_val_predict(_model(), X.astype(float), y, cv=cv, groups=genes)
+        value = spearmanr(y, pred).statistic
+        return float(value) if np.isfinite(value) else 0.0
+
+    base, with_access = rho(design), rho(combined)
+    return {
+        "rows": int(len(subset)),
+        "genes": int(subset["target_gene"].nunique()),
+        "design_only": round(base, 4),
+        "with_accessibility": round(with_access, 4),
+        "gain": round(with_access - base, 4),
+        "features": list(combined.columns),
+        "X": combined,
+        "y": y,
+    }
+
+
 def main() -> None:
     if not ATLAS.exists():
         raise SystemExit(f"missing {ATLAS}; run scripts/ingest_aso_atlas.py first")
@@ -135,6 +220,8 @@ def main() -> None:
 
     rows, shipped = [], {}
     MODELS.mkdir(parents=True, exist_ok=True)
+    spans = _load_spans()
+    print(f"{len(spans)} genomic span(s) available for accessibility\n")
 
     for slug, frame, meta in contexts:
         scores = evaluate(frame)
@@ -195,6 +282,50 @@ def main() -> None:
                     f"{scores['model']:.2f}. Do not read it as general potency."
                 ),
             }
+
+            # A separate model for callers who supply a target gene. It ships
+            # only if it beats the design-only model on the very same located
+            # rows, which is a gate at training time rather than a number
+            # carried over from an offline run.
+            if slug in ACCESS_CANDIDATES and spans:
+                acc = evaluate_accessibility(frame, spans)
+                if acc is None:
+                    print(f"         accessibility: too few located rows to judge")
+                elif acc["gain"] < MIN_ACCESS_GAIN:
+                    print(f"         accessibility: gain {acc['gain']:+.4f} below "
+                          f"{MIN_ACCESS_GAIN}, not shipped")
+                else:
+                    fitted_acc = _model().fit(acc["X"][acc["features"]].astype(float),
+                                              acc["y"])
+                    joblib.dump(fitted_acc, MODELS / f"potency_{slug}_access.joblib")
+                    shipped[slug]["accessibility_model"] = {
+                        "model_file": f"potency_{slug}_access.joblib",
+                        "feature_columns": acc["features"],
+                        "rows": acc["rows"],
+                        "genes": acc["genes"],
+                        "spearman": acc["with_accessibility"],
+                        "design_only_on_same_rows": acc["design_only"],
+                        "gain": acc["gain"],
+                        "requires": "a target gene whose genomic span is cached, and "
+                                    "an oligo whose binding site locates in it",
+                        "evidence": (
+                            f"Spearman {acc['with_accessibility']:.3f} against "
+                            f"{acc['design_only']:.3f} for the same model without "
+                            f"accessibility, on the same {acc['rows']:,} located rows "
+                            f"over {acc['genes']} genes. The gain held across three "
+                            "sample seeds; see NEGATIVE_RESULTS entry 16, where four "
+                            "other contexts did not."
+                        ),
+                        "caveat": (
+                            "Used only when a target gene is supplied. Sequences "
+                            "whose site does not locate are scored by the design-only "
+                            "model instead, never by filling these columns with zeros."
+                        ),
+                    }
+                    print(f"         accessibility: {acc['design_only']:+.3f} -> "
+                          f"{acc['with_accessibility']:+.3f} "
+                          f"(gain {acc['gain']:+.4f}) on {acc['rows']:,} located rows, "
+                          "shipped")
 
     (CONFIG / "potency_contexts.json").write_text(json.dumps({
         "source": "ASO Atlas, https://github.com/barneyhill/aso_atlas (Apache-2.0)",

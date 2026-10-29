@@ -76,17 +76,41 @@ def load_context_models(config_dir: str | Path) -> dict:
     return json.loads(path.read_text()) if path.exists() else {}
 
 
+def _accessibility_features(sequence: str, transcript: str, cols: list[str]):
+    """Accessibility for a located site, or None when it does not locate.
+
+    Returning None rather than zeros is the whole point. A zero here would
+    mean "not computable" while the model reads it as "fully paired", which
+    is the source-indicator failure in NEGATIVE_RESULTS entry 13.
+    """
+    from oligotox.features.accessibility import site_accessibility
+
+    site = site_accessibility(sequence, transcript)
+    if not site.site_found:
+        return None
+    feats = site.as_features()
+    return {c: feats[c] for c in cols if c in feats}
+
+
 def score_efficacy(
     sequence: str,
     modality: str,
     model_dir: str | Path,
     config_dir: str | Path,
+    target_transcript: str | None = None,
 ) -> Dict[str, Any]:
     """Potency for the matching modality, or an explanation of why not.
 
     The returned score is the model's raw readout, in the units the training
     data used, and those units are returned alongside it. They are not a
     probability and not comparable across modalities.
+
+    `target_transcript` is optional. When a context ships an accessibility
+    model and the oligo's binding site locates in the transcript, that model
+    is used instead and the prediction says so. Without a transcript, or when
+    the site does not locate, the design-only model is used unchanged. The
+    accessibility columns are never filled in with zeros to make up the
+    difference.
     """
     config = load_efficacy_config(config_dir)
     model_dir = Path(model_dir)
@@ -134,14 +158,37 @@ def score_efficacy(
         missing = [c for c in cols if c not in feats]
         if missing:
             continue
-        row = pd.DataFrame([[float(feats[c]) for c in cols]], columns=cols)
+        # Prefer the accessibility model when a transcript was supplied and
+        # the site locates. Everything needed is resolved first, so the
+        # fallback path stays exactly what it was before this existed.
+        use_path, use_cols, use_feats = path, cols, feats
+        used_accessibility = False
+        evidence = spec["evidence"]
+
+        access_spec = spec.get("accessibility_model")
+        if target_transcript and access_spec:
+            acc_path = model_dir / access_spec["model_file"]
+            acc_cols = access_spec["feature_columns"]
+            site_feats = (
+                _accessibility_features(sequence, target_transcript, acc_cols)
+                if acc_path.exists() else None
+            )
+            if site_feats is not None:
+                merged = {**feats, **site_feats}
+                if all(c in merged for c in acc_cols):
+                    use_path, use_cols, use_feats = acc_path, acc_cols, merged
+                    used_accessibility = True
+                    evidence = access_spec["evidence"]
+
+        row = pd.DataFrame([[float(use_feats[c]) for c in use_cols]], columns=use_cols)
         predictions[f"potency_{name}"] = {
-            "score": float(joblib.load(path).predict(row)[0]),
+            "score": float(joblib.load(use_path).predict(row)[0]),
+            "used_accessibility": used_accessibility,
             "units": spec["units"],
             "readout": spec["readout"],
             "tier": "context",
             "context": spec["context"],
-            "evidence": spec["evidence"],
+            "evidence": evidence,
             "caveat": spec.get("caveat", ""),
             "training_sequences": spec["sequences"],
         }
