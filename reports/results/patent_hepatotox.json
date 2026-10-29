@@ -1,0 +1,346 @@
+{
+  "query": "antisense ALT AST hepatotoxicity gapmer",
+  "publications_read": 30,
+  "rows": 50,
+  "unique_sequences": 46,
+  "rejected": {
+    "no_compound": 1460,
+    "no_seq_id": 160,
+    "no_sequence": 3,
+    "no_alt_value": 95,
+    "no_control": 0
+  },
+  "rule": "A row is emitted only when the compound resolves to a real sequence and its own table carries a control group. A patent that reports toxicity qualitatively yields nothing.",
+  "per_patent": [
+    {
+      "publication": "US9567587B2",
+      "rows": 12,
+      "rejected": {
+        "no_compound": 24,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10493092B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 70,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20130053430A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 3,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "USRE48060E1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 3,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US11225664B2",
+      "rows": 3,
+      "rejected": {
+        "no_compound": 11,
+        "no_seq_id": 0,
+        "no_sequence": 3,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US11981897B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 67,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US11312962B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 76,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US8846639B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20220228140A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20240026364A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 173,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20210349076A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 20,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US8865674B2",
+      "rows": 33,
+      "rejected": {
+        "no_compound": 93,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US8440637B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US8158597B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 3,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US8865884B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US9624496B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 6,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20250354135A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 330,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US11118183B2",
+      "rows": 2,
+      "rejected": {
+        "no_compound": 152,
+        "no_seq_id": 13,
+        "no_sequence": 0,
+        "no_alt_value": 95,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10815480B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 11,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US12297431B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 56,
+        "no_seq_id": 11,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US11633483B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 99,
+        "no_seq_id": 9,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US12409188B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 68,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US9873876B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US9399774B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 63,
+        "no_seq_id": 91,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10479993B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 4,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10434117B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10912792B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 78,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10772906B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 61,
+        "no_seq_id": 25,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20210071181A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US8278425B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    }
+  ]
+}
