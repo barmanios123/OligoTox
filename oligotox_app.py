@@ -85,8 +85,18 @@ def _validate_sequence(seq: str):
         return False, "Sequence is too short for meaningful analysis; use at least 8 nt."
     return True, seq
 
+def _ps_fraction(chemistry: str) -> float:
+    """The one place this is decided.
+
+    The summary and the design scan both used to default to 1.0 when the run
+    payload carried no value, while scoring used 0.9, so the interface
+    reported a backbone the model never saw.
+    """
+    return 0.9 if "PS" in chemistry.upper() else 0.0
+
+
 def _sequence_features(seq: str, chemistry: str, dose_mg_kg: float, modality: str = "siRNA"):
-    ps_fraction = 0.9 if "PS" in chemistry.upper() else 0.0
+    ps_fraction = _ps_fraction(chemistry)
     return build_candidate_features(
         seq,
         modality=modality,
@@ -265,13 +275,17 @@ with st.sidebar:
     analyst_note = st.text_input("Analyst note", value="")
     run_btn = st.button("Run analysis", type="primary", width="stretch")
 
+# Summary first, because it is the one view that answers "what did this
+# find" without the reader knowing which tab holds which half of it. The old
+# "Candidate Input" tab only echoed the sidebar's own fields and dumped raw
+# features, so it is folded in here rather than kept as a ninth thing to read.
 tabs = st.tabs([
-    "Candidate Input",
-    "Toxicity Results",
-    "PK/PD",
-    "Regulatory Report",
+    "Summary",
+    "Toxicity",
     "Efficacy",
+    "PK/PD",
     "Design advice",
+    "Report",
     "Saved Runs",
     "Build Info",
 ])
@@ -279,26 +293,10 @@ tabs = st.tabs([
 if "last_run" not in st.session_state:
     st.session_state["last_run"] = None
 
-with tabs[0]:
-    st.subheader("Candidate setup")
-    ok, seq_or_msg = _validate_sequence(sequence)
-    if ok:
-        normalized_seq = seq_or_msg
-        st.success(f"Sequence accepted. Length: {len(normalized_seq)} nt.")
-        st.code(normalized_seq)
-        features_preview = _sequence_features(normalized_seq, chemistry, dose_mg_kg, modality)
-        st.write("Derived feature preview")
-        st.json(features_preview)
-    else:
-        normalized_seq = None
-        st.error(seq_or_msg)
-
-    st.write("Artifacts status")
-    st.write({
-        "processed_dir_exists": PROCESSED_DIR.exists(),
-        "model_dir_exists": MODEL_DIR.exists(),
-        "config_dir_exists": CONFIG_DIR.exists(),
-    })
+# Validation runs before the tabs so the sidebar can report a bad sequence
+# immediately, without waiting for a run.
+_input_ok, _input_msg = _validate_sequence(sequence)
+normalized_seq = _input_msg if _input_ok else None
 
 if run_btn:
     ok, seq_or_msg = _validate_sequence(sequence)
@@ -319,6 +317,7 @@ if run_btn:
                 "chemistry": chemistry,
                 "modality": modality,
                 "dose_mg_kg": dose_mg_kg,
+                "ps_fraction": _ps_fraction(chemistry),
                 "analyst_note": analyst_note,
                 "candidate_features": candidate_features,
             },
@@ -331,6 +330,60 @@ if run_btn:
         st.success(f"Analysis complete. Run {run_id} kept in this session.")
 
 run = st.session_state.get("last_run")
+
+with tabs[0]:
+    if not _input_ok:
+        st.error(_input_msg)
+    elif not run:
+        st.subheader("Ready")
+        st.success(f"Sequence accepted, {len(normalized_seq)} nt.")
+        st.code(normalized_seq)
+        st.info("Press **Run analysis** in the sidebar. The summary of what was "
+                "measured, what is predicted and what is deliberately not "
+                "predicted appears here.")
+        with st.expander("Derived features, before any model runs"):
+            st.caption("These are computed from the sequence alone. They are "
+                       "inputs, not results.")
+            st.json({k: (round(v, 4) if isinstance(v, (int, float)) else v)
+                     for k, v in _sequence_features(
+                         normalized_seq, chemistry, dose_mg_kg, modality).items()})
+    else:
+        st.subheader("Summary")
+        with st.spinner("Summarising"):
+            full = summarize(run["input"]["sequence"], run["input"]["modality"],
+                             run["input"]["chemistry"],
+                             run["input"].get("ps_fraction", _ps_fraction(run["input"]["chemistry"])))
+
+        # The headline first, so the answer does not depend on reading prose.
+        tox = run["toxicity"]
+        validated = full["validated_toxicity"]
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Endpoints presented", f"{len(validated)} of 13")
+        c2.metric("Composite", "none" if tox.get("composite_score") is None
+                  else f"{_safe_float(tox.get('composite_score')):.3f}")
+        c3.metric("Band", str(tox.get("composite_band") or "not scored"))
+        st.caption("Ten of the thirteen toxicity models run and are withheld "
+                   "because they failed an evidence check. The Toxicity tab "
+                   "lists each one and the reason.")
+
+        st.code(full["text"], language=None)
+        st.download_button("Download this summary", data=full["text"],
+                           file_name=f"oligotox_summary_{full['sequence'][:12]}.txt",
+                           mime="text/plain")
+        if full["parameters_unavailable"]:
+            st.warning("Some parameters this summary expects were not produced "
+                       f"by the feature pipeline: {full['parameters_unavailable']}. "
+                       "The summary is incomplete rather than wrong.")
+
+        with st.expander("What the other tabs add"):
+            st.markdown(
+                "- **Toxicity** every endpoint, including the ten withheld, with why\n"
+                "- **Efficacy** predicted knockdown, scored per assay\n"
+                "- **PK/PD** exposure and dose\n"
+                "- **Design advice** every single-base edit, scored and ranked\n"
+                "- **Report** the regulatory write-up\n"
+                "- **Saved Runs** this session's runs, kept in your browser only"
+            )
 
 with tabs[1]:
     st.subheader("Toxicity")
@@ -384,7 +437,7 @@ with tabs[1]:
             mime="application/json",
         )
 
-with tabs[2]:
+with tabs[3]:
     st.subheader("PK/PD")
     if not run:
         st.info("Run an analysis to view PK/PD outputs.")
@@ -395,7 +448,7 @@ with tabs[2]:
         else:
             st.write(pkpd)
 
-with tabs[3]:
+with tabs[5]:
     st.subheader("Regulatory report")
     if not run:
         st.info("Run an analysis to generate a report.")
@@ -413,7 +466,7 @@ with tabs[3]:
         )
 
 
-with tabs[4]:
+with tabs[2]:
     st.subheader("Efficacy")
     if not run:
         st.info("Run an analysis to view efficacy outputs.")
@@ -454,7 +507,7 @@ with tabs[4]:
             )
 
 
-with tabs[5]:
+with tabs[4]:
     st.subheader("Design advice")
     if not run:
         st.info("Run an analysis to see which edits change the prediction.")
@@ -462,26 +515,7 @@ with tabs[5]:
         seq = run["input"]["sequence"]
         modality = run["input"]["modality"]
 
-        # The full write-up first. The edit scan below says what to change;
-        # this says what the sequence is and what the models will and will not
-        # claim about it, which is the part a reader needs before any advice.
-        with st.expander("Full summary of this sequence", expanded=True):
-            with st.spinner("Summarising"):
-                full = summarize(seq, modality, run["input"]["chemistry"],
-                                 run["input"].get("ps_fraction", 1.0))
-            st.code(full["text"], language=None)
-            st.download_button(
-                "Download this summary",
-                data=full["text"],
-                file_name=f"oligotox_summary_{seq[:12]}.txt",
-                mime="text/plain",
-            )
-            if full["parameters_unavailable"]:
-                st.warning(
-                    "Some parameters this summary expects were not produced by "
-                    f"the feature pipeline: {full['parameters_unavailable']}. "
-                    "The summary is incomplete rather than wrong."
-                )
+        # The full summary lives on the Summary tab.
 
         st.caption(
             "Every single-base substitution is scored through the same models the "

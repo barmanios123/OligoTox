@@ -446,14 +446,16 @@ The last step is what the app reads, so rerun it after any change to the baselin
 
 | Tab | What it does | Status |
 |---|---|---|
-| Candidate Input | Sequence, chemistry, modality and dose entry, with validation | — |
-| Toxicity Results | Predictions for the validated endpoints, a composite over those only, and the remaining model outputs behind an expander with the reason each is excluded | Gated by evidence tier |
-| PK/PD | Liver AUC, Cmax and half-life from a GalNAc-siRNA compartment simulator | Mechanistic simulator, not fitted to this data |
-| Regulatory Report | OSWG-style JSON safety summary, with an evidence block and recommendations raised only from validated endpoints | Report formatting |
+| Summary | The whole result in one place: the sequence's measured parameters with what each means, the endpoints the evidence supports, and what the summary deliberately cannot tell you. Downloadable as text | Reads the gate, never bypasses it |
+| Toxicity | Predictions for the validated endpoints, a composite over those only, and the remaining model outputs behind an expander with the reason each is excluded | Gated by evidence tier |
 | Efficacy | Potency for the candidate's modality, with units, evidence and caveat, plus per-assay knockdown models | siRNA validated, ASO per-assay |
+| PK/PD | Liver AUC, Cmax and half-life from a GalNAc-siRNA compartment simulator | Mechanistic simulator, not fitted to this data |
 | Design advice | Single-base edits ranked by predicted risk reduction, with their potency cost | Validated endpoints only |
+| Report | OSWG-style JSON safety summary, with an evidence block and recommendations raised only from validated endpoints | Report formatting |
 | Saved Runs | Runs kept during the session | — |
 | Build Info | Model versions, feature count and config provenance | — |
+
+Sequence, chemistry, modality and dose are entered in the sidebar, so there is no separate input tab. Before a run the Summary tab shows the validated sequence and its derived features; after one it shows the result.
 
 The Efficacy tab previously held untrained model slots and was removed rather than shipped behind a disclaimer. It returned once the models were trained and validated against baselines.
 

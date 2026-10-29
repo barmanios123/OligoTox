@@ -67,3 +67,24 @@ def test_runs_are_not_written_to_shared_storage(root):
     # Nothing on disk for this run.
     run_id = runs[0]["run_id"]
     assert not list((root / "artifacts" / "runs").glob(f"{run_id}.json"))
+
+
+def test_the_summary_reports_the_backbone_that_was_actually_scored():
+    """The interface must not print a parameter the model never saw.
+
+    `_sequence_features` scores PS chemistry at 0.9, while the summary and the
+    design scan both defaulted to 1.0 when the run payload carried no value.
+    The app then displayed "100% phosphorothioate" for a candidate scored at
+    90%. One definition, used everywhere.
+    """
+    import oligotox_app as app
+
+    assert app._ps_fraction("PS") == 0.9
+    assert app._ps_fraction("mixed_PS_PO") == 0.9
+    assert app._ps_fraction("PO") == 0.0
+
+    feats = app._sequence_features("ACGTACGTACGTACGTACGT", "PS", 3.0, "siRNA")
+    assert feats["ps_fraction"] == app._ps_fraction("PS"), (
+        "the features the model sees must carry the same PS fraction the "
+        "summary prints"
+    )
