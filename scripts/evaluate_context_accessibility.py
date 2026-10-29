@@ -27,6 +27,7 @@ Writes reports/results/context_accessibility.{csv,json}.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -41,7 +42,9 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from oligotox.efficacy.potency import guide_features  # noqa: E402
-from oligotox.features.accessibility import site_accessibility  # noqa: E402
+from oligotox.features.accessibility import (  # noqa: E402
+    _unpaired_profile, site_accessibility,
+)
 from train_context_potency import _model, load_contexts  # noqa: E402
 
 GENOMIC = ROOT / "data" / "external" / "genomic"
@@ -84,12 +87,30 @@ def _rho(X: pd.DataFrame, y: np.ndarray, genes: np.ndarray, cv) -> float:
     return float(value) if np.isfinite(value) else 0.0
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    # Folding holds a lot of memory and this machine has little to spare, so
+    # a whole-corpus pass was being killed partway through. One context per
+    # process starts from a clean heap and, because results are merged into
+    # the file rather than overwriting it, a death costs one context instead
+    # of the run.
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--only", default=None, help="run a single context by slug")
+    parser.add_argument("--list", action="store_true", help="print context slugs and exit")
+    args = parser.parse_args(argv)
+
     transcripts = load_sequences()
     if not transcripts:
         raise SystemExit("no genomic spans cached; run scripts/fetch_transcripts.py --genomic")
     print(f"{len(transcripts)} genomic span(s) cached", flush=True)
     contexts = load_contexts()
+    if args.list:
+        for slug, frame, _ in contexts:
+            print(slug, len(frame))
+        return
+    if args.only:
+        contexts = [c for c in contexts if c[0] == args.only]
+        if not contexts:
+            raise SystemExit(f"no context named {args.only}")
     print(f"{len(contexts)} context(s) to test, "
           f"up to {MAX_ROWS_PER_CONTEXT} rows each\n", flush=True)
 
@@ -116,6 +137,10 @@ def main() -> None:
             print(f"  {slug:32s} skipped, {len(subset)} located rows over "
                   f"{subset['target_gene'].nunique()} gene(s)")
             continue
+
+        # Folding profiles are large and a context shares almost none with the
+        # next, so holding them across contexts only risks the run.
+        _unpaired_profile.cache_clear()
 
         design = pd.DataFrame([guide_features(s) for s in subset["sequence"]],
                               index=subset.index)
@@ -145,6 +170,19 @@ def main() -> None:
         print(f"  {slug:32s} n={len(subset):6,} genes={subset['target_gene'].nunique():3d}  "
               f"design={base:+.3f} +access={combined:+.3f} alone={alone:+.3f} "
               f"gain={gain:+.4f}", flush=True)
+
+    # Merge with anything earlier runs recorded, so one context per process
+    # accumulates rather than replacing.
+    existing = []
+    out_json = RESULTS / "context_accessibility.json"
+    if out_json.exists():
+        try:
+            existing = json.loads(out_json.read_text()).get("results", [])
+        except json.JSONDecodeError:
+            existing = []
+    done = {r["context"] for r in rows}
+    rows = rows + [r for r in existing if r["context"] not in done]
+    rows.sort(key=lambda r: -r["gain"])
 
     if not rows:
         raise SystemExit("no context had enough located rows to evaluate")

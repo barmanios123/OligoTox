@@ -93,7 +93,11 @@ def find_site(oligo: str, transcript: str) -> int:
 CONTEXT = 400
 
 
-@lru_cache(maxsize=256)
+# One cached profile is 801 x 26 Python floats, about 0.7MB as nested tuples,
+# so 256 of them is ~180MB. The hit rate barely justifies one entry: every
+# binding site gets its own window, so repeats are rare. A large cache here
+# bought nothing and was enough to get the evaluation killed partway through.
+@lru_cache(maxsize=32)
 def _unpaired_profile(transcript: str) -> tuple:
     """Local unpaired probabilities for a sequence, cached."""
     import RNA

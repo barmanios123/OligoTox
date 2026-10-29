@@ -1,0 +1,8 @@
+context,rows_located,rows_sampled,sampled,coverage,genes,design_only,design_plus_accessibility,accessibility_only,gain,helps
+a431_4000_gymnosis,1010,1200,True,0.842,12,0.1941,0.2439,0.1428,0.0499,True
+a431_2000_gymnosis,1092,1200,True,0.91,9,0.2497,0.3536,0.2439,0.104,True
+shsy5y_4000_electroporat,1196,1200,True,0.997,6,0.207,0.1432,-0.2325,-0.0638,False
+hepg2_4500_electroporat,1186,1200,True,0.988,7,0.0619,0.1483,-0.1139,0.0865,True
+a549_anydose_other,1044,1200,True,0.87,54,-0.0578,0.0237,-0.0046,0.0815,True
+t24_anydose_other,986,1200,True,0.822,59,0.1726,0.1908,-0.0469,0.0181,True
+hepg2_1000_electroporat,1181,1200,True,0.984,5,0.2116,0.2236,-0.0306,0.0119,True

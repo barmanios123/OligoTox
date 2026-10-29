@@ -1,0 +1,100 @@
+{
+  "question": "Does target-site accessibility improve the per-assay potency models, inside their own data?",
+  "method": "Restricted to rows whose binding site locates in a cached genomic span. Nothing zero-filled, so no column encodes computability. Target-gene-grouped folds, same model as the shipped contexts.",
+  "caveat": "The located subset is narrower than the shipped model's population. This answers whether accessibility helps where it is computable, not whether it helps everywhere.",
+  "min_gain": 0.01,
+  "verdict": "accessibility clears +0.01 in 6 of 7 context(s)",
+  "results": [
+    {
+      "context": "a431_4000_gymnosis",
+      "rows_located": 1010,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.842,
+      "genes": 12,
+      "design_only": 0.1941,
+      "design_plus_accessibility": 0.2439,
+      "accessibility_only": 0.1428,
+      "gain": 0.0499,
+      "helps": true
+    },
+    {
+      "context": "a431_2000_gymnosis",
+      "rows_located": 1092,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.91,
+      "genes": 9,
+      "design_only": 0.2497,
+      "design_plus_accessibility": 0.3536,
+      "accessibility_only": 0.2439,
+      "gain": 0.104,
+      "helps": true
+    },
+    {
+      "context": "shsy5y_4000_electroporat",
+      "rows_located": 1196,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.997,
+      "genes": 6,
+      "design_only": 0.207,
+      "design_plus_accessibility": 0.1432,
+      "accessibility_only": -0.2325,
+      "gain": -0.0638,
+      "helps": false
+    },
+    {
+      "context": "hepg2_4500_electroporat",
+      "rows_located": 1186,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.988,
+      "genes": 7,
+      "design_only": 0.0619,
+      "design_plus_accessibility": 0.1483,
+      "accessibility_only": -0.1139,
+      "gain": 0.0865,
+      "helps": true
+    },
+    {
+      "context": "a549_anydose_other",
+      "rows_located": 1044,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.87,
+      "genes": 54,
+      "design_only": -0.0578,
+      "design_plus_accessibility": 0.0237,
+      "accessibility_only": -0.0046,
+      "gain": 0.0815,
+      "helps": true
+    },
+    {
+      "context": "t24_anydose_other",
+      "rows_located": 986,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.822,
+      "genes": 59,
+      "design_only": 0.1726,
+      "design_plus_accessibility": 0.1908,
+      "accessibility_only": -0.0469,
+      "gain": 0.0181,
+      "helps": true
+    },
+    {
+      "context": "hepg2_1000_electroporat",
+      "rows_located": 1181,
+      "rows_sampled": 1200,
+      "sampled": true,
+      "coverage": 0.984,
+      "genes": 5,
+      "design_only": 0.2116,
+      "design_plus_accessibility": 0.2236,
+      "accessibility_only": -0.0306,
+      "gain": 0.0119,
+      "helps": true
+    }
+  ]
+}
