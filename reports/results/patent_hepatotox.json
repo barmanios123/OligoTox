@@ -1,12 +1,12 @@
 {
   "query": "antisense ALT AST hepatotoxicity gapmer",
   "publications_read": 30,
-  "rows": 50,
-  "unique_sequences": 46,
+  "rows": 143,
+  "unique_sequences": 119,
   "rejected": {
     "no_compound": 1460,
-    "no_seq_id": 160,
-    "no_sequence": 3,
+    "no_seq_id": 70,
+    "no_sequence": 0,
     "no_alt_value": 95,
     "no_control": 0
   },
@@ -58,11 +58,11 @@
     },
     {
       "publication": "US11225664B2",
-      "rows": 3,
+      "rows": 6,
       "rejected": {
         "no_compound": 11,
         "no_seq_id": 0,
-        "no_sequence": 3,
+        "no_sequence": 0,
         "no_alt_value": 0,
         "no_control": 0
       }
@@ -201,10 +201,10 @@
     },
     {
       "publication": "US11118183B2",
-      "rows": 2,
+      "rows": 15,
       "rejected": {
         "no_compound": 152,
-        "no_seq_id": 13,
+        "no_seq_id": 0,
         "no_sequence": 0,
         "no_alt_value": 95,
         "no_control": 0
@@ -212,10 +212,10 @@
     },
     {
       "publication": "US10815480B2",
-      "rows": 0,
+      "rows": 11,
       "rejected": {
         "no_compound": 0,
-        "no_seq_id": 11,
+        "no_seq_id": 0,
         "no_sequence": 0,
         "no_alt_value": 0,
         "no_control": 0
@@ -223,10 +223,10 @@
     },
     {
       "publication": "US12297431B2",
-      "rows": 0,
+      "rows": 9,
       "rejected": {
         "no_compound": 56,
-        "no_seq_id": 11,
+        "no_seq_id": 2,
         "no_sequence": 0,
         "no_alt_value": 0,
         "no_control": 0
@@ -234,10 +234,10 @@
     },
     {
       "publication": "US11633483B2",
-      "rows": 0,
+      "rows": 9,
       "rejected": {
         "no_compound": 99,
-        "no_seq_id": 9,
+        "no_seq_id": 0,
         "no_sequence": 0,
         "no_alt_value": 0,
         "no_control": 0
@@ -267,10 +267,10 @@
     },
     {
       "publication": "US9399774B2",
-      "rows": 0,
+      "rows": 23,
       "rejected": {
         "no_compound": 63,
-        "no_seq_id": 91,
+        "no_seq_id": 68,
         "no_sequence": 0,
         "no_alt_value": 0,
         "no_control": 0
@@ -311,10 +311,10 @@
     },
     {
       "publication": "US10772906B2",
-      "rows": 0,
+      "rows": 25,
       "rejected": {
         "no_compound": 61,
-        "no_seq_id": 25,
+        "no_seq_id": 0,
         "no_sequence": 0,
         "no_alt_value": 0,
         "no_control": 0

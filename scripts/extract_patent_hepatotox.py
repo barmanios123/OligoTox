@@ -52,6 +52,11 @@ UA = "Mozilla/5.0 (compatible; oligotox research extractor)"
 PAUSE = 1.0
 
 OLIGO = re.compile(r"^[ACGT]{15,25}$")
+# A gapmer motif such as 5-10-5 or 3-14-3: MOE wing, deoxy gap, MOE wing.
+# Ionis routinely files several compounds on one base sequence that differ
+# only in this, so two rows sharing a sequence is correct data rather than a
+# mapping error, and dropping the column is what makes them look identical.
+MOTIF = re.compile(r"^\d{1,2}-\d{1,2}-\d{1,2}$")
 ISIS_SEQID = re.compile(r"ISIS\s+(\d{5,7})\s*\(\s*SEQ\s+ID\s+NO:?\s*(\d+)\s*\)", re.I)
 ISIS_LABEL = re.compile(r"ISIS\s+(\d{5,7})", re.I)
 DOSE = re.compile(r"(\d+(?:\.\d+)?)\s*mg/kg", re.I)
@@ -136,6 +141,28 @@ def _rejoin(rows: list[list[str]]) -> list[list[str]]:
     return merged
 
 
+def compound_details(tables: list[list[list[str]]]) -> dict[int, dict]:
+    """ISIS number -> its sequence and motif, where a table lists both.
+
+    This is the only place the chemistry is recorded. Two compounds on the
+    same base sequence are distinguished by motif alone, so a row without it
+    cannot be told apart from its sibling.
+    """
+    out: dict[int, dict] = {}
+    for rows in tables:
+        for row in rows:
+            seq = next((c.upper().replace("U", "T") for c in row
+                        if OLIGO.match(c.upper().replace("U", "T"))), None)
+            if not seq:
+                continue
+            isis = next((int(c) for c in row if c.isdigit() and 100000 <= int(c) < 10000000), None)
+            if isis is None:
+                continue
+            motif = next((c for c in row if MOTIF.match(c.strip())), None)
+            out[isis] = {"sequence": seq, "motif": motif}
+    return out
+
+
 def sequence_map(tables: list[list[list[str]]]) -> dict[int, str]:
     """SEQ ID NO -> sequence, from the sequence listing tables."""
     out: dict[int, str] = {}
@@ -199,6 +226,7 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
     text = re.sub(r"[ \t]+", " ", re.sub(r"<[^>]+>", " ", html))
     tables = _tables(html)
     seqs = sequence_map(tables)
+    details = compound_details(tables)
     isis_to_seq = {int(a): int(b) for a, b in ISIS_SEQID.findall(text)}
 
     rejected = {"no_compound": 0, "no_seq_id": 0, "no_sequence": 0,
@@ -221,13 +249,21 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
             if entry["alt"] is None:
                 rejected["no_alt_value"] += 1
                 continue
-            if isis not in isis_to_seq:
-                rejected["no_seq_id"] += 1
-                continue
-            seq_id = isis_to_seq[isis]
-            if seq_id not in seqs:
-                rejected["no_sequence"] += 1
-                continue
+            # A table that lists the compound directly is better than the
+            # prose route, because it carries the motif too.
+            detail = details.get(isis)
+            if detail:
+                seq_id = isis_to_seq.get(isis)
+                sequence, motif = detail["sequence"], detail["motif"]
+            else:
+                if isis not in isis_to_seq:
+                    rejected["no_seq_id"] += 1
+                    continue
+                seq_id = isis_to_seq[isis]
+                if seq_id not in seqs:
+                    rejected["no_sequence"] += 1
+                    continue
+                sequence, motif = seqs[seq_id], None
             if control is None:
                 # Without a control in the same table an ALT of 52 means
                 # nothing: normal mouse ALT spans a wide range between studies.
@@ -238,7 +274,8 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
                 "publication": pub,
                 "isis_number": isis,
                 "seq_id": seq_id,
-                "sequence": seqs[seq_id],
+                "sequence": sequence,
+                "motif": motif,
                 "dose_mg_kg": float(dose.group(1)) if dose else None,
                 "alt": entry["alt"],
                 "ast": entry["ast"],

@@ -21,7 +21,9 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from extract_patent_hepatotox import _rejoin, extract, sequence_map, _tables  # noqa: E402
+from extract_patent_hepatotox import (  # noqa: E402
+    _rejoin, _tables, compound_details, extract, sequence_map,
+)
 
 FIXTURE = ROOT / "data" / "external" / "patent_cache" / "US11225664B2.html"
 pytestmark = pytest.mark.skipif(not FIXTURE.exists(),
@@ -53,16 +55,44 @@ def test_the_sequence_is_the_one_the_patent_names(parsed):
     assert {r["seq_id"] for r in rows if r["isis_number"] == 233698} == {136}
 
 
-def test_a_compound_whose_sequence_is_absent_is_rejected_not_guessed(parsed):
-    """ISIS 233693 maps to SEQ ID 131, which the rendered patent never prints.
+def test_the_compound_table_is_preferred_over_the_prose_route():
+    """ISIS 233693 is recovered from the table that lists it directly.
 
-    The sequence listing is a separate document Google Patents does not show.
-    Emitting that row with a guessed or blank sequence would put three
-    fabricated measurements into the training corpus.
+    The prose says "ISIS 233693 (SEQ ID NO: 131)", but reading SEQ ID 131
+    back out of the sequence listing failed, because that table ends in two
+    numeric columns and taking the last one picked 355. The row itself,
+    `233693 | 6 | 349 | GACATGTTCTTCACCTCCTC | 80 | 131 | 355`, carries the
+    sequence next to the compound and needs no lookup at all. Values checked
+    against the patent.
     """
-    rows, rejected, _ = parsed
-    assert not [r for r in rows if r["isis_number"] == 233693]
-    assert rejected["no_sequence"] == 3
+    html = FIXTURE.read_text(encoding="utf-8", errors="replace")
+    rows, _ = extract("US11225664B2", html)
+    by_dose = {r["dose_mg_kg"]: r for r in rows if r["isis_number"] == 233693}
+    assert set(by_dose) == {10.0, 25.0, 50.0}
+    assert (by_dose[10.0]["alt"], by_dose[25.0]["alt"], by_dose[50.0]["alt"]) \
+        == (23.0, 21.0, 52.0)
+    assert {r["sequence"] for r in by_dose.values()} == {"GACATGTTCTTCACCTCCTC"}
+
+
+def test_two_compounds_may_share_a_sequence_and_differ_by_motif():
+    """This looked like a mapping bug and is not one.
+
+    Ionis files several compounds on one base sequence that differ only in
+    gapmer architecture, so `426183 | 3-14-3` and `426261 | 2-13-5` both carry
+    AGCCATGGTGATCAGGAGGC. Dropping the motif column is what made them
+    indistinguishable, and a corpus that cannot tell them apart would hold
+    contradictory labels for one sequence.
+    """
+    cached = FIXTURE.parent / "US9567587B2.html"
+    if not cached.exists():
+        pytest.skip("US9567587B2 not cached")
+    details = compound_details(_tables(
+        cached.read_text(encoding="utf-8", errors="replace")))
+    a, b = details.get(426183), details.get(426261)
+    assert a and b
+    assert a["sequence"] == b["sequence"] == "AGCCATGGTGATCAGGAGGC"
+    assert a["motif"] != b["motif"], "the motif is what tells them apart"
+    assert {a["motif"], b["motif"]} == {"3-14-3", "2-13-5"}
 
 
 def test_dose_rows_are_rejoined_with_their_label():
