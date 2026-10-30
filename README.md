@@ -14,24 +14,26 @@ Each bar is an out-of-fold PR-AUC from a calibrated logistic regression. Blue is
 
 | Endpoint | Positive rows / sequences | Rows measured | Base rate | Row-level CV | **Sequence-grouped CV** |
 |---|---|---|---|---|---|
-| injection site reaction | 12 / 12 | 24 | 0.500 | 0.68 | **0.66** |
-| thrombocytopenia | 4 / 4 | 28 | 0.143 | 0.63 | **0.50** |
-| complement activation | 6 / 6 | 28 | 0.214 | 0.56 | **0.50** |
-| kupffer cell activation | 34 / 27 | 1614 | 0.021 | 0.73 | **0.48** |
-| renal tubular injury | 7 / 7 | 28 | 0.250 | 0.37 | **0.43** |
-| hepatocellular injury | 313 / 103 | 1051 | 0.298 | 0.66 | **0.37** |
-| offtarget gene silencing | 68 / 12 | 544 | 0.125 | 0.74 | **0.35** |
-| renal accumulation | 7 / 7 | 24 | 0.292 | 0.36 | **0.35** |
-| coagulation effect | 5 / 5 | 24 | 0.208 | 0.23 | **0.35** |
-| innate immune activation | 7 / 7 | 28 | 0.250 | 0.20 | **0.25** |
-| cytokine release | 7 / 7 | 28 | 0.250 | 0.20 | **0.25** |
-| hepatic vacuolation | 12 / 6 | 1614 | 0.007 | 0.46 | **0.15** |
+| renal accumulation | 7 / 7 | 24 | 0.292 | 0.80 | **0.84** |
+| offtarget gene silencing | 68 / 12 | 544 | 0.125 | 0.75 | **0.64** |
+| hepatocellular injury | 313 / 103 | 1051 | 0.298 | 0.71 | **0.62** |
+| kupffer cell activation | 34 / 27 | 1614 | 0.021 | 0.90 | **0.60** |
+| thrombocytopenia | 4 / 4 | 28 | 0.143 | 0.35 | **0.50** |
+| coagulation effect | 5 / 5 | 24 | 0.208 | 0.29 | **0.50** |
+| renal tubular injury | 7 / 7 | 28 | 0.250 | 0.51 | **0.49** |
+| injection site reaction | 12 / 12 | 24 | 0.500 | 0.67 | **0.41** |
+| innate immune activation | 7 / 7 | 28 | 0.250 | 0.30 | **0.21** |
+| cytokine release | 7 / 7 | 28 | 0.250 | 0.30 | **0.21** |
+| complement activation | 6 / 6 | 28 | 0.214 | 0.20 | **0.18** |
+| hepatic vacuolation | 12 / 6 | 1614 | 0.007 | 0.43 | **0.11** |
 
 CNS toxicity has only 2 positives in this data and is not evaluated here; it is trained and validated separately on external assays, below.
 
 Read the **Rows measured** column before the PR-AUC. Each endpoint is scored only on the rows that were actually assayed for it, which for most of them is 24 to 28 rows. Until 2026-10-30 every unmeasured row was trained as a negative, so all twelve reported 1,614 or 2,058 samples and their base rates looked ten times smaller than they are; the whole table moved when that was fixed. [Entry 17](docs/NEGATIVE_RESULTS.md) has what happened. A PR-AUC of 0.50 on 28 rows with 4 positives is noise, which is why those endpoints sit at `insufficient_data` whatever the number says.
 
-Hepatocellular injury is the one endpoint with a real corpus behind it: 1,051 measured rows over 296 unique sequences, 103 of them positive, after 444 observations were added from 30 Ionis patents. That ingestion did what it was meant to do and removed the source confounding, and it is still only `weak`, because the model does not clear a crude sequence baseline and does not transfer to an independent screen.
+Hepatocellular injury is the one endpoint with a real corpus behind it: 1,051 measured rows over 296 unique sequences, 103 of them positive, after 444 observations were added from 30 Ionis patents. That ingestion did what it was meant to do and removed the source confounding, and it is still only `weak`, because the model does not clear a crude sequence baseline (CI low 0.34 against 0.44) and does not transfer to an independent screen (ROC-AUC 0.38, where 0.5 is chance).
+
+These numbers are also the first produced by an estimator that is not mis-specified. Until 2026-10-30 the shipped model calibrated on 2 folds, so every sub-model was fitted on half the rows, and it never scaled its features, so one penalty fell across coefficients whose scales run from 0.5 to 20. Fixing both is worth +0.195 PR-AUC on hepatocellular injury by a paired bootstrap over sequences [+0.024, +0.342], and takes its Brier skill from -0.054, worse than quoting the base rate, to +0.128. It promoted off-target gene silencing to `validated`. [Entry 18](docs/NEGATIVE_RESULTS.md) has the decomposition, and entries 17, 19 and 20 are the three other things this one endpoint turned up.
 
 ### What the fix changed
 

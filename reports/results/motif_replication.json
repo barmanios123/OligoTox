@@ -1,0 +1,109 @@
+{
+  "claim": "Kasuya et al., NAR 2022;50(13):7224: TGC and TCC counts track hepatotoxicity in LNA gapmers.",
+  "question": "Does it hold in a second in-vivo source?",
+  "rule": "It replicates only if the direction agrees across sources and each source's own interval clears zero. A motif that holds in one source is a source effect, and adding it as a feature would teach the model to recognise that source.",
+  "motifs": {
+    "TGC": {
+      "pooled": {
+        "difference": -0.2323869884066253,
+        "ci": [
+          -0.3387432215706071,
+          0.021359839757017184
+        ]
+      },
+      "per_source": {
+        "ionis_patents": {
+          "sequences": 256,
+          "rows": 444,
+          "mean_in_positives": 0.4818181818181818,
+          "mean_in_negatives": 0.4431137724550898,
+          "difference": 0.038704409363091996,
+          "ci": [
+            -0.09588000057231158,
+            0.17250572759846652
+          ],
+          "direction": "higher in toxic",
+          "clears_zero": false
+        },
+        "oligotox_main": {
+          "sequences": 24,
+          "rows": 24,
+          "mean_in_positives": 0.0,
+          "mean_in_negatives": 0.21428571428571427,
+          "difference": -0.21428571428571427,
+          "ci": [
+            -0.45454545454545453,
+            0.0
+          ],
+          "direction": "higher in non-toxic",
+          "clears_zero": false
+        },
+        "papargyri_2020": {
+          "sequences": 12,
+          "rows": 579,
+          "mean_in_positives": 0.2538860103626943,
+          "mean_in_negatives": 0.6735751295336787,
+          "difference": -0.4196891191709844,
+          "ci": [
+            -0.5348842653481437,
+            0.0678581047368849
+          ],
+          "direction": "higher in non-toxic",
+          "clears_zero": false
+        }
+      },
+      "replicates": false
+    },
+    "TCC": {
+      "pooled": {
+        "difference": 0.29150973618362386,
+        "ci": [
+          0.009096971106849617,
+          0.39988626524756127
+        ]
+      },
+      "per_source": {
+        "ionis_patents": {
+          "sequences": 256,
+          "rows": 444,
+          "mean_in_positives": 0.44545454545454544,
+          "mean_in_negatives": 0.36227544910179643,
+          "difference": 0.083179096352749,
+          "ci": [
+            -0.08218140286687142,
+            0.25764704252655524
+          ],
+          "direction": "higher in toxic",
+          "clears_zero": false
+        },
+        "oligotox_main": {
+          "sequences": 24,
+          "rows": 24,
+          "mean_in_positives": 0.3,
+          "mean_in_negatives": 0.07142857142857142,
+          "difference": 0.22857142857142856,
+          "ci": [
+            -0.15,
+            0.7272727272727273
+          ],
+          "direction": "higher in toxic",
+          "clears_zero": false
+        },
+        "papargyri_2020": {
+          "sequences": 12,
+          "rows": 579,
+          "mean_in_positives": 0.7461139896373057,
+          "mean_in_negatives": 0.32124352331606215,
+          "difference": 0.42487046632124353,
+          "ci": [
+            -0.062162415590589805,
+            0.5521281123206567
+          ],
+          "direction": "higher in toxic",
+          "clears_zero": false
+        }
+      },
+      "replicates": false
+    }
+  }
+}

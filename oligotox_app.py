@@ -23,7 +23,7 @@ from oligotox.reporting.oswg_report import OSWGSafetyReport
 
 APP_TITLE = "OligoTox Operator Console"
 APP_SUBTITLE = (
-    "Research prototype. One toxicity endpoint of 13 currently clears the "
+    "Research prototype. Two toxicity endpoints of 13 currently clear the "
     "evidence gate; the rest are shown as unsupported with the reason. "
     "CNS neurotoxicity and siRNA potency are trained on external data. "
     "Each number carries the evidence behind it, and How it works has the "

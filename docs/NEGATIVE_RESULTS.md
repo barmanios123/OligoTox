@@ -692,6 +692,128 @@ following run records the reversal. It is not evidence of anything.
 
 ---
 
+## 18. The estimator was mis-specified, and no output said so
+
+Hepatocellular injury had 296 unique sequences and still lost to GC content
+alone: 0.371 PR-AUC against 0.428. A 39-feature model losing to one crude
+number is a modelling result, not a data one, so
+`scripts/evaluate_hepatotox_model.py` tried the alternatives on the same
+sequence-grouped folds over three seeds.
+
+| Configuration | PR-AUC | Spread over 3 seeds |
+|---|---|---|
+| shipped: `CalibratedClassifierCV(cv=2)`, unscaled | 0.394 | 0.041 |
+| balanced logistic, scaled | 0.662 | 0.021 |
+| gradient boosting, shallow | 0.674 | 0.011 |
+| gradient boosting, shallow, no source-shaped features | **0.674** | **0.008** |
+
+Decomposing the gap found two independent defects in three lines of code:
+
+| Change | PR-AUC |
+|---|---|
+| shipped | 0.371 |
+| + scale the features | 0.437 |
+| + calibrate on 5 folds instead of 2 | **0.619** |
+
+`cv=2` meant every calibrated sub-model was fitted on half the rows, and the
+endpoint with the most data is the one that suffers most from being handed
+half of it. Separately, `liblinear` applies one penalty across coefficients
+whose natural scales run from 0.5 (`gc_content`) to 20 (`seq_length`), so
+regularisation fell unevenly across the features.
+
+A paired bootstrap over sequences, which is the right test rather than
+comparing two marginal confidence intervals, puts the whole fix at **+0.195
+[+0.024, +0.342], P(better) 0.994**. Brier skill goes from **-0.054**, worse
+than quoting the base rate, to **+0.128**.
+
+**What was not done.** Gradient boosting scores higher still, 0.679 against
+0.619, but the paired test puts that difference at +0.042 [-0.032, +0.100],
+P(better) 0.90. It is not distinguishable, and it would give up the
+calibrated probabilities the rest of the platform is built on, so the
+estimator was fixed rather than replaced. Dropping all 21 source-shaped
+chemistry features left gradient boosting at 0.674 with a smaller seed
+spread, so none of the gain was source confounding.
+
+**Why it survived this long.** Nothing in the loop looks at the shape of the
+estimator. The model trained, predicted, and reported a number, and the
+number was simply much worse than it needed to be. It only came up because
+the patent ingestion made the endpoint large enough that losing to one
+feature was obviously wrong rather than plausibly just a small dataset.
+
+The fix moved `offtarget_gene_silencing` from `weak` to `validated` and
+`injection_site_reaction` from `weak` to `source_confounded`. It did not
+rescue hepatocellular injury, which still fails to clear the simple
+baseline (CI low 0.343 against 0.436) and still does not transfer to the
+NAR screen (ROC-AUC 0.379 [0.236-0.547], where 0.5 is chance).
+
+Pinned by `tests/test_estimator_shape.py`.
+
+---
+
+## 19. The models were briefly unloadable by anything but the trainer
+
+Moving the estimator into a class broke every shipped artifact, silently, in
+a way no test covered and no training run could notice.
+
+The trainer runs as `python -m oligotox.training.train`, so its module is
+`__main__`. A class defined beside the training loop pickles as
+`__main__.AdaptiveCalibrated`, and joblib resolves that by import path when
+loading. Training succeeded. Every `.joblib` it wrote raised
+`AttributeError` in the app, in the scorer and in the external check.
+
+It was caught by running the external hepatotoxicity check, which is the
+only step that loads a model in a fresh process. The fix is to define the
+estimator in `src/oligotox/models/estimator.py`, which gives the pickle a
+stable import path.
+
+The same move also lost `feature_names_in_`, which sklearn sets inside
+`_validate_data` and a hand-written estimator never calls. The app's How it
+works page lists each model's real inputs by reading that attribute off the
+model, so every toxicity model would have appeared to consume nothing at
+all. Both are now asserted by `tests/test_estimator_shape.py`, including a
+test that opens every shipped model.
+
+The lesson is narrow and worth having: a model that trains is not a model
+that loads, and only loading it in another process tells you which.
+
+---
+
+## 20. A published motif does not replicate in the second source
+
+Kasuya et al. (NAR 2022) report that TGC and TCC counts track
+hepatotoxicity in LNA gapmers, and the Papargyri rows in this corpus agree
+emphatically. It was the obvious feature to add once hepatocellular injury
+had a real corpus behind it. Until the patent ingestion there was no second
+in-vivo source to check it against.
+
+Positive-minus-negative mean motif count, resampling whole sequences:
+
+| Motif | Patents (256 seq) | Papargyri (12 seq) | oligotox_main (24 seq) | Pooled |
+|---|---|---|---|---|
+| TGC | **+0.039** | **-0.420** | -0.214 | -0.232 [-0.339, +0.021] |
+| TCC | +0.083 | +0.425 | +0.229 | +0.292 [+0.009, +0.400] |
+
+**TGC changes sign between sources.** It is higher in the toxic gapmers in
+the patents and markedly lower in the toxic ones in Papargyri. The pooled
+figure of -0.232 is Papargyri's 12 sequences outvoting 256, because the
+pooling is over rows and Papargyri contributes 579 of them.
+
+**TCC agrees in direction everywhere and clears zero nowhere.** Each
+source's own interval spans zero; only the pooled interval excludes it, and
+only barely, on the same row-weighting that makes TGC look real.
+
+So the honest reading is that the motif association is a Papargyri
+phenomenon that the patent corpus does not confirm, and TCC is at best a
+weak effect the data here cannot resolve. Neither was added as a feature.
+Adding TGC in particular would have taught the model to recognise which
+source a sequence came from, by way of a mechanism with a citation attached
+to it, which is the most persuasive possible form of entry 13.
+
+The check is `scripts/evaluate_motif_replication.py`, and it is cheap: it
+is the same number computed once per source instead of once.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
@@ -706,6 +828,15 @@ found by re-running a committed result on a second machine and watching the
 verdict change. The one after it was found because a new source made a
 long-standing bug move, and it announced itself as two promotions rather
 than as a failure.
+
+Two of the 13 are presented as predictions. The last four entries above all
+came out of one afternoon's work on a single endpoint: adding data to it
+exposed a labelling defect that had been inflating every endpoint, fixing
+that exposed an estimator that had been throwing away half its training
+data, and fixing that exposed models that could not be loaded outside the
+process that wrote them. The one feature worth adding, a motif with a
+published mechanism behind it, turned out to change sign between sources.
+None of them was visible in any number the platform reported.
 
 The platform's honest position is not that its models are good. It is that it
 knows which of them are not.

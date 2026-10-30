@@ -8,7 +8,10 @@ import numpy as np
 import pandas as pd
 from oligotox.features.v03_bridge import build_v03_feature_df
 
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.calibration import CalibratedClassifierCV
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.dummy import DummyClassifier
@@ -26,6 +29,7 @@ from oligotox.config.risk_config import (
     DEFAULT_THRESHOLD_POLICY,
     RISK_BANDS,
 )
+from oligotox.models.estimator import AdaptiveCalibrated
 from oligotox.pipelines.build_training_dataset import run as build_training_dataset
 from oligotox.pipelines.thresholds import batch_select_thresholds
 
@@ -42,13 +46,10 @@ def _json_dump(path: Path, obj: dict) -> None:
     path.write_text(json.dumps(obj, indent=2))
 
 
-def _make_model() -> CalibratedClassifierCV:
-    base = LogisticRegression(
-        max_iter=2000,
-        class_weight="balanced",
-        solver="liblinear",
-    )
-    return CalibratedClassifierCV(base, method="sigmoid", cv=2)
+def _make_model(min_class: int | None = None) -> AdaptiveCalibrated:
+    """The shipped estimator. `min_class` is accepted and no longer used:
+    the fold count is chosen inside `fit`, from the rows it is given."""
+    return AdaptiveCalibrated()
 
 
 def _prepare_training_matrix(X: pd.DataFrame) -> pd.DataFrame:
@@ -135,7 +136,8 @@ def _get_groups_for_cv(raw_X: pd.DataFrame) -> "np.ndarray | None":
 def _random_split_pr_auc(X: pd.DataFrame, y: np.ndarray, n_splits: int) -> float:
     """Ungrouped CV score, kept only to show how much row-level splits inflate metrics."""
     cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-    prob = cross_val_predict(_make_model(), X, y, cv=cv, method="predict_proba")[:, 1]
+    prob = cross_val_predict(_make_model(int(min(y.sum(), (y == 0).sum()))),
+                             X, y, cv=cv, method="predict_proba")[:, 1]
     return float(average_precision_score(y, prob))
 
 
@@ -315,7 +317,7 @@ def main() -> None:
             endpoint_metrics = None
         elif min_class < 3:
             status = "fallback_low_count_fit"
-            model = _make_model()
+            model = _make_model(min_class)
             model.fit(X_endpoint, y)
             y_prob = _positive_class_proba(model, X_endpoint)
             pr_auc = None
@@ -324,7 +326,7 @@ def main() -> None:
             endpoint_metrics = None
         elif groups is not None and positive_groups < MIN_POSITIVE_GROUPS:
             status = "fallback_few_positive_sequences"
-            model = _make_model()
+            model = _make_model(min_class)
             model.fit(X_endpoint, y)
             y_prob = _positive_class_proba(model, X_endpoint)
             pr_auc = None
@@ -343,7 +345,7 @@ def main() -> None:
                 cv_iter = cv.split(X_endpoint, y)
             random_pr_auc = _random_split_pr_auc(X_endpoint, y, min(5, min_class))
 
-            model = _make_model()
+            model = _make_model(min_class)
 
             y_prob = cross_val_predict(
                 model,
