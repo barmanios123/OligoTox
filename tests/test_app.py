@@ -77,6 +77,16 @@ def test_the_summary_reports_the_backbone_that_was_actually_scored():
     The app then displayed "100% phosphorothioate" for a candidate scored at
     90%. One definition, used everywhere.
     """
+    # oligotox_app.py sits at the repository root, which is not importable
+    # on its own: the other tests here reach the app through Streamlit's
+    # AppTest rather than importing it, so nothing else puts the root on the
+    # path. Locally it happened to be there and on CI it was not.
+    import sys
+    from pathlib import Path
+
+    root = str(Path(__file__).resolve().parent.parent)
+    if root not in sys.path:
+        sys.path.insert(0, root)
     import oligotox_app as app
 
     assert app._ps_fraction("PS") == 0.9
