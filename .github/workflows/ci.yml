@@ -28,4 +28,15 @@ jobs:
           pip install -e packages/evidence-audit --no-deps
           pip install pytest
       - name: Test
-        run: pytest -q
+        run: pytest -q --junitxml=test-report.xml
+
+      # A red run whose logs need a token is a red run nobody reads. The
+      # report is public on a public repo, so the failure can be diagnosed
+      # without one.
+      - name: Keep the report even when tests fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-report.xml
+          retention-days: 14
