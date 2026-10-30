@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-10-30T14:00:28.380262Z",
+  "checked_at": "2026-10-30T15:50:03.192545Z",
   "healthy": true,
   "failed": [],
   "note": "A loop that has quietly stopped learning commits exactly like a healthy one, because the history log gains a line every run. These are the signs that distinguish them.",
   "checks": {
     "history_fresh": {
       "ok": true,
-      "detail": "last run 2d 12h ago (4 runs logged)"
+      "detail": "last run 2d 13h ago (4 runs logged)"
     },
     "sources_on_disk": {
       "ok": true,

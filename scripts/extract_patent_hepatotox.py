@@ -49,6 +49,9 @@ QUERY = 'antisense ALT AST hepatotoxicity gapmer'
 SEARCH = "https://patents.google.com/xhr/query"
 PATENT = "https://patents.google.com/patent/{pub}/en"
 UA = "Mozilla/5.0 (compatible; oligotox research extractor)"
+# How far back to read for a dose statement. An Example's treatment
+# paragraph sits a few thousand characters above its first table.
+PROSE_WINDOW = 6000
 PAUSE = 1.0
 
 OLIGO = re.compile(r"^[ACGT]{15,25}$")
@@ -111,26 +114,37 @@ def fetch(pub: str) -> str | None:
     return html
 
 
-def _tables(html: str) -> list[list[list[str]]]:
-    """Every table as a list of rows of cell text."""
+def _tables_with_spans(html: str) -> list[tuple[list[list[str]], int]]:
+    """Every table as (rows, start offset in the html).
+
+    The offset is what lets a dose stated in the Example prose be tied to the
+    table it introduces, which is where the dose lives whenever the table
+    itself has no dose column.
+    """
     out = []
-    for block in re.findall(r"<table[^>]*>.*?</table>", html, re.S | re.I):
+    for match in re.finditer(r"<table[^>]*>.*?</table>", html, re.S | re.I):
         rows = []
-        for row in re.findall(r"<tr[^>]*>(.*?)</tr>", block, re.S | re.I):
+        for row in re.findall(r"<tr[^>]*>(.*?)</tr>", match.group(0), re.S | re.I):
             cells = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", c)).strip()
                      for c in re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row, re.S | re.I)]
             if any(cells):
                 rows.append(cells)
-        out.append(rows)
+        out.append((rows, match.start()))
     return out
 
 
-def _rejoin(rows: list[list[str]]) -> list[list[str]]:
-    """Put wrapped treatment labels back on their own row.
+def _tables(html: str) -> list[list[list[str]]]:
+    """Every table as a list of rows of cell text."""
+    return [rows for rows, _ in _tables_with_spans(html)]
 
-    "ISIS 233693," and "50 mg/kg" arrive as two rows because the label wraps.
-    Without this the dose is lost and two different doses of one compound look
-    like duplicates.
+
+def _rejoin(rows: list[list[str]]) -> list[list[str]]:
+    """Put a wrapped dose back on the label it belongs to.
+
+    Where a table has no dose column the dose sits inside the treatment
+    label, and a long label wraps so that "ISIS 233693," and "50 mg/kg"
+    arrive as two rows. Without this the dose is lost and three doses of one
+    compound look like three unexplained ALT values.
     """
     merged: list[list[str]] = []
     for row in rows:
@@ -139,6 +153,61 @@ def _rejoin(rows: list[list[str]]) -> list[list[str]]:
         else:
             merged.append(list(row))
     return merged
+
+
+def _column_names(header_rows: list[list[str]]) -> list[str]:
+    """One name per column, from the stacked header rows.
+
+    Google Patents splits a two-line header such as `Dose / (mg/kg)` across
+    two rows, so a column is only named by reading down. Single-cell rows are
+    the table's caption, not a header, and are left out.
+    """
+    stacked = [r for r in header_rows if len(r) > 1]
+    width = max((len(r) for r in stacked), default=0)
+    names = []
+    for k in range(width):
+        parts = [r[k] for r in stacked if k < len(r) and r[k]]
+        names.append(" ".join(parts).strip())
+    return names
+
+
+def _find_column(names: list[str], pattern: str) -> int | None:
+    for k, name in enumerate(names):
+        if re.search(pattern, name, re.I):
+            return k
+    return None
+
+
+FRAGMENT = re.compile(r"^\d{5,7}$")
+
+
+def _label_dose(label: str) -> float | None:
+    """The dose stated inside a treatment label, as in "ISIS 233698, 50 mg/kg"."""
+    found = {float(v) for v in DOSE.findall(label)}
+    return found.pop() if len(found) == 1 else None
+
+
+def _groups(data: list[list[str]], label_at: int) -> list[tuple[str, list[list[str]]]]:
+    """Split data rows into treatment groups, label carried down.
+
+    A dose-response table prints the compound once and leaves the label blank
+    on its lower doses, and a long label wraps so that `ISIS` and `304299`
+    land on separate rows. Both mean the label on a row is not the label of
+    its group, which is why reading row[0] alone lost every dose-response
+    table in the corpus.
+    """
+    groups: list[tuple[list[str], list[list[str]]]] = []
+    for row in data:
+        cell = row[label_at] if label_at < len(row) else ""
+        if re.search(r"ISIS", cell, re.I) or CONTROL.search(cell):
+            groups.append(([cell], [row]))
+        elif groups and FRAGMENT.match(cell):
+            # The tail of a label that wrapped onto this row.
+            groups[-1][0].append(cell)
+            groups[-1][1].append(row)
+        elif groups and not cell:
+            groups[-1][1].append(row)
+    return [(" ".join(parts), rows) for parts, rows in groups]
 
 
 def compound_details(tables: list[list[list[str]]]) -> dict[int, dict]:
@@ -183,48 +252,99 @@ def sequence_map(tables: list[list[list[str]]]) -> dict[int, str]:
     return out
 
 
-def tox_rows(tables: list[list[list[str]]]) -> list[dict]:
-    """Treatment rows from tables whose header mentions ALT or AST."""
+def tox_rows(tables: list[tuple[list[list[str]], int]]) -> list[dict]:
+    """Treatment rows from tables whose header mentions ALT or AST.
+
+    Columns are matched to data cells from the right, because Google Patents
+    often emits a leading spacer cell in the data rows that the header does
+    not have. Aligning from the left read the wrong column.
+    """
     found = []
-    for i, rows in enumerate(tables):
+    for i, (rows, start) in enumerate(tables):
         header = " ".join(" ".join(r) for r in rows)
         if not re.search(r"\bALT\b", header) and not re.search(r"\bAST\b", header):
             continue
-        columns = [c.strip().upper() for r in rows for c in r]
         if i + 1 >= len(tables):
             continue
-        data = _rejoin(tables[i + 1])
-        if not data:
+        data = _rejoin([r for r in tables[i + 1][0] if r])
+        names = _column_names(rows)
+        alt_at = _find_column(names, r"\bALT\b")
+        if alt_at is None or not data:
             continue
-        try:
-            alt_at = columns.index("ALT")
-            ast_at = columns.index("AST") if "AST" in columns else None
-        except ValueError:
+        ast_at = _find_column(names, r"\bAST\b")
+        dose_at = _find_column(names, r"\bdose\b")
+
+        width = max(len(r) for r in data)
+        offset = width - len(names)
+        if offset < 0:
             continue
-        # The label occupies column 0, so a header column k is data cell k.
-        for row in data:
-            label = row[0] if row else ""
-            values = row[1:]
-            def value(pos):
-                idx = pos - 1
-                if idx is None or idx < 0 or idx >= len(values):
-                    return None
-                try:
-                    return float(values[idx])
-                except ValueError:
-                    return None
-            found.append({
-                "label": label,
-                "alt": value(alt_at),
-                "ast": value(ast_at) if ast_at is not None else None,
-                "table": i + 1,
-            })
+
+        label_at = next((k for k in range(width)
+                         if any(re.search(r"ISIS", r[k], re.I) or CONTROL.search(r[k])
+                                for r in data if k < len(r))), None)
+        if label_at is None:
+            continue
+
+        def cell(row, col):
+            idx = col + offset
+            return row[idx] if 0 <= idx < len(row) else ""
+
+        def number(row, col):
+            if col is None:
+                return None
+            try:
+                return float(cell(row, col).replace(",", ""))
+            except ValueError:
+                return None
+
+        for label, group in _groups(data, label_at):
+            for row in group:
+                in_row = _label_dose(row[label_at] if label_at < len(row) else "")
+                found.append({
+                    "label": label,
+                    "alt": number(row, alt_at),
+                    "ast": number(row, ast_at),
+                    "dose": (number(row, dose_at) if number(row, dose_at) is not None
+                             else in_row if in_row is not None
+                             else _label_dose(label)),
+                    "dose_from": ("table" if number(row, dose_at) is not None
+                                  else "label" if (in_row is not None
+                                                   or _label_dose(label) is not None)
+                                  else None),
+                    "table": i + 1,
+                    "start": start,
+                })
     return found
+
+
+def prose_dose(html: str, before: int, isis: set[int]) -> float | None:
+    """The dose from the Example that introduces a table, when unambiguous.
+
+    Most screening tables carry no dose column: every animal got the same
+    dose and the prose says so once. That dose is real data and worth having,
+    but only where the passage leaves no choice about which value applies, so
+    this returns None unless the window states exactly one.
+    """
+    window = re.sub(r"\s+", " ", re.sub(
+        r"<[^>]+>", " ", html[max(0, before - PROSE_WINDOW):before]))
+    at = window.rfind("Example")
+    if at > 0:
+        window = window[at:]
+    if not (re.search(r"ISIS\s+oligonucleotide", window, re.I)
+            or any(str(n) in window for n in isis)):
+        return None
+    # Anaesthetic doses are stated in mg/kg too and are not the treatment.
+    window = re.sub(r"\b(ketamine|xylazine|warfarin)\b[^.]*", " ", window, flags=re.I)
+    window = re.sub(r"\d+(?:\.\d+)?\s*mg/kg\s+(ketamine|xylazine)",
+                    " ", window, flags=re.I)
+    values = {float(v) for v in DOSE.findall(window)}
+    return values.pop() if len(values) == 1 else None
 
 
 def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
     text = re.sub(r"[ \t]+", " ", re.sub(r"<[^>]+>", " ", html))
-    tables = _tables(html)
+    spans = _tables_with_spans(html)
+    tables = [rows for rows, _ in spans]
     seqs = sequence_map(tables)
     details = compound_details(tables)
     isis_to_seq = {int(a): int(b) for a, b in ISIS_SEQID.findall(text)}
@@ -232,12 +352,17 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
     rejected = {"no_compound": 0, "no_seq_id": 0, "no_sequence": 0,
                 "no_alt_value": 0, "no_control": 0}
     rows, by_table = [], {}
-    for entry in tox_rows(tables):
+    for entry in tox_rows(spans):
         by_table.setdefault(entry["table"], []).append(entry)
 
     for table, entries in by_table.items():
         control = next((e for e in entries
                         if CONTROL.search(e["label"]) and e["alt"] is not None), None)
+        numbers = {int(m) for e in entries
+                   for m in ISIS_LABEL.findall(e["label"])}
+        # One dose for the whole table, used only where the table itself has
+        # no dose column to read.
+        shared = prose_dose(html, entries[0]["start"], numbers)
         for entry in entries:
             if CONTROL.search(entry["label"]):
                 continue
@@ -269,14 +394,17 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
                 # nothing: normal mouse ALT spans a wide range between studies.
                 rejected["no_control"] += 1
                 continue
-            dose = DOSE.search(entry["label"])
+            dose = entry["dose"] if entry["dose"] is not None else shared
+            source = entry["dose_from"] or ("prose" if dose is not None else None)
             rows.append({
                 "publication": pub,
                 "isis_number": isis,
                 "seq_id": seq_id,
                 "sequence": sequence,
                 "motif": motif,
-                "dose_mg_kg": float(dose.group(1)) if dose else None,
+                "dose_mg_kg": dose,
+                "dose_source": source,
+                "table": table,
                 "alt": entry["alt"],
                 "ast": entry["ast"],
                 "control_alt": control["alt"],
@@ -319,12 +447,22 @@ def main(argv: list[str] | None = None) -> int:
             writer.writerows(all_rows)
 
     sequences = {r["sequence"] for r in all_rows}
+    by_source: dict[str, int] = {}
+    for row in all_rows:
+        key = row["dose_source"] or "unknown"
+        by_source[key] = by_source.get(key, 0) + 1
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUT_JSON.write_text(json.dumps({
         "query": args.query,
         "publications_read": len(pubs),
         "rows": len(all_rows),
         "unique_sequences": len(sequences),
+        "dose_source": by_source,
+        "dose_rule": "A dose is taken from the table's own dose column, else "
+                     "from the treatment label, else from the Example prose "
+                     "and only where that passage states exactly one dose. "
+                     "Otherwise it is left empty, because a liver readout "
+                     "without a dose cannot be compared with another study.",
         "rejected": totals,
         "rule": "A row is emitted only when the compound resolves to a real "
                 "sequence and its own table carries a control group. A patent "
@@ -333,6 +471,7 @@ def main(argv: list[str] | None = None) -> int:
     }, indent=2) + "\n")
 
     print(f"\n{len(all_rows)} row(s), {len(sequences)} unique sequence(s)")
+    print(f"dose: {by_source}")
     if totals:
         print(f"rejected: {totals}")
     print(f"wrote {OUT_JSON.relative_to(ROOT)}")
