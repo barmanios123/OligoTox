@@ -452,8 +452,18 @@ The last step is what the app reads, so rerun it after any change to the baselin
 | PK/PD | Liver AUC, Cmax and half-life from a GalNAc-siRNA compartment simulator | Mechanistic simulator, not fitted to this data |
 | Design advice | Single-base edits ranked by predicted risk reduction, with their potency cost | Validated endpoints only |
 | Report | OSWG-style JSON safety summary, with an evidence block and recommendations raised only from validated endpoints | Report formatting |
+| How it works | What the models were trained on, what each one consumes, how it is validated, the evidence gate, the independent check that argues against one endpoint, and the commands to confirm each of those | Derived from the shipped artifacts at render time |
 | Saved Runs | Runs kept during the session | — |
 | Build Info | Model versions, feature count and config provenance | — |
+
+The How it works tab reads the dataset inventory, the training summary, the
+evidence config, the shipped models' own feature names and the latest loop
+health report, so nothing on it is written out by hand. Three tests in
+`tests/test_app.py` recount its figures from those files and fail if the page
+states a number it did not derive. The most useful thing on it is the
+side-by-side of PR-AUC grouped by sequence against PR-AUC on a random split:
+the random split scores higher on 11 of 12 endpoints, which is what sequence
+leakage looks like, and the grouped column is the one quoted everywhere else.
 
 Sequence, chemistry, modality and dose are entered in the sidebar, so there is no separate input tab. Before a run the Summary tab shows the validated sequence and its derived features; after one it shows the result.
 

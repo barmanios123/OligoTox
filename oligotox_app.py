@@ -230,6 +230,43 @@ def _load_saved_runs():
     return pd.DataFrame(rows)
 
 
+@st.cache_data(show_spinner=False)
+def _model_features() -> dict[str, list[str]]:
+    """What each shipped model actually consumes, read off the model.
+
+    Taken from the estimators rather than from a config file, so the How it
+    works page lists the real inputs even for the endpoints whose feature set
+    was never written down separately.
+    """
+    import joblib
+
+    out: dict[str, list[str]] = {}
+    for path in sorted(MODEL_DIR.glob("*.joblib")):
+        try:
+            names = getattr(joblib.load(path), "feature_names_in_", None)
+        except Exception:
+            continue
+        if names is not None:
+            out[path.stem] = list(names)
+    return out
+
+
+def _load_report(name: str) -> dict:
+    """A shipped report, or {} if this build does not carry it."""
+    return _load_json(ROOT / "reports" / "results" / name)
+
+
+def _load_config(name: str) -> dict:
+    return _load_json(CONFIG_DIR / name)
+
+
+def _load_json(path: Path) -> dict:
+    try:
+        return json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
 def _render_endpoint_table(toxicity_result, tiers=None):
     rows = []
     for endpoint, info in toxicity_result.get("per_endpoint", {}).items():
@@ -309,16 +346,20 @@ with st.sidebar:
 # find" without the reader knowing which tab holds which half of it. The old
 # "Candidate Input" tab only echoed the sidebar's own fields and dumped raw
 # features, so it is folded in here rather than kept as a ninth thing to read.
-tabs = st.tabs([
+TAB_NAMES = [
     "Summary",
     "Toxicity",
     "Efficacy",
     "PK/PD",
     "Design advice",
     "Report",
+    "How it works",
     "Saved Runs",
     "Build Info",
-])
+]
+# Keyed by name rather than position: the blocks below used to be `tabs[4]`,
+# which meant inserting a tab silently moved every panel after it.
+tab = dict(zip(TAB_NAMES, st.tabs(TAB_NAMES)))
 
 if "last_run" not in st.session_state:
     st.session_state["last_run"] = None
@@ -362,7 +403,7 @@ if run_btn:
 
 run = st.session_state.get("last_run")
 
-with tabs[0]:
+with tab["Summary"]:
     if not _input_ok:
         st.error(_input_msg)
     elif not run:
@@ -416,7 +457,7 @@ with tabs[0]:
                 "- **Saved Runs** this session's runs, kept in your browser only"
             )
 
-with tabs[1]:
+with tab["Toxicity"]:
     st.subheader("Toxicity")
     if not run:
         st.info("Run an analysis to view toxicity outputs.")
@@ -468,7 +509,7 @@ with tabs[1]:
             mime="application/json",
         )
 
-with tabs[3]:
+with tab["PK/PD"]:
     st.subheader("PK/PD")
     if not run:
         st.info("Run an analysis to view PK/PD outputs.")
@@ -479,7 +520,7 @@ with tabs[3]:
         else:
             st.write(pkpd)
 
-with tabs[5]:
+with tab["Report"]:
     st.subheader("Regulatory report")
     if not run:
         st.info("Run an analysis to generate a report.")
@@ -497,7 +538,7 @@ with tabs[5]:
         )
 
 
-with tabs[2]:
+with tab["Efficacy"]:
     st.subheader("Efficacy")
     if not run:
         st.info("Run an analysis to view efficacy outputs.")
@@ -561,7 +602,7 @@ with tabs[2]:
             )
 
 
-with tabs[4]:
+with tab["Design advice"]:
     st.subheader("Design advice")
     if not run:
         st.info("Run an analysis to see which edits change the prediction.")
@@ -616,7 +657,205 @@ with tabs[4]:
 
         for note in advice.notes:
             st.caption(note)
-with tabs[6]:
+with tab["How it works"]:
+    st.subheader("How it works, and how to check it")
+    st.caption(
+        "Everything on this page is read from the files this build shipped "
+        "with, not written out by hand, so it cannot drift from what the app "
+        "is actually doing."
+    )
+
+    st.markdown("#### 1. What the app does")
+    st.markdown(
+        "You give it a sequence, a chemistry and a dose. It computes features "
+        "from the sequence, runs one model per toxicity endpoint and one per "
+        "efficacy context, and reports the endpoints that passed an evidence "
+        "gate. Endpoints that did not pass are still shown, under "
+        "**Unsupported**, with the reason. Nothing is hidden because it looks "
+        "bad; it is separated because it is not supported."
+    )
+
+    st.markdown("#### 2. What it was trained on")
+    inventory = _load_report("dataset_inventory.json")
+    sources = inventory.get("sources", [])
+    if sources:
+        train = [s for s in sources if s.get("usable_for_training")]
+        st.markdown(
+            f"**{len(train)} source(s), {inventory.get('usable_sequences', 0):,} "
+            "sequences.** These are public assay datasets, not internal data."
+        )
+        st.dataframe(pd.DataFrame([{
+            "source": s["name"],
+            "kind": s.get("kind"),
+            "endpoint": s.get("endpoint"),
+            "sequences": s.get("sequences"),
+        } for s in train]), width="stretch", hide_index=True)
+        held = [s for s in sources if not s.get("usable_for_training")]
+        with st.expander(f"{len(held)} source(s) not used for training, and why"):
+            st.dataframe(pd.DataFrame([{
+                "source": s["name"],
+                "status": s.get("status"),
+                "not used because": s.get("blocked_by"),
+            } for s in held]), width="stretch", hide_index=True)
+    else:
+        st.info("The dataset inventory did not ship with this build.")
+
+    st.markdown("#### 3. How a sequence becomes numbers")
+    st.markdown(
+        "Only sequence-derived features. No proprietary descriptors, no "
+        "embeddings from a model you cannot inspect. Each feature is computed "
+        "by code in `src/oligotox/features/`."
+    )
+    feature_config = _load_config("endpoint_features.json")
+    features = _model_features()
+    if features:
+        st.dataframe(pd.DataFrame([{
+            "model": name,
+            "features": len(columns),
+            "uses chemistry": any(c.startswith(("ps_", "lna_", "aso_chem", "aso_mod"))
+                                  for c in columns),
+            "uses folding": any(c.startswith("site_") for c in columns),
+        } for name, columns in features.items()]), width="stretch", hide_index=True)
+        chosen = st.selectbox("See every input to one model", sorted(features))
+        st.code(", ".join(features[chosen]), language="text")
+        note = (feature_config.get(chosen) or {}).get("note")
+        if note:
+            st.caption(note)
+    st.caption(
+        "Where a target gene is given and its transcript is cached, local "
+        "folding (ViennaRNA) adds binding-site accessibility, but only for "
+        "the two assay contexts where it improved a like-for-like comparison "
+        "and held across three sampling seeds. A site that does not locate "
+        "falls back to the design-only model rather than being scored as if "
+        "its accessibility were zero."
+    )
+
+    st.markdown("#### 4. How it is validated, and the number that matters most")
+    st.markdown(
+        "Cross-validation is **grouped by sequence**, so no sequence appears "
+        "in both the training and test half of a fold. That sounds like a "
+        "detail and it is the whole difference between a real score and a "
+        "flattering one, because these datasets test the same sequence many "
+        "times. Here is the same model scored both ways:"
+    )
+    training = _load_report("training_summary_after.json")
+    rows = [{
+        "endpoint": name,
+        "PR-AUC, grouped by sequence": round(spec["pr_auc"], 3),
+        "PR-AUC, random split": (round(spec["random_split_pr_auc"], 3)
+                                 if spec.get("random_split_pr_auc") is not None else None),
+        "unique positive sequences": spec.get("positive_sequences"),
+    } for name, spec in training.items()
+        if isinstance(spec, dict) and spec.get("pr_auc") is not None]
+    if rows:
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+        inflated = [r for r in rows
+                    if r["PR-AUC, random split"] is not None
+                    and r["PR-AUC, random split"] > r["PR-AUC, grouped by sequence"]]
+        st.markdown(
+            f"The random split scores higher on **{len(inflated)} of "
+            f"{len(rows)}** endpoints. The left column is the one quoted "
+            "everywhere else in this app."
+        )
+
+    st.markdown("#### 5. The evidence gate")
+    evidence = _load_config("endpoint_evidence.json")
+    st.markdown(
+        "An endpoint is only presented as a prediction if it passes every "
+        "check below, run by `scripts/derive_evidence_tiers.py`. The gate is "
+        "a ratchet: a tier can be lost on new evidence, and the history is "
+        "kept in `reports/results/endpoint_history.jsonl`."
+    )
+    endpoints = evidence.get("endpoints", {})
+    if endpoints:
+        st.dataframe(pd.DataFrame([{
+            "endpoint": name,
+            "tier": TIER_LABELS.get(spec.get("tier"), spec.get("tier")),
+            "unique positive sequences": spec.get("positive_sequences"),
+            "reads as": ("probability" if spec.get("probabilities_calibrated")
+                         else "ranking only"),
+        } for name, spec in endpoints.items()]), width="stretch", hide_index=True)
+        presented = [n for n, s in endpoints.items() if s.get("tier") == "validated"]
+        st.markdown(
+            f"**{len(presented)} of {len(endpoints)}** endpoints are presented: "
+            + ", ".join(f"`{n}`" for n in presented) + "."
+        )
+        for name in presented:
+            with st.expander(f"Why {name} passed, and what is still wrong with it"):
+                st.write(endpoints[name].get("reason", ""))
+
+    st.markdown("#### 6. Why some numbers are rankings and not percentages")
+    st.markdown(
+        "A score is only called a probability if it is calibrated: its Brier "
+        "skill against simply predicting the base rate has to beat 0.02. "
+        "Below that, a 30% means this sequence ranks above one scored 20%, "
+        "and nothing more. The app labels each score with which it is, and "
+        "`hepatocellular_injury` is a ranking, not a percentage."
+    )
+
+    st.markdown("#### 7. What an independent dataset says")
+    external = (endpoints.get("hepatocellular_injury", {}) or {}).get("external_check")
+    if external:
+        st.warning(
+            f"On {external.get('sequences')} LNA gapmers from an independent "
+            f"screen ({external.get('positives')} hepatotoxic by the paper's "
+            f"own ALT criterion), `hepatocellular_injury` achieves ROC-AUC "
+            f"**{external.get('roc_auc', 0):.2f}** "
+            f"[{external.get('roc_ci', [0, 0])[0]:.2f}-"
+            f"{external.get('roc_ci', [0, 0])[1]:.2f}]. "
+            "0.5 is chance. Five positives cannot settle it, but there is no "
+            "evidence this endpoint transfers off the data it was trained on. "
+            "It is presented anyway, with this said on its own tab, because "
+            "removing the check would be the dishonest option."
+        )
+        st.caption(f"Source: {external.get('source', '')}")
+
+    st.markdown("#### 8. How to confirm all of this yourself")
+    st.markdown(
+        "Nothing here asks you to take the app's word for it. The repository "
+        "is public and each claim above has a command behind it."
+    )
+    st.code(
+        "pytest -q                               "
+        "# the full suite, including values pinned to hand-read papers\n"
+        "python scripts/loop_health.py           "
+        "# are the data, training and evidence gate still consistent\n"
+        "python scripts/derive_evidence_tiers.py "
+        "# recompute every tier on this page from the metrics\n"
+        "python scripts/evaluate_hepatotox_external.py --help  "
+        "# re-run the independent check in section 7",
+        language="bash",
+    )
+    health = _load_report("loop_health.json")
+    if health:
+        checks = health.get("checks", {})
+        st.dataframe(pd.DataFrame([{
+            "check": name,
+            "result": "pass" if spec.get("ok") else "FAIL",
+            "detail": spec.get("detail"),
+        } for name, spec in checks.items()]), width="stretch", hide_index=True)
+        st.caption(
+            f"Last checked {health.get('checked_at', 'unknown')}. "
+            + (health.get("note") or "")
+        )
+
+    st.markdown("#### 9. What this app is not")
+    st.markdown(
+        "- It is a research prototype and not a regulatory tool. No output "
+        "here substitutes for an in-vivo study.\n"
+        "- Most toxicity endpoints rest on a small number of unique "
+        "sequences. Rows are plentiful; independent sequences are not, and "
+        "the sequence count is the one that limits what can be claimed.\n"
+        "- The CNS endpoint does not beat the published G-count rule. It "
+        "matches it, so treat it as that rule rather than a new finding.\n"
+        "- A sequence unlike anything in the training sources will still get "
+        "a score. The app cannot tell you that it is out of distribution.\n"
+        "- Nothing you type is sent anywhere or written to the server. Runs "
+        "live in your browser session and disappear when you close the tab."
+    )
+
+
+with tab["Saved Runs"]:
     st.subheader("Saved runs")
     st.caption(
         "Runs from this browser session only. They are not written to the server "
@@ -641,7 +880,7 @@ with tabs[6]:
             )
             st.json(chosen)
 
-with tabs[7]:
+with tab["Build Info"]:
     st.subheader("Build info")
     st.write({
         "app_file": str(ROOT / "oligotox_app.py"),

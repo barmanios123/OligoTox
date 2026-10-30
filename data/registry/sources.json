@@ -73,7 +73,8 @@
       "licence": "Open access article; the extracted table is a small factual dataset redistributed with citation",
       "sequences": 149,
       "positives": 5,
-      "notes": "External check only, restored 2026-10-30 after the earlier copy was lost with the checkout. 5 positives by the paper's own ALT > 100 U/l criterion cannot validate an endpoint, and the pipeline treats it as directional. Parse verified against the sequences themselves: both motif columns, TGC and TCC, are recomputable from the sequence and match 149 of 149, so the columns are aligned. The second was read as CCC for a while, which is a different motif matching only 44%. What it says: hepatocellular_injury ranks the 5 hepatotoxic gapmers at positions 50, 104, 111, 123 and 141 of 149, ROC-AUC 0.29 [0.10-0.53]. No evidence the endpoint transfers off its own source."
+      "notes": "External check only, restored 2026-10-30 after the earlier copy was lost with the checkout. 5 positives by the paper's own ALT > 100 U/l criterion cannot validate an endpoint, and the pipeline treats it as directional. Parse verified against the sequences themselves: both motif columns, TGC and TCC, are recomputable from the sequence and match 149 of 149, so the columns are aligned. The second was read as CCC for a while, which is a different motif matching only 44%. What it says: hepatocellular_injury ranks the 5 hepatotoxic gapmers at positions 50, 104, 111, 123 and 141 of 149, ROC-AUC 0.29 [0.10-0.53]. No evidence the endpoint transfers off its own source.",
+      "role": "external_check"
     },
     {
       "name": "asoptimizer_rodent_alt_ast",
@@ -157,7 +158,7 @@
     },
     {
       "name": "ionis_patent_hepatotox",
-      "status": "feasible_not_built",
+      "status": "built_not_ingested",
       "kind": "toxicity",
       "endpoint": "hepatocellular_injury",
       "readout": "serum_ALT_AST_IU_per_L",
@@ -165,7 +166,9 @@
       "threshold": null,
       "url": "https://patents.google.com/?q=antisense+oligonucleotide+hepatotoxicity+ALT+gapmer",
       "licence": "patent text is public; extracted factual measurements, cite each publication number",
-      "notes": "Probed 2026-10-29, not built. Google Patents' public query endpoint needs no key and returns 1,175 matches, overwhelmingly Ionis/Isis, which is the right source: ASO Atlas's 188k efficacy rows came from the same corpus. What the probe established on CA2786071C (ANGPTL3): 8 distinct ISIS compound numbers, 11 places where a compound number sits within 160 characters of a sequence or SEQ ID, and 50 twenty-mers, so compound-to-sequence mapping is possible. What makes it harder than the efficacy mining: toxicity is reported per treatment group, two to five compounds, not per sequence across a library, so the yield is single-digit compounds per patent rather than hundreds. Many readouts are qualitative ('levels associated with liver toxicity were not observed') rather than numeric. And the tables are flattened into running text in the HTML and visibly truncated: Table 8 in that patent shows only its Saline row before the prose resumes, so the ISIS rows have to come from somewhere else. Rough ceiling if it worked: a few thousand sequences with a liver readout, against 74 unique sequences today. Worth building, but it is an extractor with a validation step, not a fetch."
+      "notes": "Extractor built 2026-10-29 and corrected 2026-10-30; rows are written to data/external/patent_hepatotox.csv, which is gitignored so it cannot be mistaken for curated data. 30 US publications read, 527 rows, 256 unique sequences, each row carrying its own table's control so a fold change is computable. Dose is on 280 of 527: 112 from a dose column, 6 from a treatment label, 162 from Example prose that stated exactly one dose, and 247 left empty rather than guessed. Values are pinned in tests/test_patent_extraction.py against two studies of US11225664B2 read by hand. Why it is not ingested: 527 rows would be the largest single source in the corpus, assembled from separate studies with their own controls and animal species, and hepatocellular_injury is already the endpoint that fails to transfer off its own source (ROC-AUC 0.29 on the NAR screen). Ingesting it is a question about source confounding, not about row count.",
+      "role": "candidate",
+      "sequences": 256
     }
   ]
 }

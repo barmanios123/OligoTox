@@ -44,14 +44,13 @@
     },
     {
       "name": "nar2022_gapmer_hepatotox_screen",
-      "status": "fetchable",
+      "status": "present",
       "kind": "toxicity",
       "endpoint": "hepatocellular_injury",
-      "on_disk": false,
+      "on_disk": true,
       "usable_for_training": false,
-      "blocked_by": "status fetchable",
-      "sequences": 149,
-      "remote": "HTTP 403"
+      "blocked_by": "held out as an external check",
+      "sequences": 149
     },
     {
       "name": "asoptimizer_rodent_alt_ast",
@@ -61,8 +60,7 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "no label threshold declared",
-      "sequences": 6000,
-      "remote": "HTTP 403"
+      "sequences": 6000
     },
     {
       "name": "aso_atlas_patent_gapmers",
@@ -82,8 +80,7 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "status deferred",
-      "sequences": null,
-      "remote": "unreachable (URLError)"
+      "sequences": null
     },
     {
       "name": "safesense_human_adverse_events",
@@ -93,8 +90,7 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "status not_applicable",
-      "sequences": null,
-      "remote": "reachable (200)"
+      "sequences": null
     },
     {
       "name": "gallo_sarscov2_shape_gapmers",
@@ -115,6 +111,16 @@
       "usable_for_training": false,
       "blocked_by": "status wanted",
       "sequences": null
+    },
+    {
+      "name": "ionis_patent_hepatotox",
+      "status": "built_not_ingested",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "no label threshold declared",
+      "sequences": 256
     }
   ]
 }

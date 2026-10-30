@@ -70,7 +70,12 @@ def main(argv: list[str] | None = None) -> int:
         usable = status in USABLE_FOR_TRAINING and on_disk
 
         blocked = None
-        if kind == "toxicity" and source.get("direction") is None:
+        if source.get("role") == "external_check":
+            # A held-out screen is what the endpoint is tested against.
+            # Counting it as training data would both overstate the corpus
+            # and describe the one honest check as if it were fitted on.
+            blocked = "held out as an external check"
+        elif kind == "toxicity" and source.get("direction") is None:
             blocked = "no readout direction declared"
         elif kind == "toxicity" and source.get("threshold") is None:
             blocked = "no label threshold declared"

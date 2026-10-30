@@ -98,3 +98,63 @@ def test_the_summary_reports_the_backbone_that_was_actually_scored():
         "the features the model sees must carry the same PS fraction the "
         "summary prints"
     )
+
+
+def test_how_it_works_is_read_from_the_shipped_artifacts(root):
+    """The trust page must not carry hand-written numbers.
+
+    A page that explains the evidence is worth less than nothing if it can
+    drift from the evidence, so every figure on it is derived at render time.
+    These assert the derivation rather than the text: change the config and
+    the page has to change with it.
+    """
+    at = _run(root)
+    evidence = load_endpoint_evidence(root / "artifacts/config")
+    validated = [e for e, v in evidence["endpoints"].items() if v["tier"] == "validated"]
+    body = " ".join(m.value for m in at.markdown)
+
+    assert (f"**{len(validated)} of {len(evidence['endpoints'])}** endpoints "
+            "are presented") in body
+    for endpoint in validated:
+        assert f"`{endpoint}`" in body
+
+    inventory = json.loads(
+        (root / "reports/results/dataset_inventory.json").read_text())
+    usable = [s for s in inventory["sources"] if s["usable_for_training"]]
+    assert (f"**{len(usable)} source(s), "
+            f"{inventory['usable_sequences']:,} sequences.**") in body
+
+
+def test_the_page_says_grouped_cv_beats_the_flattering_split(root):
+    """The leakage comparison is the page's main claim; it has to be counted.
+
+    Writing "the random split scores higher" as prose would survive the
+    numbers changing. This recounts it from the training summary.
+    """
+    at = _run(root)
+    training = json.loads(
+        (root / "reports/results/training_summary_after.json").read_text())
+    scored = [s for s in training.values()
+              if isinstance(s, dict) and s.get("pr_auc") is not None]
+    inflated = [s for s in scored
+                if s.get("random_split_pr_auc") is not None
+                and s["random_split_pr_auc"] > s["pr_auc"]]
+    body = " ".join(m.value for m in at.markdown)
+    assert f"**{len(inflated)} of {len(scored)}**" in body
+
+
+def test_the_external_check_is_on_the_page_and_not_softened(root):
+    """The one result that argues against the app has to be visible on it."""
+    at = _run(root)
+    evidence = load_endpoint_evidence(root / "artifacts/config")
+    external = evidence["endpoints"]["hepatocellular_injury"]["external_check"]
+    warnings = " ".join(w.value for w in at.warning)
+    assert f"{external['roc_auc']:.2f}" in warnings
+    assert "0.5 is chance" in warnings
+
+
+def test_adding_a_tab_cannot_renumber_the_others(root):
+    """The panels were indexed by position and are now keyed by name."""
+    source = (root / "oligotox_app.py").read_text()
+    assert "with tabs[" not in source, "a positional tab index came back"
+    assert "How it works" in source
