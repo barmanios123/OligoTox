@@ -144,3 +144,8 @@ drafts/
 # reproducible from a clone rather than requiring a 69 MB pickle download.
 !data/external/aso_atlas.parquet
 !data/external/nar2022_hepatotox_screen.csv
+
+# Patent HTML is a fetch cache, about 1MB each. Only the single publication
+# the extraction tests pin their values against is tracked; the rest refetch.
+data/external/patent_cache/*
+!data/external/patent_cache/US11225664B2.html
