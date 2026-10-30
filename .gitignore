@@ -149,3 +149,10 @@ drafts/
 # the extraction tests pin their values against is tracked; the rest refetch.
 data/external/patent_cache/*
 !data/external/patent_cache/US11225664B2.html
+
+# Extractor output, regenerable and not yet fit to train on: dose is missing
+# from most rows and a few sequences carry conflicting ALT at one motif and
+# dose. reports/results/patent_hepatotox.json records those caveats and is
+# tracked; the rows themselves are not, so they cannot be mistaken for
+# curated data.
+data/external/patent_hepatotox.csv
