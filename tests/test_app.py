@@ -179,3 +179,18 @@ def test_the_page_never_claims_a_demoted_endpoint_is_presented(root):
         assert "is not presented as a prediction" in captions
         assert f"`{tier}`" in captions
         assert "presented as a prediction anyway" not in captions
+
+
+def test_the_summary_counts_the_withheld_endpoints_rather_than_naming_a_number(root):
+    """It read "Ten of the thirteen" while the gate was presenting two.
+
+    Same drift as the How it works page: a count that is true when written
+    and silently false after the next pipeline run.
+    """
+    at = _run(root)
+    evidence = load_endpoint_evidence(root / "artifacts/config")
+    total = len(evidence["endpoints"])
+    validated = sum(1 for v in evidence["endpoints"].values()
+                    if v["tier"] == "validated")
+    captions = " ".join(c.value for c in at.caption)
+    assert f"{total - validated} of the {total} toxicity models" in captions

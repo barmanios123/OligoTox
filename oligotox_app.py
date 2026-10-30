@@ -436,9 +436,14 @@ with tab["Summary"]:
         c2.metric("Composite", "none" if tox.get("composite_score") is None
                   else f"{_safe_float(tox.get('composite_score')):.3f}")
         c3.metric("Band", str(tox.get("composite_band") or "not scored"))
-        st.caption("Ten of the thirteen toxicity models run and are withheld "
-                   "because they failed an evidence check. The Toxicity tab "
-                   "lists each one and the reason.")
+        # Counted, not written down. This read "Ten of the thirteen" while
+        # the gate was presenting two, for the same reason the How it works
+        # page claimed a demoted endpoint was still presented.
+        withheld = len(tox.get("per_endpoint", {})) - len(validated)
+        st.caption(f"{withheld} of the {len(tox.get('per_endpoint', {}))} "
+                   "toxicity models run and are withheld because they failed "
+                   "an evidence check. The Toxicity tab lists each one and "
+                   "the reason.")
 
         st.code(full["text"], language=None)
         st.download_button("Download this summary", data=full["text"],
@@ -451,7 +456,8 @@ with tab["Summary"]:
 
         with st.expander("What the other tabs add"):
             st.markdown(
-                "- **Toxicity** every endpoint, including the ten withheld, with why\n"
+                f"- **Toxicity** every endpoint, including the {withheld} "
+                "withheld, with why\n"
                 "- **Efficacy** predicted knockdown, scored per assay\n"
                 "- **PK/PD** exposure and dose\n"
                 "- **Design advice** every single-base edit, scored and ranked\n"
