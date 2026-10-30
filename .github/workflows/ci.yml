@@ -27,16 +27,20 @@ jobs:
           # since the package was split out has been doing.
           pip install -e packages/evidence-audit --no-deps
           pip install pytest
+      # Both the logs endpoint and artifact downloads want a token, even on a
+      # public repo, so a red run could not be read at all. Annotations are
+      # public, so the failures are emitted as those.
       - name: Test
-        run: pytest -q --junitxml=test-report.xml
-
-      # A red run whose logs need a token is a red run nobody reads. The
-      # report is public on a public repo, so the failure can be diagnosed
-      # without one.
-      - name: Keep the report even when tests fail
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: test-report.xml
-          retention-days: 14
+        run: |
+          set +e
+          pytest -q 2>&1 | tee pytest.out
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            grep -E "^(FAILED|ERROR)" pytest.out | while IFS= read -r line; do
+              echo "::error::$line"
+            done
+            grep -E "^E  " pytest.out | head -20 | while IFS= read -r line; do
+              echo "::error::$line"
+            done
+          fi
+          exit "$status"
