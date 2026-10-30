@@ -644,6 +644,54 @@ Script: `scripts/evaluate_context_accessibility.py --only <context> --seed <n>`.
 
 ---
 
+## 17. Every unmeasured row was being trained as a negative result
+
+Adding a new source of liver measurements moved the score of all twelve
+endpoints, including the ones with no liver data at all. Kupffer cell
+activation went from 0.478 to 0.606 PR-AUC and injection site reaction from
+0.209 to 0.317, and both were promoted by the evidence gate, on the strength
+of 444 rows that are blank for both of them.
+
+The cause was one line in the trainer:
+
+```python
+y = pd.to_numeric(Y[endpoint], errors="coerce").fillna(0).astype(int).values
+```
+
+A row that nobody assayed for thrombocytopenia became a row asserting that
+thrombocytopenia did not occur. Thrombocytopenia was trained on 4 real
+positives and 2,030 invented negatives, and reported `samples=2034` as
+though that were its evidence. The same `fillna(0)` was in
+`evaluate_baselines.py`, `evaluate_calibration.py` and
+`endpoint_requirements.py`, so the baselines a model is gated against were
+computed on the same fabricated labels.
+
+What makes this one worth writing down is that it is invisible while the
+corpus is static. Every endpoint carried the same padding, so the numbers
+were wrong but stable, and nothing in the loop's health checks looks at
+whether a sample count is larger than the number of labels. It only surfaced
+because a new source changed the padding, and then it surfaced as *good*
+news: two promotions.
+
+After the fix each endpoint sees only the rows carrying its label. The
+sparse endpoints shrink from 2,058 rows to between 24 and 28, which is what
+they always were.
+
+This is entry 13's rule applied to labels instead of features. A zero is a
+measurement. If nobody measured it, there is no row.
+
+Fixed in `src/oligotox/training/train.py` and the three evaluators; pinned by
+`tests/test_unmeasured_is_not_negative.py`, which asserts that each
+endpoint's reported sample count equals the number of rows carrying its
+label.
+
+The promotions of `kupffer_cell_activation` and `injection_site_reaction`
+are recorded in `reports/results/endpoint_history.jsonl` under the trigger
+`patent-ingest`. That log is append-only, so the entry stays and the
+following run records the reversal. It is not evidence of anything.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
@@ -655,7 +703,9 @@ which cut its apparent benefit to a quarter. Every failure above was found by a 
 check that is not standard practice: a source-only baseline, a grouped split,
 an ablation, a calibration curve, an external set. The last of them was
 found by re-running a committed result on a second machine and watching the
-verdict change.
+verdict change. The one after it was found because a new source made a
+long-standing bug move, and it announced itself as two promotions rather
+than as a failure.
 
 The platform's honest position is not that its models are good. It is that it
 knows which of them are not.

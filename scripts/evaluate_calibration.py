@@ -88,9 +88,12 @@ def internal_rows() -> tuple[list[dict], dict]:
     for endpoint, stats in summary.items():
         if stats["status"] != "ok":
             continue
-        y = pd.to_numeric(Y[endpoint], errors="coerce").fillna(0).astype(int).values
+        # Only the rows measured for this endpoint, matching the trainer.
+        keep = pd.to_numeric(Y[endpoint], errors="coerce").notna().values
+        y = pd.to_numeric(Y[endpoint][keep], errors="coerce").astype(int).values
         cv = StratifiedGroupKFold(n_splits=stats["n_splits"])
-        prob = cross_val_predict(_make_model(), X, y, cv=cv, groups=groups,
+        prob = cross_val_predict(_make_model(), X[keep], y, cv=cv,
+                                 groups=groups[keep],
                                  method="predict_proba")[:, 1]
         rows.append(_row(endpoint, y, prob))
         curves[endpoint] = (y, prob)

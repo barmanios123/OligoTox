@@ -81,11 +81,18 @@ def main() -> None:
     for endpoint, s in summary.items():
         if s["status"] != "ok":
             continue
-        y = pd.to_numeric(Y[endpoint], errors="coerce").fillna(0).astype(int).values
+        # Only the rows measured for this endpoint, matching the trainer.
+        keep = pd.to_numeric(Y[endpoint], errors="coerce").notna().values
+        y = pd.to_numeric(Y[endpoint][keep], errors="coerce").astype(int).values
+        groups_e, source_e = groups[keep], source[keep].reset_index(drop=True)
+        # Every baseline is scored on the same rows as the model it is a
+        # baseline for, or the comparison means nothing.
+        models_e = {name: (factory, feats[keep].reset_index(drop=True))
+                    for name, (factory, feats) in models.items()}
         n_splits = s["n_splits"]
-        for name, (factory, feats) in models.items():
-            prob = _oof(factory(), feats, y, groups, n_splits)
-            lo, hi = _bootstrap_ci(y, prob, groups, rng)
+        for name, (factory, feats) in models_e.items():
+            prob = _oof(factory(), feats, y, groups_e, n_splits)
+            lo, hi = _bootstrap_ci(y, prob, groups_e, rng)
             rows.append({
                 "endpoint": endpoint, "model": name,
                 "pr_auc": average_precision_score(y, prob), "ci_low": lo, "ci_high": hi,
@@ -93,15 +100,17 @@ def main() -> None:
             })
 
         # Within the source that holds most positives, the source shortcut is gone.
-        top = source[y == 1].value_counts()
-        mask = (source == top.index[0]).values
-        ys, gs = y[mask], groups[mask]
+        top = source_e[y == 1].value_counts()
+        mask = (source_e == top.index[0]).values
+        ys, gs = y[mask], groups_e[mask]
         pos_seq = len(set(gs[ys == 1]))
         neg_seq = len(set(gs[ys == 0]))
         if pos_seq >= 3 and neg_seq >= 3:
             for name in (LOGISTIC, "GC content only", "Length only"):
-                factory, feats = models[name]
-                prob = _oof(factory(), feats[mask], ys, gs, min(5, pos_seq, neg_seq))
+                # models_e, not models: `mask` indexes this endpoint's rows.
+                factory, feats = models_e[name]
+                prob = _oof(factory(), feats[mask].reset_index(drop=True), ys, gs,
+                            min(5, pos_seq, neg_seq))
                 lo, hi = _bootstrap_ci(ys, prob, gs, rng)
                 within.append({
                     "endpoint": endpoint, "source": top.index[0], "model": name,

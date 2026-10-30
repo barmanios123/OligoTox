@@ -47,7 +47,11 @@ def _source_breakdown() -> dict[str, dict[str, int]]:
 
     out = {}
     for endpoint in labels.columns:
-        y = pd.to_numeric(labels[endpoint], errors="coerce").fillna(0).astype(int)
+        # This counts positive sequences per source, so an unmeasured row
+        # cannot affect it either way. Written as a mask rather than a
+        # zero-fill so that nobody copies the zero-fill out of here into a
+        # place where it does matter, which is how it reached the trainer.
+        y = pd.to_numeric(labels[endpoint], errors="coerce") == 1
         positives = pd.DataFrame({"seq": seq, "source": source})[y == 1]
         out[endpoint] = positives.groupby("source")["seq"].nunique().to_dict()
     return out

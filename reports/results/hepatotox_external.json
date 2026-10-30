@@ -5,22 +5,22 @@
   "sequences": 149,
   "positives": 5,
   "base_rate": 0.03355704697986577,
-  "roc_auc": 0.28611111111111115,
+  "roc_auc": 0.30833333333333335,
   "roc_ci": [
-    0.10463300301175553,
-    0.5276924893717522
+    0.12244897959183676,
+    0.47338877338877333
   ],
-  "pr_auc": 0.026847822873769942,
+  "pr_auc": 0.027732793522267207,
   "pr_ci": [
-    0.00980392156862745,
-    0.06511175216405518
+    0.011460647357028935,
+    0.06243295297106792
   ],
   "toxic_ranks_out_of_n": [
-    50.0,
-    104.0,
-    111.0,
-    123.0,
-    141.0
+    76.0,
+    84.0,
+    90.0,
+    130.0,
+    133.0
   ],
   "status": "directional only",
   "caveat": "5 positive sequences. Too few to validate the endpoint; the confidence interval spans most of the range. Reported so the endpoint has some external signal, not as evidence of performance. These are 14-mer LNA gapmers, a chemistry and length the model was not trained on."

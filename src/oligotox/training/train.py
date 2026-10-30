@@ -273,20 +273,42 @@ def main() -> None:
         if endpoint in externally_trained:
             print(f"{endpoint:28s} skipped, trained externally with its own feature list")
             continue
-        y = pd.to_numeric(Y[endpoint], errors="coerce").fillna(0).astype(int).values
+        # A row that was never measured for this endpoint is not a negative.
+        # `fillna(0)` turned every unlabelled row into "known not toxic":
+        # thrombocytopenia was trained on 4 real positives and 2,030 rows
+        # nobody had assayed, and its metrics moved whenever an unrelated
+        # source was added to the corpus. Each endpoint now sees only the
+        # rows that carry its label.
+        labelled = pd.to_numeric(Y[endpoint], errors="coerce").notna().values
+        y = pd.to_numeric(Y[endpoint][labelled], errors="coerce").astype(int).values
+        X_endpoint = X[labelled].reset_index(drop=True)
+        groups_endpoint = groups[labelled] if groups is not None else None
+
         positives = int(y.sum())
         negatives = int((y == 0).sum())
-        positive_rate = float(np.mean(y))
+        positive_rate = float(np.mean(y)) if len(y) else 0.0
         samples = int(len(y))
         min_class = min(positives, negatives)
-        positive_groups = int(len(set(groups[y == 1]))) if groups is not None else None
+        positive_groups = (int(len(set(groups_endpoint[y == 1])))
+                           if groups_endpoint is not None else None)
         random_pr_auc = None
+
+        if samples == 0:
+            print(f"{endpoint:28s} skipped, no row carries this label")
+            summary[endpoint] = {
+                "samples": 0, "positive_rate": 0.0,
+                "status": "no_labelled_rows", "pr_auc": None, "brier": None,
+                "positives": 0, "negatives": 0, "positive_sequences": 0,
+                "cv": None, "random_split_pr_auc": None, "n_splits": None,
+                "datasail_eval": None,
+            }
+            continue
 
         if positives == 0 or negatives == 0:
             status = "fallback_single_class_fit"
             model = _make_constant_model()
-            model.fit(X, y)
-            y_prob = _positive_class_proba(model, X)
+            model.fit(X_endpoint, y)
+            y_prob = _positive_class_proba(model, X_endpoint)
             pr_auc = None
             brier = None
             n_splits = None
@@ -294,8 +316,8 @@ def main() -> None:
         elif min_class < 3:
             status = "fallback_low_count_fit"
             model = _make_model()
-            model.fit(X, y)
-            y_prob = _positive_class_proba(model, X)
+            model.fit(X_endpoint, y)
+            y_prob = _positive_class_proba(model, X_endpoint)
             pr_auc = None
             brier = None
             n_splits = None
@@ -303,8 +325,8 @@ def main() -> None:
         elif groups is not None and positive_groups < MIN_POSITIVE_GROUPS:
             status = "fallback_few_positive_sequences"
             model = _make_model()
-            model.fit(X, y)
-            y_prob = _positive_class_proba(model, X)
+            model.fit(X_endpoint, y)
+            y_prob = _positive_class_proba(model, X_endpoint)
             pr_auc = None
             brier = None
             n_splits = None
@@ -314,18 +336,18 @@ def main() -> None:
             if groups is not None:
                 n_splits = min(5, positive_groups)
                 cv = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=42)
-                cv_iter = cv.split(X, y, groups=groups)
+                cv_iter = cv.split(X_endpoint, y, groups=groups_endpoint)
             else:
                 n_splits = min(3, min_class)
                 cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-                cv_iter = cv.split(X, y)
-            random_pr_auc = _random_split_pr_auc(X, y, min(5, min_class))
+                cv_iter = cv.split(X_endpoint, y)
+            random_pr_auc = _random_split_pr_auc(X_endpoint, y, min(5, min_class))
 
             model = _make_model()
 
             y_prob = cross_val_predict(
                 model,
-                X,
+                X_endpoint,
                 y,
                 cv=cv_iter,
                 method="predict_proba",
@@ -338,7 +360,7 @@ def main() -> None:
             except Exception:
                 endpoint_metrics = None
 
-        model.fit(X, y)
+        model.fit(X_endpoint, y)
         joblib.dump(model, MODEL_ARTIFACTS_DIR / f"{endpoint}.joblib")
 
         oof_true[endpoint] = y

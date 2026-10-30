@@ -12,22 +12,26 @@ The main result is in the evaluation. The first version scored PR-AUC 0.93 on he
 
 Each bar is an out-of-fold PR-AUC from a calibrated logistic regression. Blue is the number to trust. In that setup, all rows of a sequence (RNA and DNA spellings count as the same sequence) stay on the same side of every split. That matches the real use case: scoring an oligo the model has never seen.
 
-| Endpoint | Positive rows / sequences | Base rate | Before fix | Row-level CV | **Sequence-grouped CV** |
+| Endpoint | Positive rows / sequences | Rows measured | Base rate | Row-level CV | **Sequence-grouped CV** |
 |---|---|---|---|---|---|
-| kupffer cell activation | 34 / 27 | 0.021 | 0.93 | 0.73 | **0.48** |
-| hepatocellular injury | 203 / 19 | 0.126 | 0.93 | 0.55 | **0.29** |
-| injection site reaction | 12 / 12 | 0.007 | 0.42 | 0.36 | **0.27** |
-| offtarget gene silencing | 68 / 12 | 0.042 | 0.64 | 0.31 | **0.23** |
-| hepatic vacuolation | 12 / 6 | 0.007 | 0.57 | 0.44 | **0.16** |
-| complement activation | 6 / 6 | 0.004 | 0.00 | 0.22 | **0.07** |
-| coagulation effect | 5 / 5 | 0.003 | 0.32 | 0.36 | **0.07** |
-| renal tubular injury | 7 / 7 | 0.004 | 0.20 | 0.01 | **0.06** |
-| cytokine release | 7 / 7 | 0.004 | 0.09 | 0.12 | **0.06** |
-| innate immune activation | 7 / 7 | 0.004 | 0.09 | 0.12 | **0.06** |
-| thrombocytopenia | 4 / 4 | 0.003 | 0.15 | 0.25 | **0.02** |
-| renal accumulation | 7 / 7 | 0.004 | 0.40 | 0.05 | **0.02** |
+| injection site reaction | 12 / 12 | 24 | 0.500 | 0.68 | **0.66** |
+| thrombocytopenia | 4 / 4 | 28 | 0.143 | 0.63 | **0.50** |
+| complement activation | 6 / 6 | 28 | 0.214 | 0.56 | **0.50** |
+| kupffer cell activation | 34 / 27 | 1614 | 0.021 | 0.73 | **0.48** |
+| renal tubular injury | 7 / 7 | 28 | 0.250 | 0.37 | **0.43** |
+| hepatocellular injury | 313 / 103 | 1051 | 0.298 | 0.66 | **0.37** |
+| offtarget gene silencing | 68 / 12 | 544 | 0.125 | 0.74 | **0.35** |
+| renal accumulation | 7 / 7 | 24 | 0.292 | 0.36 | **0.35** |
+| coagulation effect | 5 / 5 | 24 | 0.208 | 0.23 | **0.35** |
+| innate immune activation | 7 / 7 | 28 | 0.250 | 0.20 | **0.25** |
+| cytokine release | 7 / 7 | 28 | 0.250 | 0.20 | **0.25** |
+| hepatic vacuolation | 12 / 6 | 1614 | 0.007 | 0.46 | **0.15** |
 
-CNS toxicity has only 2 positives in this data and is not evaluated here; it is trained and validated separately on external assays, below. 1,614 rows cover 74 unique sequences.
+CNS toxicity has only 2 positives in this data and is not evaluated here; it is trained and validated separately on external assays, below.
+
+Read the **Rows measured** column before the PR-AUC. Each endpoint is scored only on the rows that were actually assayed for it, which for most of them is 24 to 28 rows. Until 2026-10-30 every unmeasured row was trained as a negative, so all twelve reported 1,614 or 2,058 samples and their base rates looked ten times smaller than they are; the whole table moved when that was fixed. [Entry 17](docs/NEGATIVE_RESULTS.md) has what happened. A PR-AUC of 0.50 on 28 rows with 4 positives is noise, which is why those endpoints sit at `insufficient_data` whatever the number says.
+
+Hepatocellular injury is the one endpoint with a real corpus behind it: 1,051 measured rows over 296 unique sequences, 103 of them positive, after 444 observations were added from 30 Ionis patents. That ingestion did what it was meant to do and removed the source confounding, and it is still only `weak`, because the model does not clear a crude sequence baseline and does not transfer to an independent screen.
 
 ### What the fix changed
 
@@ -210,7 +214,7 @@ This is also the clearest statement of what the project needs: not more features
 
 ## The evaluation is the product
 
-The models here are not better than PFRED, ASOptimizer or any proprietary platform, and with 74 unique sequences they will not be. What this repo has instead is a harness that says, per endpoint, whether a result survives scrutiny, and an app that refuses to present anything that does not.
+The models here are not better than PFRED, ASOptimizer or any proprietary platform, and on this much data they will not be. What this repo has instead is a harness that says, per endpoint, whether a result survives scrutiny, and an app that refuses to present anything that does not.
 
 | Check | Script | Catches |
 |---|---|---|
@@ -471,7 +475,8 @@ The Efficacy tab previously held untrained model slots and was removed rather th
 
 ## Limitations
 
-- 74 unique sequences is small. Nine of the 13 endpoints have 7 or fewer positive sequences.
+- The corpus is small. Nine of the 13 endpoints have 7 or fewer positive sequences, and most are measured on 24 to 28 rows. Only hepatocellular injury and CNS toxicity have more than 40 unique sequences.
+- One endpoint of 13 is presented as a prediction. That number went from 3 to 1 on 2026-10-30, when unmeasured rows stopped being trained as negatives.
 - **Only 3 of the 13 endpoints are presented as predictions.** Hepatocellular injury survives both the data-source baseline and a within-source check; Kupffer cell activation, the highest raw score, does not. CNS neurotoxicity is validated on external data but reproduces a published rule rather than improving on it. The other 10 models ship and run, but the app labels them unsupported.
 - Hepatocellular injury rests on 19 positive sequences with within-source confirmation from a single dataset. A second independent source is what would settle it, and no external hepatotoxicity data is on hand.
 - Several endpoints draw all their positives from one source dataset, so source and biology cannot be separated for them with this data.

@@ -1,0 +1,28 @@
+{
+  "source": "ionis_patents",
+  "label_rule": "ALT >= 3.0x the study's own control, at the worst dose that study tested",
+  "grouping": "one row per (publication, table, sequence)",
+  "rows_added": 444,
+  "positive_rows_added": 110,
+  "sequences": {
+    "before": 40,
+    "after": 296
+  },
+  "positive_sequences": {
+    "before": 19,
+    "after": 103
+  },
+  "base_rate": {
+    "before": 0.3344,
+    "after": 0.2978
+  },
+  "modality": {
+    "ASO_gapmer": 383,
+    "LNA_gapmer": 61
+  },
+  "assumed": {
+    "ps_fraction": "set to 1.0 for every patent row",
+    "lna_fraction": "left empty; the trainer imputes 0.0, so it reads as a source indicator and the source-only baseline is the check on it"
+  },
+  "warning": "hepatocellular_injury already fails to transfer to the NAR 2022 screen. Whether this source helps is settled by that check and by the source-only baseline, not by the number of rows added."
+}

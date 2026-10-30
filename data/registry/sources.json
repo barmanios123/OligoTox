@@ -158,17 +158,19 @@
     },
     {
       "name": "ionis_patent_hepatotox",
-      "status": "built_not_ingested",
+      "status": "present",
       "kind": "toxicity",
       "endpoint": "hepatocellular_injury",
-      "readout": "serum_ALT_AST_IU_per_L",
+      "readout": "serum_ALT_fold_vs_study_control",
       "direction": "higher_is_toxic",
-      "threshold": null,
+      "threshold": 3.0,
       "url": "https://patents.google.com/?q=antisense+oligonucleotide+hepatotoxicity+ALT+gapmer",
       "licence": "patent text is public; extracted factual measurements, cite each publication number",
-      "notes": "Extractor built 2026-10-29 and corrected 2026-10-30; rows are written to data/external/patent_hepatotox.csv, which is gitignored so it cannot be mistaken for curated data. 30 US publications read, 527 rows, 256 unique sequences, each row carrying its own table's control so a fold change is computable. Dose is on 280 of 527: 112 from a dose column, 6 from a treatment label, 162 from Example prose that stated exactly one dose, and 247 left empty rather than guessed. Values are pinned in tests/test_patent_extraction.py against two studies of US11225664B2 read by hand. Why it is not ingested: 527 rows would be the largest single source in the corpus, assembled from separate studies with their own controls and animal species, and hepatocellular_injury is already the endpoint that fails to transfer off its own source (ROC-AUC 0.29 on the NAR screen). Ingesting it is a question about source confounding, not about row count.",
-      "role": "candidate",
-      "sequences": 256
+      "notes": "Ingested 2026-10-30 by scripts/ingest_patent_hepatotox.py. 30 US publications, 527 extracted rows collapsed to 444 study-by-sequence observations over 256 sequences, labelled toxic at ALT >= 3x that study's own control at its worst dose. Fold change rather than an absolute ALT because control ALT runs 9 to 57 U/l across these patents and an absolute cut would label whole studies by their baseline. What it did: hepatocellular_injury went from 40 unique sequences (19 positive) to 296 (103 positive), and the source confounding that blocked it is gone, the model now scoring 0.37 against a source-only baseline of 0.23. What it did not do: the model still does not clear the best simple sequence baseline (CI low 0.29 against 0.43) and still does not transfer to the NAR 2022 screen (ROC-AUC 0.31 [0.12-0.47]). The endpoint went validated -> weak and is no longer presented. More data fixed the confounding and revealed that there was no signal underneath it. Assumed, not measured: ps_fraction 1.0 for every row; lna_fraction left empty except where a patent states cEt or LNA wings. Remove with --remove and re-run the pipeline.",
+      "role": "training",
+      "sequences": 256,
+      "local_path": "data/external/patent_hepatotox.csv",
+      "positives": 84
     }
   ]
 }

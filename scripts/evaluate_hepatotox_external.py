@@ -102,18 +102,28 @@ def _boot(y, p, rng, fn, n=N_BOOT):
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
+    cached = EXTERNAL / "nar2022_hepatotox_screen.csv"
+    if len(sys.argv) >= 2:
+        df = extract(Path(sys.argv[1]))
+        if df.empty:
+            raise SystemExit(
+                "No Table S1 rows parsed; the supplementary layout may have changed.")
+        EXTERNAL.mkdir(parents=True, exist_ok=True)
+        df.to_csv(cached, index=False)
+    elif cached.exists():
+        # The parse is the part that needs the PDF, and it is already done.
+        # Re-scoring has to be runnable by anyone and on every retrain, or
+        # the one check that argues against this endpoint only gets re-run
+        # when somebody remembers to download a file.
+        df = pd.read_csv(cached)
+        print(f"re-scoring the cached parse at {cached.relative_to(ROOT)}")
+    else:
         raise SystemExit(
-            "usage: evaluate_hepatotox_external.py <gkac562_supplemental_file.pdf>\n"
-            "Download it from the article's supplementary data: "
+            "usage: evaluate_hepatotox_external.py [<gkac562_supplemental_file.pdf>]\n"
+            f"No cached parse at {cached.relative_to(ROOT)}. Download the "
+            "supplementary file from the article: "
             "https://academic.oup.com/nar/article/50/13/7224/6633893"
         )
-    df = extract(Path(sys.argv[1]))
-    if df.empty:
-        raise SystemExit("No Table S1 rows parsed; the supplementary layout may have changed.")
-
-    EXTERNAL.mkdir(parents=True, exist_ok=True)
-    df.to_csv(EXTERNAL / "nar2022_hepatotox_screen.csv", index=False)
 
     probs = []
     for seq in df["sequence"]:

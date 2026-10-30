@@ -3,6 +3,13 @@
   "publications_read": 30,
   "rows": 527,
   "unique_sequences": 256,
+  "dose_source": {
+    "unknown": 247,
+    "prose": 162,
+    "table": 112,
+    "label": 6
+  },
+  "dose_rule": "A dose is taken from the table's own dose column, else from the treatment label, else from the Example prose and only where that passage states exactly one dose. Otherwise it is left empty, because a liver readout without a dose cannot be compared with another study.",
   "rejected": {
     "no_compound": 2,
     "no_seq_id": 137,

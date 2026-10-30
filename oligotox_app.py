@@ -23,9 +23,11 @@ from oligotox.reporting.oswg_report import OSWGSafetyReport
 
 APP_TITLE = "OligoTox Operator Console"
 APP_SUBTITLE = (
-    "Research prototype. Most toxicity endpoints rest on 74 unique sequences and are "
-    "shown as unsupported; CNS neurotoxicity and siRNA potency are trained on external "
-    "data. Each number carries the evidence behind it."
+    "Research prototype. One toxicity endpoint of 13 currently clears the "
+    "evidence gate; the rest are shown as unsupported with the reason. "
+    "CNS neurotoxicity and siRNA potency are trained on external data. "
+    "Each number carries the evidence behind it, and How it works has the "
+    "whole of it."
 )
 
 # Endpoints are presented by how well the evaluation supports them, not by how
@@ -785,12 +787,15 @@ with tab["How it works"]:
                 st.write(endpoints[name].get("reason", ""))
 
     st.markdown("#### 6. Why some numbers are rankings and not percentages")
+    rankings = [n for n, s in endpoints.items()
+                if not s.get("probabilities_calibrated")]
     st.markdown(
         "A score is only called a probability if it is calibrated: its Brier "
         "skill against simply predicting the base rate has to beat 0.02. "
         "Below that, a 30% means this sequence ranks above one scored 20%, "
-        "and nothing more. The app labels each score with which it is, and "
-        "`hepatocellular_injury` is a ranking, not a percentage."
+        "and nothing more. The app labels each score with which it is. "
+        + (f"**{len(rankings)} of {len(endpoints)}** endpoints are rankings "
+           "rather than percentages." if endpoints else "")
     )
 
     st.markdown("#### 7. What an independent dataset says")
@@ -804,10 +809,24 @@ with tab["How it works"]:
             f"[{external.get('roc_ci', [0, 0])[0]:.2f}-"
             f"{external.get('roc_ci', [0, 0])[1]:.2f}]. "
             "0.5 is chance. Five positives cannot settle it, but there is no "
-            "evidence this endpoint transfers off the data it was trained on. "
-            "It is presented anyway, with this said on its own tab, because "
-            "removing the check would be the dishonest option."
+            "evidence this endpoint transfers off the data it was trained on."
         )
+        # Whether that endpoint is presented is a fact about the gate, and
+        # this page is the last place that should state it from memory: the
+        # sentence here read "it is presented anyway" for a while after the
+        # endpoint had already been demoted.
+        tier = (endpoints.get("hepatocellular_injury", {}) or {}).get("tier")
+        if tier == "validated":
+            st.caption(
+                "It is presented as a prediction anyway, with this said on "
+                "its own tab, because removing the check would be the "
+                "dishonest option."
+            )
+        else:
+            st.caption(
+                f"It is not presented as a prediction. Its tier is "
+                f"`{tier}`, and section 5 gives the check it failed."
+            )
         st.caption(f"Source: {external.get('source', '')}")
 
     st.markdown("#### 8. How to confirm all of this yourself")
@@ -822,7 +841,7 @@ with tab["How it works"]:
         "# are the data, training and evidence gate still consistent\n"
         "python scripts/derive_evidence_tiers.py "
         "# recompute every tier on this page from the metrics\n"
-        "python scripts/evaluate_hepatotox_external.py --help  "
+        "python scripts/evaluate_hepatotox_external.py  "
         "# re-run the independent check in section 7",
         language="bash",
     )

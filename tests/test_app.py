@@ -158,3 +158,24 @@ def test_adding_a_tab_cannot_renumber_the_others(root):
     source = (root / "oligotox_app.py").read_text()
     assert "with tabs[" not in source, "a positional tab index came back"
     assert "How it works" in source
+
+
+def test_the_page_never_claims_a_demoted_endpoint_is_presented(root):
+    """This sentence drifted once already and is the reason for the rule.
+
+    Section 7 read "It is presented anyway" for as long as
+    hepatocellular_injury was validated, and kept reading that way after the
+    gate demoted it. A page whose whole claim is that it cannot drift must
+    not state a tier from memory.
+    """
+    at = _run(root)
+    evidence = load_endpoint_evidence(root / "artifacts/config")
+    tier = evidence["endpoints"]["hepatocellular_injury"]["tier"]
+    captions = " ".join(c.value for c in at.caption)
+
+    if tier == "validated":
+        assert "presented as a prediction anyway" in captions
+    else:
+        assert "is not presented as a prediction" in captions
+        assert f"`{tier}`" in captions
+        assert "presented as a prediction anyway" not in captions

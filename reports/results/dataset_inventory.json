@@ -1,6 +1,6 @@
 {
-  "usable_sources": 4,
-  "usable_sequences": 9637,
+  "usable_sources": 5,
+  "usable_sequences": 9893,
   "sources": [
     {
       "name": "oligogym_cns_moe_neurotox",
@@ -114,12 +114,12 @@
     },
     {
       "name": "ionis_patent_hepatotox",
-      "status": "built_not_ingested",
+      "status": "present",
       "kind": "toxicity",
       "endpoint": "hepatocellular_injury",
-      "on_disk": false,
-      "usable_for_training": false,
-      "blocked_by": "no label threshold declared",
+      "on_disk": true,
+      "usable_for_training": true,
+      "blocked_by": null,
       "sequences": 256
     }
   ]

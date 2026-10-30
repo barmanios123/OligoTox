@@ -273,6 +273,11 @@ def tox_rows(tables: list[tuple[list[list[str]], int]]) -> list[dict]:
             continue
         ast_at = _find_column(names, r"\bAST\b")
         dose_at = _find_column(names, r"\bdose\b")
+        # Several patents state the backbone next to the readout, as
+        # "5-10-5 MOE" or "Deoxy, MOE and cEt". Without it every patent
+        # compound has to be assumed one chemistry, and an assumed chemistry
+        # that is constant across a whole source is a source label.
+        chem_at = _find_column(names, r"\bchemistry\b")
 
         width = max(len(r) for r in data)
         offset = width - len(names)
@@ -307,6 +312,8 @@ def tox_rows(tables: list[tuple[list[list[str]], int]]) -> list[dict]:
                     "dose": (number(row, dose_at) if number(row, dose_at) is not None
                              else in_row if in_row is not None
                              else _label_dose(label)),
+                    "chemistry": (cell(row, chem_at).strip()
+                                  if chem_at is not None else ""),
                     "dose_from": ("table" if number(row, dose_at) is not None
                                   else "label" if (in_row is not None
                                                    or _label_dose(label) is not None)
@@ -394,6 +401,7 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
                 # nothing: normal mouse ALT spans a wide range between studies.
                 rejected["no_control"] += 1
                 continue
+            chemistry = entry["chemistry"] or ""
             dose = entry["dose"] if entry["dose"] is not None else shared
             source = entry["dose_from"] or ("prose" if dose is not None else None)
             rows.append({
@@ -402,6 +410,7 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
                 "seq_id": seq_id,
                 "sequence": sequence,
                 "motif": motif,
+                "chemistry": chemistry or None,
                 "dose_mg_kg": dose,
                 "dose_source": source,
                 "table": table,
