@@ -61,19 +61,19 @@
     },
     {
       "name": "nar2022_gapmer_hepatotox_screen",
-      "status": "fetchable",
+      "status": "present",
       "kind": "toxicity",
       "endpoint": "hepatocellular_injury",
       "readout": "ALT_U_per_L",
       "direction": "higher_is_toxic",
       "threshold": 100.0,
       "url": "https://academic.oup.com/nar/article/50/13/7224/6633893",
-      "fetch_note": "Supplementary Table S1 is a PDF behind a signed URL that expires. Open the article page, download the supplement, then run scripts/evaluate_hepatotox_external.py against it.",
+      "fetch_note": "Supplementary Table S1 of the paper. PMC serves it only to a real browser; four machine routes are bot-gated, so a human downloads it and passes the path to scripts/evaluate_hepatotox_external.py.",
       "local_path": "data/external/nar2022_hepatotox_screen.csv",
       "licence": "Open access article; the extracted table is a small factual dataset redistributed with citation",
       "sequences": 149,
       "positives": 5,
-      "notes": "External check only. 5 positives cannot validate an endpoint, and the pipeline treats it as directional."
+      "notes": "External check only, restored 2026-10-30 after the earlier copy was lost with the checkout. 5 positives by the paper's own ALT > 100 U/l criterion cannot validate an endpoint, and the pipeline treats it as directional. Parse verified against the sequences themselves: both motif columns, TGC and TCC, are recomputable from the sequence and match 149 of 149, so the columns are aligned. The second was read as CCC for a while, which is a different motif matching only 44%. What it says: hepatocellular_injury ranks the 5 hepatotoxic gapmers at positions 50, 104, 111, 123 and 141 of 149, ROC-AUC 0.29 [0.10-0.53]. No evidence the endpoint transfers off its own source."
     },
     {
       "name": "asoptimizer_rodent_alt_ast",

@@ -32,7 +32,7 @@
     },
     "hepatocellular_injury": {
       "tier": "validated",
-      "reason": "PR-AUC 0.28 [0.21-0.56] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source Its probabilities are not calibrated: Brier skill +0.0017 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking. On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.40, CI 0.13-0.70). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
+      "reason": "PR-AUC 0.28 [0.21-0.56] against a 0.126 base rate, clearing the source, GC and length baselines and holding up within a single source Its probabilities are not calibrated: Brier skill +0.0017 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking. On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.29, CI 0.10-0.53). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
       "pr_auc": 0.2849,
       "ci_low": 0.2059,
       "ci_high": 0.5618,
@@ -54,10 +54,10 @@
         "source": "NAR 2022;50(13):7224 doi:10.1093/nar/gkac562 Supplementary Table S1",
         "sequences": 149,
         "positives": 5,
-        "roc_auc": 0.4027777777777778,
+        "roc_auc": 0.28611111111111115,
         "roc_ci": [
-          0.13467106872095871,
-          0.7014894636015325
+          0.10463300301175553,
+          0.5276924893717522
         ],
         "status": "directional only"
       }

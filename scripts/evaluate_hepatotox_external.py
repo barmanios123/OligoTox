@@ -10,6 +10,12 @@ gapmer sequences paired to liver enzymes is the hepatotoxicity screen in:
   Supplementary Table S1, 149 LNA gapmers, C57BL/6 mice, 20 mg/kg IV,
   AST/ALT at 96 h.
 
+The two motif columns are TGC and TCC, which the paper names as the
+sequence features driving toxicity. Both are verified on parse against the
+sequences themselves: a misaligned column would show up as a mismatch, and
+both match 149 of 149. The second was read as "CCC" for a while, which is a
+different motif and matched only 44% of rows.
+
 **This set is too small to validate the endpoint and is not treated as
 validation.** It carries roughly five hepatotoxic sequences by the paper's
 own ALT > 100 U/l criterion. A confidence interval on five positives spans
@@ -71,10 +77,10 @@ def extract(pdf_path: Path) -> pd.DataFrame:
             m = ROW.match(line.strip())
             if not m:
                 continue
-            ident, seq, tgc, ccc, ast, alt, tm = m.groups()
+            ident, seq, tgc, tcc, ast, alt, tm = m.groups()
             rows.append({
                 "id": ident, "sequence": seq,
-                "motifs_TGC": int(tgc), "motifs_CCC": int(ccc),
+                "motifs_TGC": int(tgc), "motifs_TCC": int(tcc),
                 "AST_U_per_L": int(ast), "ALT_U_per_L": int(alt), "tm_c": int(tm),
             })
     df = pd.DataFrame(rows).drop_duplicates("id")
