@@ -52,7 +52,7 @@
     },
     "hepatocellular_injury": {
       "tier": "weak",
-      "reason": "the model's 95% CI reaches 0.38, below the best simple baseline (0.41), so it is not distinguishable from one crude sequence number On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.46, CI 0.33-0.59). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
+      "reason": "the model's 95% CI reaches 0.38, below the best simple baseline (0.41), so this check cannot separate it from one crude sequence number. Tested directly as a difference on the same resampled sequences it beats that baseline by +0.119 [+0.036, +0.194], P(better) 0.996, which disagrees with the check above. The tier follows the check above; scripts/evaluate_paired_baselines.py has both On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.46, CI 0.33-0.59). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
       "pr_auc": 0.5344,
       "ci_low": 0.3838,
       "ci_high": 0.667,

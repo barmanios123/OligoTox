@@ -42,11 +42,35 @@ MIN_BRIER_SKILL = 0.02
 TIER_ORDER = ("validated", "weak", "source_confounded", "insufficient_data")
 
 
+def _paired_note(endpoint: str) -> str:
+    """What the paired test says, when it has been run.
+
+    The sentence this appends to used to end at "not distinguishable from
+    one crude sequence number", which is a claim about a difference made by
+    comparing a marginal interval to a point estimate. Where the direct test
+    exists and disagrees, saying so is not optional.
+    """
+    path = RESULTS / "paired_baselines.json"
+    try:
+        spec = json.loads(path.read_text())["endpoints"][endpoint]
+    except (OSError, json.JSONDecodeError, KeyError):
+        return ""
+    lo, hi = spec["ci"]
+    verdict = ("which disagrees with the check above"
+               if spec["clears_paired"] else "which agrees")
+    return (f". Tested directly as a difference on the same resampled "
+            f"sequences it beats that baseline by {spec['difference']:+.3f} "
+            f"[{lo:+.3f}, {hi:+.3f}], P(better) {spec['p_better']:.3f}, "
+            f"{verdict}. The tier follows the check above; "
+            f"scripts/evaluate_paired_baselines.py has both")
+
+
 def _model_label(df) -> str:
     """The model label carries the feature count, so match on the prefix."""
     return next(m for m in df.model.unique() if m.startswith(MODEL_PREFIX))
 
-def classify(model, source_pr_auc, best_simple, base_rate, n_sequences, within_beats_base):
+def classify(model, source_pr_auc, best_simple, base_rate, n_sequences,
+             within_beats_base, endpoint=""):
     """Return (tier, reason, checks) for one endpoint."""
     checks = {
         "has_enough_sequences": n_sequences >= MIN_POSITIVE_SEQUENCES,
@@ -74,7 +98,8 @@ def classify(model, source_pr_auc, best_simple, base_rate, n_sequences, within_b
         return (
             "weak",
             f"the model's 95% CI reaches {model['ci_low']:.2f}, below the best simple baseline "
-            f"({best_simple:.2f}), so it is not distinguishable from one crude sequence number",
+            f"({best_simple:.2f}), so this check cannot separate it from one "
+            f"crude sequence number" + _paired_note(endpoint),
             checks,
         )
     if not checks["ci_clears_base_rate"]:
@@ -121,7 +146,8 @@ def main() -> None:
             "ci_high": float(model["ci_high"]),
         }
         tier, reason, checks = classify(
-            model_metrics, source_pr_auc, best_simple, base_rate, n_sequences, within_beats_base
+            model_metrics, source_pr_auc, best_simple, base_rate, n_sequences,
+            within_beats_base, endpoint,
         )
         endpoints[endpoint] = {
             "tier": tier,
