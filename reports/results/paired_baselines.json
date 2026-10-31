@@ -1,7 +1,7 @@
 {
   "question": "Does the model beat the best simple baseline, tested as a paired difference on the same resampled sequences?",
   "why": "The gate compares the model's marginal CI lower bound to the baseline's point estimate, which is not a test of the difference and is far more conservative than one.",
-  "status": "reported, not wired into the gate: changing the gate is a decision about what the platform claims.",
+  "status": "this is the gate's simple-baseline check; derive_evidence_tiers.py reads it, and an endpoint missing from here fails that check.",
   "endpoints": {
     "hepatocellular_injury": {
       "model_pr_auc": 0.534362731445721,

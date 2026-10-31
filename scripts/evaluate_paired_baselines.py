@@ -1,25 +1,28 @@
 """Is the model better than the best simple baseline, tested as a difference?
 
-The gate's `ci_clears_simple_baselines` check asks whether the model's 95%
-confidence interval lower bound exceeds the best simple baseline's point
-estimate. That is not a test of the difference between them. The two models
-are scored on the same rows with the same folds, so their errors are
-correlated, and comparing a marginal interval to a point estimate is far
-more conservative than asking directly whether one beats the other.
+This is the gate's simple-baseline check. `derive_evidence_tiers.py` reads
+what it writes, and an endpoint missing from the output fails that check, so
+this runs inside `run_pipeline.py` before the tiers are derived rather than
+by hand.
 
-This computes the direct question: resample whole sequences, score both
-models on each resample, and take the distribution of the difference.
+What it replaced: a comparison of the model's marginal 95% interval lower
+bound to the baseline's point estimate. The two models are scored on the
+same rows with the same folds, so their errors are correlated, and that is
+not a test of the difference between them. It is far more conservative than
+one, and conservative in a direction nobody chose.
 
-It is reported rather than wired into the gate, because changing the gate
-is a decision about what the platform claims and not one a script should
-make quietly. The numbers cut both ways, which is the point:
+This resamples whole sequences, scores both models on each resample, and
+takes the distribution of the difference. The check passes when that
+distribution excludes zero.
 
-    hepatocellular_injury     +0.119 [+0.036, +0.194]  P 0.996   passes
-    offtarget_gene_silencing  +0.355 [-0.075, +0.688]  P 0.917   fails
+The change was not a loosening. On the run that introduced it:
 
-The second currently passes the marginal check and is presented. So the
-paired test is not a looser gate; it is a different one, and it disagrees
-with the current gate in both directions.
+    hepatocellular_injury     +0.119 [+0.036, +0.194]  P 0.996   promoted
+    offtarget_gene_silencing  +0.355 [-0.075, +0.688]  P 0.917   demoted
+
+The second had passed the marginal check and was being presented, on 12
+positive sequences. A test that moves endpoints in both directions is a
+different gate, not a weaker one.
 
     python scripts/evaluate_paired_baselines.py
 
@@ -121,8 +124,9 @@ def main() -> int:
         "why": "The gate compares the model's marginal CI lower bound to the "
                "baseline's point estimate, which is not a test of the "
                "difference and is far more conservative than one.",
-        "status": "reported, not wired into the gate: changing the gate is a "
-                  "decision about what the platform claims.",
+        "status": "this is the gate's simple-baseline check; "
+                  "derive_evidence_tiers.py reads it, and an endpoint "
+                  "missing from here fails that check.",
         "endpoints": report,
     }, indent=2) + "\n")
     print(f"\nwrote {OUT.relative_to(ROOT)}")

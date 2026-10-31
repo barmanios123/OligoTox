@@ -9,7 +9,7 @@
   ],
   "composite_endpoints": [
     "cns_toxicity",
-    "offtarget_gene_silencing"
+    "hepatocellular_injury"
   ],
   "endpoints": {
     "cns_toxicity": {
@@ -29,30 +29,9 @@
       "calibration_mae": 0.0117,
       "probabilities_calibrated": true
     },
-    "offtarget_gene_silencing": {
-      "tier": "validated",
-      "reason": "PR-AUC 0.64 [0.21-0.85] against a 0.125 base rate, clearing the source, GC and length baselines and holding up within a single source",
-      "pr_auc": 0.6407,
-      "ci_low": 0.2065,
-      "ci_high": 0.8481,
-      "base_rate": 0.125,
-      "positive_sequences": 12,
-      "source_only_pr_auc": 0.1519,
-      "best_simple_baseline_pr_auc": 0.1926,
-      "checks": {
-        "has_enough_sequences": true,
-        "beats_source_baseline": true,
-        "ci_clears_base_rate": true,
-        "ci_clears_simple_baselines": true,
-        "beats_base_rate_within_source": true
-      },
-      "brier_skill": 0.3434,
-      "calibration_mae": 0.0608,
-      "probabilities_calibrated": true
-    },
     "hepatocellular_injury": {
-      "tier": "weak",
-      "reason": "the model's 95% CI reaches 0.38, below the best simple baseline (0.41), so this check cannot separate it from one crude sequence number. Tested directly as a difference on the same resampled sequences it beats that baseline by +0.119 [+0.036, +0.194], P(better) 0.996, which disagrees with the check above. The tier follows the check above; scripts/evaluate_paired_baselines.py has both On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.46, CI 0.33-0.59). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
+      "tier": "validated",
+      "reason": "PR-AUC 0.53 [0.38-0.67] against a 0.307 base rate, beating the best simple baseline of 0.41 on a paired test (the paired difference over resampled sequences is +0.119 [+0.036, +0.194], P(better) 0.996), clearing the source baseline and holding up within a single source On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.46, CI 0.33-0.59). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
       "pr_auc": 0.5344,
       "ci_low": 0.3838,
       "ci_high": 0.667,
@@ -64,7 +43,7 @@
         "has_enough_sequences": true,
         "beats_source_baseline": true,
         "ci_clears_base_rate": true,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": true,
         "beats_base_rate_within_source": true
       },
       "brier_skill": 0.0941,
@@ -82,6 +61,27 @@
         "status": "directional only"
       }
     },
+    "offtarget_gene_silencing": {
+      "tier": "weak",
+      "reason": "against the best simple baseline (0.19) the paired difference over resampled sequences is +0.355 [-0.075, +0.688], P(better) 0.917, which does not exclude zero, so it is not distinguishable from one crude sequence number",
+      "pr_auc": 0.6407,
+      "ci_low": 0.2065,
+      "ci_high": 0.8481,
+      "base_rate": 0.125,
+      "positive_sequences": 12,
+      "source_only_pr_auc": 0.1519,
+      "best_simple_baseline_pr_auc": 0.1926,
+      "checks": {
+        "has_enough_sequences": true,
+        "beats_source_baseline": true,
+        "ci_clears_base_rate": true,
+        "beats_simple_baseline_paired": false,
+        "beats_base_rate_within_source": true
+      },
+      "brier_skill": 0.3434,
+      "calibration_mae": 0.0608,
+      "probabilities_calibrated": true
+    },
     "injection_site_reaction": {
       "tier": "source_confounded",
       "reason": "the data-source-only baseline scores 0.45 against the model's 0.41, so the model is recognising the source dataset, not the design",
@@ -96,7 +96,7 @@
         "has_enough_sequences": true,
         "beats_source_baseline": false,
         "ci_clears_base_rate": false,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": false,
         "beats_base_rate_within_source": false
       },
       "brier_skill": 0.0255,
@@ -117,7 +117,7 @@
         "has_enough_sequences": true,
         "beats_source_baseline": false,
         "ci_clears_base_rate": true,
-        "ci_clears_simple_baselines": true,
+        "beats_simple_baseline_paired": true,
         "beats_base_rate_within_source": true
       },
       "brier_skill": 0.4748,
@@ -138,7 +138,7 @@
         "has_enough_sequences": false,
         "beats_source_baseline": true,
         "ci_clears_base_rate": false,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": false,
         "beats_base_rate_within_source": true
       },
       "brier_skill": -0.0228,
@@ -159,7 +159,7 @@
         "has_enough_sequences": false,
         "beats_source_baseline": false,
         "ci_clears_base_rate": false,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": false,
         "beats_base_rate_within_source": true
       },
       "brier_skill": -0.1594,
@@ -180,7 +180,7 @@
         "has_enough_sequences": false,
         "beats_source_baseline": false,
         "ci_clears_base_rate": false,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": false,
         "beats_base_rate_within_source": false
       },
       "brier_skill": -0.2715,
@@ -201,7 +201,7 @@
         "has_enough_sequences": false,
         "beats_source_baseline": false,
         "ci_clears_base_rate": true,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": false,
         "beats_base_rate_within_source": true
       },
       "brier_skill": -1.8694,
@@ -222,7 +222,7 @@
         "has_enough_sequences": false,
         "beats_source_baseline": false,
         "ci_clears_base_rate": false,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": false,
         "beats_base_rate_within_source": false
       },
       "brier_skill": -0.2715,
@@ -243,7 +243,7 @@
         "has_enough_sequences": false,
         "beats_source_baseline": true,
         "ci_clears_base_rate": true,
-        "ci_clears_simple_baselines": true,
+        "beats_simple_baseline_paired": true,
         "beats_base_rate_within_source": true
       },
       "brier_skill": 0.3002,
@@ -264,7 +264,7 @@
         "has_enough_sequences": false,
         "beats_source_baseline": true,
         "ci_clears_base_rate": false,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": false,
         "beats_base_rate_within_source": true
       },
       "brier_skill": 0.1115,
@@ -285,7 +285,7 @@
         "has_enough_sequences": false,
         "beats_source_baseline": true,
         "ci_clears_base_rate": true,
-        "ci_clears_simple_baselines": false,
+        "beats_simple_baseline_paired": false,
         "beats_base_rate_within_source": true
       },
       "brier_skill": 0.1126,

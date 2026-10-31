@@ -854,6 +854,48 @@ Pinned by `tests/test_bootstrap_independence.py`.
 
 ---
 
+## 22. The baseline check was not a test of the difference
+
+Every endpoint was gated on whether the model's marginal 95% interval lower
+bound cleared the best simple baseline's point estimate. Two models scored
+on the same rows with the same folds have correlated errors, so that
+comparison is not a test of whether one beats the other. It is far more
+conservative than one, and conservative in a direction nobody chose.
+
+Hepatocellular injury, at 409 sequences, scored 0.534 with an interval
+reaching 0.384 against a GC-content baseline of 0.408. It failed by 0.024
+and its stored reason read "not distinguishable from one crude sequence
+number". Resampling whole sequences and scoring both models on each
+resample gives the direct answer: **+0.119 [+0.036, +0.194], P(better)
+0.996**. Spearman between the model's score and GC content is +0.377, so it
+is not re-expressing it either.
+
+The check now asks the paired question. What makes this a change of test
+rather than a lowered bar is that it moved endpoints both ways on the run
+that introduced it:
+
+| Endpoint | Paired difference | Old check | New check |
+|---|---|---|---|
+| hepatocellular_injury | +0.119 [+0.036, +0.194] | fail | **pass** |
+| offtarget_gene_silencing | +0.355 [-0.075, +0.688] | pass | **fail** |
+
+Off-target gene silencing had been presented as a prediction on 12 positive
+sequences, with an interval wide enough to span zero. It is now `weak`.
+
+Two things were deliberate. The paired step runs inside `run_pipeline.py`
+before the tiers are derived, rather than as a script somebody remembers:
+an endpoint missing from its output **fails** the check, because a gate
+whose evidence is absent must not wave anything through. And the tier
+change did not touch the external check, which still says hepatocellular
+injury ranks the NAR screen's 5 hepatotoxic gapmers at ROC-AUC 0.457
+[0.330, 0.592]. The internal gate now presents an endpoint that the
+external check cannot confirm, and both appear in its evidence entry,
+because the alternative is to quietly drop whichever one disagrees.
+
+Pinned by `tests/test_paired_gate.py`, including the fail-closed case.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
@@ -869,8 +911,9 @@ verdict change. The one after it was found because a new source made a
 long-standing bug move, and it announced itself as two promotions rather
 than as a failure.
 
-Two of the 13 are presented as predictions. The last five entries above all
-came out of one afternoon's work on a single endpoint: adding data to it
+Two of the 13 are presented as predictions, and one of those two is
+contradicted by the only external dataset it has been tested against. The last six entries above all
+came out of one stretch of work on a single endpoint: adding data to it
 exposed a labelling defect that had been inflating every endpoint, fixing
 that exposed an estimator that had been throwing away half its training
 data, and fixing that exposed models that could not be loaded outside the

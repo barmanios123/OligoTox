@@ -62,6 +62,10 @@ def test_shipped_tiers_match_the_baseline_results(root, evidence):
             float(model["base_rate"]),
             int(model["positive_sequences"]),
             bool((rows.pr_auc > rows.base_rate).any()) if len(rows) else False,
+            # The endpoint name is what lets classify find its paired
+            # result. Without it the simple-baseline check fails closed,
+            # which is correct behaviour and not what this test is for.
+            endpoint,
         )
         assert evidence["endpoints"][endpoint]["tier"] == tier, endpoint
 

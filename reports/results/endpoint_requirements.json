@@ -13,9 +13,9 @@
       "estimate": false
     },
     {
-      "endpoint": "offtarget_gene_silencing",
+      "endpoint": "hepatocellular_injury",
       "tier": "validated",
-      "positive_sequences": 12,
+      "positive_sequences": 169,
       "blocking_constraint": "none",
       "needs": [
         "Nothing. It is presented as a prediction."
@@ -23,12 +23,12 @@
       "estimate": false
     },
     {
-      "endpoint": "hepatocellular_injury",
+      "endpoint": "offtarget_gene_silencing",
       "tier": "weak",
-      "positive_sequences": 169,
+      "positive_sequences": 12,
       "blocking_constraint": "estimate too noisy to clear a baseline",
       "needs": [
-        "Roughly 192 positive sequences, against 169 now, for the CI lower bound (0.38) to clear the best simple baseline (0.41). An order-of-magnitude estimate assuming the point estimate holds, which more data may disprove."
+        "A narrower confidence interval, which means more positive sequences."
       ],
       "estimate": true
     },

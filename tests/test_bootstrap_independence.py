@@ -52,39 +52,28 @@ def test_the_evaluators_seed_inside_their_loops():
         )
 
 
-def test_a_failed_baseline_check_reports_the_direct_test_too():
-    """The gate may keep its rule; it may not assert the opposite of the data.
+def test_a_failed_baseline_check_reports_the_paired_numbers():
+    """The reason must carry the test the decision was actually made on.
 
-    The reason text read "not distinguishable from one crude sequence
-    number", which is a claim about a difference reached by comparing a
-    marginal interval to a point estimate. The paired test on the same
-    resampled sequences puts hepatocellular injury ahead of GC content at
-    P 0.996, so the sentence was stating as fact something the project's
-    own numbers contradict.
+    This check previously forbade the phrase "not distinguishable", because
+    the gate reached it by comparing a marginal interval to a point
+    estimate, which is not a test of a difference. The gate now runs the
+    paired test, so the phrase is earned; what matters is that the numbers
+    behind it are in the reason.
     """
     import json
 
     evidence = json.loads(
         (ROOT / "artifacts/config/endpoint_evidence.json").read_text())
-    paired_path = ROOT / "reports/results/paired_baselines.json"
-    if not paired_path.exists():
-        import pytest
-        pytest.skip("paired baselines not computed in this build")
-    paired = json.loads(paired_path.read_text())["endpoints"]
-
     for name, spec in evidence["endpoints"].items():
-        # Only where that check is the one that decided the tier. An
+        checks = spec.get("checks", {})
+        if checks.get("beats_simple_baseline_paired") is not False:
+            continue
+        # Only where this check is the one that decided the tier. An
         # endpoint stopped earlier, by too few sequences or by source
-        # confounding, never reaches the baseline comparison at all.
-        if "best simple baseline" not in spec.get("reason", ""):
+        # confounding, never reaches the baseline comparison.
+        if not (checks.get("has_enough_sequences")
+                and checks.get("beats_source_baseline")):
             continue
-        if name not in paired:
-            continue
-        assert "not distinguishable" not in spec["reason"], (
-            f"{name} asserts it cannot be told apart from a baseline it "
-            "beats on the direct test"
-        )
-        assert "P(better)" in spec["reason"], (
-            f"{name} fails the baseline check without reporting the paired "
-            "test that was run on the same data"
-        )
+        assert "paired difference" in spec["reason"], name
+        assert "P(better)" in spec["reason"], name

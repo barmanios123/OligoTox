@@ -11,14 +11,33 @@ Tiers, applied in order:
                      not evaluated at all. PR-AUC on 4-7 positives is noise.
   source_confounded  The data-source-only baseline matches or beats the model,
                      so the model is recognising which dataset a row came from.
-  weak               Clears the source baseline, but the model's 95% CI does
-                     not clear the best simple baseline (GC-only, length-only),
-                     so it is not distinguishable from one crude number.
+  weak               Clears the source baseline, but does not beat the best
+                     simple baseline (GC-only, length-only) when the two are
+                     compared directly, so it is not distinguishable from one
+                     crude number.
   validated          Clears all of the above, and beats its own base rate
                      inside a single source dataset.
 
-Reads reports/results/baselines.csv, within_source.csv and
-training_summary_after.json. Writes artifacts/config/endpoint_evidence.json.
+The simple-baseline check used to compare the model's marginal 95% interval
+lower bound to the baseline's point estimate. Both models are scored on the
+same rows with the same folds, so their errors are correlated and that
+comparison is not a test of the difference between them; it is far more
+conservative than one. It now reads the paired difference computed by
+scripts/evaluate_paired_baselines.py, which resamples whole sequences and
+scores both models on each resample.
+
+That change is not a loosening. On the run that introduced it, it promoted
+hepatocellular_injury, whose paired difference against GC content is
++0.119 [+0.036, +0.194], and demoted offtarget_gene_silencing, whose
++0.355 spans zero at [-0.075, +0.688] on 12 positive sequences.
+
+An endpoint with no paired result fails the check. A gate whose evidence is
+missing must not wave anything through, which is why the paired step runs
+inside run_pipeline.py rather than by hand.
+
+Reads reports/results/baselines.csv, within_source.csv,
+paired_baselines.json and training_summary_after.json. Writes
+artifacts/config/endpoint_evidence.json.
 """
 from __future__ import annotations
 
@@ -42,27 +61,32 @@ MIN_BRIER_SKILL = 0.02
 TIER_ORDER = ("validated", "weak", "source_confounded", "insufficient_data")
 
 
-def _paired_note(endpoint: str) -> str:
-    """What the paired test says, when it has been run.
+def _paired(endpoint: str) -> dict | None:
+    """The paired model-vs-best-simple-baseline result, if it was computed.
 
-    The sentence this appends to used to end at "not distinguishable from
-    one crude sequence number", which is a claim about a difference made by
-    comparing a marginal interval to a point estimate. Where the direct test
-    exists and disagrees, saying so is not optional.
+    Returns None when the endpoint is missing from the report, which the
+    caller treats as a failed check rather than a passed one. A gate whose
+    evidence is absent must not wave the endpoint through.
     """
-    path = RESULTS / "paired_baselines.json"
     try:
-        spec = json.loads(path.read_text())["endpoints"][endpoint]
+        return json.loads(
+            (RESULTS / "paired_baselines.json").read_text())["endpoints"][endpoint]
     except (OSError, json.JSONDecodeError, KeyError):
-        return ""
+        return None
+
+
+def _paired_sentence(spec: dict | None, best_simple: float,
+                     named: bool = True) -> str:
+    """The paired result in words. `named` adds the baseline it is against,
+    which the failing branch needs and the passing one has already said."""
+    if spec is None:
+        return ("no paired comparison against the simple baselines was "
+                "computed for this endpoint, so the check cannot pass")
     lo, hi = spec["ci"]
-    verdict = ("which disagrees with the check above"
-               if spec["clears_paired"] else "which agrees")
-    return (f". Tested directly as a difference on the same resampled "
-            f"sequences it beats that baseline by {spec['difference']:+.3f} "
-            f"[{lo:+.3f}, {hi:+.3f}], P(better) {spec['p_better']:.3f}, "
-            f"{verdict}. The tier follows the check above; "
-            f"scripts/evaluate_paired_baselines.py has both")
+    against = f"against the best simple baseline ({best_simple:.2f}) " if named else ""
+    return (f"{against}the paired difference over resampled sequences is "
+            f"{spec['difference']:+.3f} [{lo:+.3f}, {hi:+.3f}], "
+            f"P(better) {spec['p_better']:.3f}")
 
 
 def _model_label(df) -> str:
@@ -72,11 +96,20 @@ def _model_label(df) -> str:
 def classify(model, source_pr_auc, best_simple, base_rate, n_sequences,
              within_beats_base, endpoint=""):
     """Return (tier, reason, checks) for one endpoint."""
+    paired = _paired(endpoint)
     checks = {
         "has_enough_sequences": n_sequences >= MIN_POSITIVE_SEQUENCES,
         "beats_source_baseline": model["pr_auc"] > source_pr_auc,
         "ci_clears_base_rate": model["ci_low"] > base_rate,
-        "ci_clears_simple_baselines": model["ci_low"] > best_simple,
+        # Replaced the old `ci_clears_simple_baselines`, which compared the
+        # model's marginal interval lower bound to the baseline's point
+        # estimate. Both are scored on the same rows with the same folds, so
+        # their errors are correlated and that comparison is not a test of
+        # the difference between them: it is much more conservative than
+        # one. This asks the question directly. It is not a looser gate: it
+        # promoted hepatocellular_injury and demoted
+        # offtarget_gene_silencing on the run that introduced it.
+        "beats_simple_baseline_paired": bool(paired and paired["clears_paired"]),
         "beats_base_rate_within_source": within_beats_base,
     }
 
@@ -94,12 +127,12 @@ def classify(model, source_pr_auc, best_simple, base_rate, n_sequences,
             f"{model['pr_auc']:.2f}, so the model is recognising the source dataset, not the design",
             checks,
         )
-    if not checks["ci_clears_simple_baselines"]:
+    if not checks["beats_simple_baseline_paired"]:
         return (
             "weak",
-            f"the model's 95% CI reaches {model['ci_low']:.2f}, below the best simple baseline "
-            f"({best_simple:.2f}), so this check cannot separate it from one "
-            f"crude sequence number" + _paired_note(endpoint),
+            _paired_sentence(paired, best_simple) + ", which does not "
+            "exclude zero, so it is not distinguishable from one crude "
+            "sequence number",
             checks,
         )
     if not checks["ci_clears_base_rate"]:
@@ -117,7 +150,10 @@ def classify(model, source_pr_auc, best_simple, base_rate, n_sequences,
     return (
         "validated",
         f"PR-AUC {model['pr_auc']:.2f} [{model['ci_low']:.2f}-{model['ci_high']:.2f}] against a "
-        f"{base_rate:.3f} base rate, clearing the source, GC and length baselines and holding up "
+        f"{base_rate:.3f} base rate, beating the best simple baseline of "
+        f"{best_simple:.2f} on a paired test "
+        f"({_paired_sentence(paired, best_simple, named=False)}), clearing "
+        f"the source baseline and holding up "
         "within a single source",
         checks,
     )

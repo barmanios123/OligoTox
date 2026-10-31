@@ -55,6 +55,10 @@ STEPS = [
     ("publish training summary", None, False),  # handled in-process
     ("baselines", [sys.executable, "scripts/evaluate_baselines.py"], True),
     ("calibration", [sys.executable, "scripts/evaluate_calibration.py"], True),
+    # The gate reads this, so it has to be current. It used to be an
+    # optional script run by hand, which is fine for a report and not fine
+    # for an input to a tier.
+    ("paired baselines", [sys.executable, "scripts/evaluate_paired_baselines.py"], True),
     ("evidence tiers", [sys.executable, "scripts/derive_evidence_tiers.py"], False),
     ("endpoint requirements", [sys.executable, "scripts/endpoint_requirements.py"], False),
 ]
