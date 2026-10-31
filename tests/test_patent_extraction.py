@@ -211,3 +211,41 @@ def test_prose_is_not_borrowed_from_an_unrelated_passage():
     """The window must mention the compounds the table is about."""
     text = "Example 9 mice were injected with 50 mg/kg of ISIS 999999 weekly."
     assert prose_dose(text, len(text), {304538}) is None
+
+
+def test_a_sequence_written_beside_the_compound_needs_no_lookup():
+    """US9399774B2 resolved nothing through the prose before this.
+
+    These patents write "ISIS 141923 (CCTTCCCTGAAGGTTCCTCC, designated
+    herein as SEQ ID NO: 165)", putting the sequence in the parentheses and
+    the SEQ ID after it. The strict pattern requires SEQ ID immediately
+    inside the parentheses and matched none of them.
+    """
+    from extract_patent_hepatotox import ISIS_SEQUENCE
+
+    text = ("Another group was injected with control oligonucleotide ISIS "
+            "141923 (CCTTCCCTGAAGGTTCCTCC, designated herein as SEQ ID NO: "
+            "165) twice a week.")
+    assert ISIS_SEQUENCE.findall(text) == [("141923", "CCTTCCCTGAAGGTTCCTCC")]
+
+
+def test_the_loose_seq_id_pattern_cannot_reach_into_the_next_compound():
+    """A bounded clause, or it would pair a compound with its neighbour's ID."""
+    from extract_patent_hepatotox import ISIS_SEQID_LOOSE
+
+    two = "ISIS 111111 was dosed. ISIS 222222 is SEQ ID NO: 7."
+    assert ISIS_SEQID_LOOSE.findall(two) == [("222222", "7")]
+
+
+def test_an_unambiguous_statement_beats_an_inferred_one(parsed):
+    """Strict matches are applied after the loose ones, so they win."""
+    rows, _, html = parsed
+    import re
+
+    from extract_patent_hepatotox import ISIS_SEQID
+
+    text = re.sub(r"[ \t]+", " ", re.sub(r"<[^>]+>", " ", html))
+    strict = {int(a): int(b) for a, b in ISIS_SEQID.findall(text)}
+    for row in rows:
+        if row["isis_number"] in strict and row["seq_id"] is not None:
+            assert row["seq_id"] == strict[row["isis_number"]]

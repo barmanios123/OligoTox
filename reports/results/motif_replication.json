@@ -5,22 +5,22 @@
   "motifs": {
     "TGC": {
       "pooled": {
-        "difference": -0.2323869884066253,
+        "difference": -0.15049979820692438,
         "ci": [
-          -0.3387432215706071,
-          0.021359839757017184
+          -0.2494890761675047,
+          0.010922913034937493
         ]
       },
       "per_source": {
         "ionis_patents": {
-          "sequences": 256,
-          "rows": 444,
-          "mean_in_positives": 0.4818181818181818,
-          "mean_in_negatives": 0.4431137724550898,
-          "difference": 0.038704409363091996,
+          "sequences": 369,
+          "rows": 1008,
+          "mean_in_positives": 0.30716723549488056,
+          "mean_in_negatives": 0.3048951048951049,
+          "difference": 0.002272130599775657,
           "ci": [
-            -0.09588000057231158,
-            0.17250572759846652
+            -0.10041453864710283,
+            0.10671173532177
           ],
           "direction": "higher in toxic",
           "clears_zero": false
@@ -45,8 +45,8 @@
           "mean_in_negatives": 0.6735751295336787,
           "difference": -0.4196891191709844,
           "ci": [
-            -0.5348842653481437,
-            0.0678581047368849
+            -0.5367659028905967,
+            0.0687676795176559
           ],
           "direction": "higher in non-toxic",
           "clears_zero": false
@@ -56,24 +56,24 @@
     },
     "TCC": {
       "pooled": {
-        "difference": 0.29150973618362386,
+        "difference": 0.1449558937991871,
         "ci": [
-          0.009096971106849617,
-          0.39988626524756127
+          -0.05070338078901041,
+          0.27524445914071344
         ]
       },
       "per_source": {
         "ionis_patents": {
-          "sequences": 256,
-          "rows": 444,
-          "mean_in_positives": 0.44545454545454544,
-          "mean_in_negatives": 0.36227544910179643,
-          "difference": 0.083179096352749,
+          "sequences": 369,
+          "rows": 1008,
+          "mean_in_positives": 0.46075085324232085,
+          "mean_in_negatives": 0.48671328671328673,
+          "difference": -0.025962433470965884,
           "ci": [
-            -0.08218140286687142,
-            0.25764704252655524
+            -0.160360580593339,
+            0.10954554476018898
           ],
-          "direction": "higher in toxic",
+          "direction": "higher in non-toxic",
           "clears_zero": false
         },
         "oligotox_main": {
@@ -83,8 +83,8 @@
           "mean_in_negatives": 0.07142857142857142,
           "difference": 0.22857142857142856,
           "ci": [
-            -0.15,
-            0.7272727272727273
+            -0.13333333333333333,
+            0.7002777777777762
           ],
           "direction": "higher in toxic",
           "clears_zero": false
@@ -96,8 +96,8 @@
           "mean_in_negatives": 0.32124352331606215,
           "difference": 0.42487046632124353,
           "ci": [
-            -0.062162415590589805,
-            0.5521281123206567
+            -0.05976210119602758,
+            0.5443917494138194
           ],
           "direction": "higher in toxic",
           "clears_zero": false

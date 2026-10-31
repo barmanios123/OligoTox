@@ -1,10 +1,10 @@
 {
   "hepatocellular_injury": {
-    "threshold": 0.43000000000000005,
-    "precision": 0.6370370370370371,
-    "recall": 0.549520766773163,
-    "f1": 0.5900514579759862,
-    "support": 313,
+    "threshold": 0.30000000000000004,
+    "precision": 0.5140625,
+    "recall": 0.6633064516129032,
+    "f1": 0.579225352112676,
+    "support": 496,
     "method": "f1"
   },
   "hepatic_vacuolation": {

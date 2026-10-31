@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import sys
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -58,7 +59,16 @@ def main() -> int:
     df["seq"] = (df["sequence"].astype(str).str.upper()
                  .str.replace("U", "T", regex=False))
     labels = df[ENDPOINT].astype(int).values
-    rng = np.random.default_rng(42)
+
+    def _rng(*parts: str) -> np.random.Generator:
+        """A generator per thing being measured, seeded from its name.
+
+        Sharing one across the loop makes each interval depend on how many
+        draws the comparisons before it consumed, so adding a source would
+        move the intervals of the ones already there.
+        """
+        return np.random.default_rng(
+            [42, *(zlib.crc32(p.encode()) for p in parts)])
 
     report: dict[str, dict] = {}
     for motif in MOTIFS:
@@ -69,7 +79,8 @@ def main() -> int:
                 continue
             v = _counts(sub["seq"], motif).values.astype(float)
             lab = sub[ENDPOINT].astype(int).values
-            point, lo, hi = _diff_ci(v, lab, sub["seq"].values, rng)
+            point, lo, hi = _diff_ci(v, lab, sub["seq"].values,
+                                     _rng(motif, source))
             per_source[source] = {
                 "sequences": int(sub["seq"].nunique()),
                 "rows": int(len(sub)),
@@ -81,7 +92,8 @@ def main() -> int:
                               else "higher in non-toxic"),
                 "clears_zero": bool(lo > 0 or hi < 0),
             }
-        point, lo, hi = _diff_ci(values, labels, df["seq"].values, rng)
+        point, lo, hi = _diff_ci(values, labels, df["seq"].values,
+                                 _rng(motif, "pooled"))
         directions = {s["direction"] for s in per_source.values()}
         report[motif] = {
             "pooled": {"difference": point, "ci": [lo, hi]},

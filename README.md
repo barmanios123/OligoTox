@@ -16,8 +16,8 @@ Each bar is an out-of-fold PR-AUC from a calibrated logistic regression. Blue is
 |---|---|---|---|---|---|
 | renal accumulation | 7 / 7 | 24 | 0.292 | 0.80 | **0.84** |
 | offtarget gene silencing | 68 / 12 | 544 | 0.125 | 0.75 | **0.64** |
-| hepatocellular injury | 313 / 103 | 1051 | 0.298 | 0.71 | **0.62** |
 | kupffer cell activation | 34 / 27 | 1614 | 0.021 | 0.90 | **0.60** |
+| hepatocellular injury | 496 / 169 | 1615 | 0.307 | 0.63 | **0.53** |
 | thrombocytopenia | 4 / 4 | 28 | 0.143 | 0.35 | **0.50** |
 | coagulation effect | 5 / 5 | 24 | 0.208 | 0.29 | **0.50** |
 | renal tubular injury | 7 / 7 | 28 | 0.250 | 0.51 | **0.49** |
@@ -31,7 +31,11 @@ CNS toxicity has only 2 positives in this data and is not evaluated here; it is 
 
 Read the **Rows measured** column before the PR-AUC. Each endpoint is scored only on the rows that were actually assayed for it, which for most of them is 24 to 28 rows. Until 2026-10-30 every unmeasured row was trained as a negative, so all twelve reported 1,614 or 2,058 samples and their base rates looked ten times smaller than they are; the whole table moved when that was fixed. [Entry 17](docs/NEGATIVE_RESULTS.md) has what happened. A PR-AUC of 0.50 on 28 rows with 4 positives is noise, which is why those endpoints sit at `insufficient_data` whatever the number says.
 
-Hepatocellular injury is the one endpoint with a real corpus behind it: 1,051 measured rows over 296 unique sequences, 103 of them positive, after 444 observations were added from 30 Ionis patents. That ingestion did what it was meant to do and removed the source confounding, and it is still only `weak`, because the model does not clear a crude sequence baseline (CI low 0.34 against 0.44) and does not transfer to an independent screen (ROC-AUC 0.38, where 0.5 is chance).
+Hepatocellular injury is the one endpoint with a real corpus behind it: 1,615 measured rows over 409 unique sequences, 169 of them positive, after 1,008 observations were mined from 16 Ionis patents. It began this work with 40 sequences and 19 positives.
+
+It is still `weak`. The model scores 0.534 against a GC-content baseline of 0.408, and the gate asks whether the model's 95% interval lower bound (0.384) clears the baseline's point estimate, which it does not. Tested as a difference instead, on the same resampled sequences, the model beats GC by +0.119 [+0.036, +0.194] with P(better) 0.996 — so the two checks disagree about this endpoint. `scripts/evaluate_paired_baselines.py` reports the paired test for all twelve; it is deliberately not wired into the gate, because it would also demote off-target gene silencing, and changing what the platform claims is not a decision for a script.
+
+What tripling the corpus did do is narrow the interval, from [0.343, 0.777] to [0.384, 0.667], and move the independent screen: ROC-AUC on the NAR gapmers has gone 0.286, 0.308, 0.379, 0.457 across this work, so it now straddles chance rather than sitting below it.
 
 These numbers are also the first produced by an estimator that is not mis-specified. Until 2026-10-30 the shipped model calibrated on 2 folds, so every sub-model was fitted on half the rows, and it never scaled its features, so one penalty fell across coefficients whose scales run from 0.5 to 20. Fixing both is worth +0.195 PR-AUC on hepatocellular injury by a paired bootstrap over sequences [+0.024, +0.342], and takes its Brier skill from -0.054, worse than quoting the base rate, to +0.128. It promoted off-target gene silencing to `validated`. [Entry 18](docs/NEGATIVE_RESULTS.md) has the decomposition, and entries 17, 19 and 20 are the three other things this one endpoint turned up.
 

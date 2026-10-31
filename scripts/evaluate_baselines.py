@@ -10,6 +10,7 @@ Needs the processed training data in data/processed/.
 from __future__ import annotations
 
 import json
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -76,11 +77,20 @@ def main() -> None:
         "Data source only": (_make_model, source_X),
     }
 
-    rng = np.random.default_rng(42)
     rows, within = [], []
     for endpoint, s in summary.items():
         if s["status"] != "ok":
             continue
+        # One RNG per endpoint, seeded from its own name. A single generator
+        # shared across the loop makes each endpoint's interval depend on how
+        # many draws the endpoints before it consumed, so adding rows to one
+        # endpoint silently moves another's confidence interval. That is not
+        # a hypothetical: 1,008 new hepatocellular rows shifted
+        # offtarget_gene_silencing's lower bound from 0.209 to 0.188 without
+        # changing its model or its data, and demoted it, because the bound
+        # sits 0.004 from the threshold it is compared against.
+        rng = np.random.default_rng(
+            [42, zlib.crc32(endpoint.encode())])
         # Only the rows measured for this endpoint, matching the trainer.
         keep = pd.to_numeric(Y[endpoint], errors="coerce").notna().values
         y = pd.to_numeric(Y[endpoint][keep], errors="coerce").astype(int).values

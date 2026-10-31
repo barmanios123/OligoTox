@@ -1,23 +1,23 @@
 {
   "hepatocellular_injury": {
-    "samples": 1051,
-    "positive_rate": 0.2978116079923882,
+    "samples": 1615,
+    "positive_rate": 0.30712074303405573,
     "status": "ok",
-    "pr_auc": 0.6192520962951013,
-    "brier": 0.17500191347524252,
-    "positives": 313,
-    "negatives": 738,
-    "positive_sequences": 103,
+    "pr_auc": 0.534362731445721,
+    "brier": 0.19030418758155768,
+    "positives": 496,
+    "negatives": 1119,
+    "positive_sequences": 169,
     "cv": "sequence_grouped",
-    "random_split_pr_auc": 0.7138846529700024,
+    "random_split_pr_auc": 0.6277390201149099,
     "n_splits": 5,
     "datasail_eval": {
       "endpoint": "hepatocellular_injury",
-      "pr_auc": 0.6192520962951013,
-      "roc_auc": 0.7452249841987237,
-      "brier": 0.17500191347524252,
-      "n_pos": 313,
-      "n_total": 1051
+      "pr_auc": 0.534362731445721,
+      "roc_auc": 0.7157852633399637,
+      "brier": 0.19030418758155768,
+      "n_pos": 496,
+      "n_total": 1615
     }
   },
   "hepatic_vacuolation": {

@@ -1,0 +1,151 @@
+{
+  "question": "Does the model beat the best simple baseline, tested as a paired difference on the same resampled sequences?",
+  "why": "The gate compares the model's marginal CI lower bound to the baseline's point estimate, which is not a test of the difference and is far more conservative than one.",
+  "status": "reported, not wired into the gate: changing the gate is a decision about what the platform claims.",
+  "endpoints": {
+    "hepatocellular_injury": {
+      "model_pr_auc": 0.534362731445721,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.4081912513061443,
+      "difference": 0.11919983286824727,
+      "ci": [
+        0.036022269854273904,
+        0.19380568834402132
+      ],
+      "p_better": 0.996,
+      "clears_paired": true
+    },
+    "hepatic_vacuolation": {
+      "model_pr_auc": 0.11383121451619518,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.031205465954881474,
+      "difference": 0.06872744559332865,
+      "ci": [
+        -0.04969822146332895,
+        0.1861032011116951
+      ],
+      "p_better": 0.8925233644859814,
+      "clears_paired": false
+    },
+    "renal_tubular_injury": {
+      "model_pr_auc": 0.4884920634920635,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.2985807670590279,
+      "difference": 0.1948149218699743,
+      "ci": [
+        -0.11998606075652112,
+        0.5646334787288732
+      ],
+      "p_better": 0.8805870580386924,
+      "clears_paired": false
+    },
+    "renal_accumulation": {
+      "model_pr_auc": 0.8441043083900227,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.2765460729746444,
+      "difference": 0.5302644113292795,
+      "ci": [
+        0.21522817460317467,
+        0.7835754281949934
+      ],
+      "p_better": 0.998,
+      "clears_paired": true
+    },
+    "thrombocytopenia": {
+      "model_pr_auc": 0.5,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.2732843137254902,
+      "difference": 0.23928184120824383,
+      "ci": [
+        -0.1333333333333333,
+        0.6044523809523809
+      ],
+      "p_better": 0.9101351351351351,
+      "clears_paired": false
+    },
+    "coagulation_effect": {
+      "model_pr_auc": 0.49783549783549785,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.3476190476190476,
+      "difference": 0.1014792904965337,
+      "ci": [
+        -0.2888888888888889,
+        0.4574675324675323
+      ],
+      "p_better": 0.7235609103078983,
+      "clears_paired": false
+    },
+    "complement_activation": {
+      "model_pr_auc": 0.17633477633477634,
+      "best_simple": "length only",
+      "simple_pr_auc": 0.34542908072319833,
+      "difference": -0.16110303647754884,
+      "ci": [
+        -0.4725002687529862,
+        0.04504329092577004
+      ],
+      "p_better": 0.11741160773849232,
+      "clears_paired": false
+    },
+    "innate_immune_activation": {
+      "model_pr_auc": 0.21175687666370896,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.3376700680272109,
+      "difference": -0.14284585654595902,
+      "ci": [
+        -0.36530146972910127,
+        0.001109143049932476
+      ],
+      "p_better": 0.02666666666666667,
+      "clears_paired": false
+    },
+    "cytokine_release": {
+      "model_pr_auc": 0.21175687666370896,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.3376700680272109,
+      "difference": -0.14172321576950447,
+      "ci": [
+        -0.3566937845651081,
+        0.001380598568098487
+      ],
+      "p_better": 0.02601734489659773,
+      "clears_paired": false
+    },
+    "kupffer_cell_activation": {
+      "model_pr_auc": 0.6011175913533402,
+      "best_simple": "length only",
+      "simple_pr_auc": 0.16774303691470124,
+      "difference": 0.41744585319349614,
+      "ci": [
+        0.23031193374606213,
+        0.5871119537414415
+      ],
+      "p_better": 1.0,
+      "clears_paired": true
+    },
+    "offtarget_gene_silencing": {
+      "model_pr_auc": 0.6406510621954689,
+      "best_simple": "GC content only",
+      "simple_pr_auc": 0.19255182727433223,
+      "difference": 0.35470423492070313,
+      "ci": [
+        -0.0748854435867982,
+        0.6876766277851041
+      ],
+      "p_better": 0.9173333333333333,
+      "clears_paired": false
+    },
+    "injection_site_reaction": {
+      "model_pr_auc": 0.4136549495682623,
+      "best_simple": "length only",
+      "simple_pr_auc": 0.4547619047619048,
+      "difference": -0.021695950503104855,
+      "ci": [
+        -0.17318511714893298,
+        0.13384799723377347
+      ],
+      "p_better": 0.3586666666666667,
+      "clears_paired": false
+    }
+  }
+}

@@ -788,19 +788,24 @@ in-vivo source to check it against.
 
 Positive-minus-negative mean motif count, resampling whole sequences:
 
-| Motif | Patents (256 seq) | Papargyri (12 seq) | oligotox_main (24 seq) | Pooled |
+| Motif | Patents (369 seq) | Papargyri (12 seq) | oligotox_main (24 seq) | Pooled |
 |---|---|---|---|---|
-| TGC | **+0.039** | **-0.420** | -0.214 | -0.232 [-0.339, +0.021] |
-| TCC | +0.083 | +0.425 | +0.229 | +0.292 [+0.009, +0.400] |
+| TGC | **+0.002** | **-0.420** | -0.214 | -0.213 [-0.316, +0.015] |
+| TCC | **-0.026** | **+0.425** | +0.229 | +0.145 [-0.051, +0.275] |
+
+At 256 patent sequences TGC read +0.039 and TCC +0.083, both weakly
+positive. At 369 both have collapsed to zero, and TCC has crossed into
+disagreeing with Papargyri outright.
 
 **TGC changes sign between sources.** It is higher in the toxic gapmers in
 the patents and markedly lower in the toxic ones in Papargyri. The pooled
 figure of -0.232 is Papargyri's 12 sequences outvoting 256, because the
 pooling is over rows and Papargyri contributes 579 of them.
 
-**TCC agrees in direction everywhere and clears zero nowhere.** Each
-source's own interval spans zero; only the pooled interval excludes it, and
-only barely, on the same row-weighting that makes TGC look real.
+**TCC no longer agrees in direction either.** It was positive in all three
+sources on the smaller corpus and is now slightly negative in the patents,
+with every source's own interval spanning zero. The pooled figure no longer
+excludes zero at all.
 
 So the honest reading is that the motif association is a Papargyri
 phenomenon that the patent corpus does not confirm, and TCC is at best a
@@ -811,6 +816,41 @@ to it, which is the most persuasive possible form of entry 13.
 
 The check is `scripts/evaluate_motif_replication.py`, and it is cheap: it
 is the same number computed once per source instead of once.
+
+---
+
+## 21. One shared random generator made tiers depend on unrelated data
+
+`evaluate_baselines.py` built a single `np.random.default_rng(42)` before
+its loop and handed it to every endpoint in turn. Each endpoint's bootstrap
+therefore drew from wherever the endpoints before it had left the stream.
+
+Adding 1,008 hepatocellular rows from a second batch of patents moved
+`offtarget_gene_silencing`'s lower bound from 0.209 to 0.188. Its model did
+not change. Its data did not change. Its PR-AUC was identical to three
+decimal places at 0.641. The endpoint was demoted from `validated` to
+`weak` and stopped being presented, because that bound sits 0.004 from the
+baseline it is compared against and the random draws had shifted underneath
+it.
+
+The seed was fixed, so every run was reproducible and the defect was
+invisible in exactly the way a fixed seed is supposed to prevent. What was
+not fixed was the *stream position*, which depends on how much work the
+loop did before reaching each endpoint.
+
+Each endpoint now seeds its own generator from its own name,
+`default_rng([42, crc32(endpoint)])`, so its interval is reproducible and
+independent of what else is in the corpus. The same fix was applied to the
+two scripts written the same day, which had copied the pattern.
+
+The wider point is about the gate rather than the generator. An endpoint
+whose tier can be flipped by 0.004 is not really being measured; it is
+being rounded. `offtarget_gene_silencing` has gone validated, weak,
+validated, weak across four runs this session. That instability is the
+finding, and it is more informative than whichever side of the line it
+happens to land on.
+
+Pinned by `tests/test_bootstrap_independence.py`.
 
 ---
 
@@ -829,7 +869,7 @@ verdict change. The one after it was found because a new source made a
 long-standing bug move, and it announced itself as two promotions rather
 than as a failure.
 
-Two of the 13 are presented as predictions. The last four entries above all
+Two of the 13 are presented as predictions. The last five entries above all
 came out of one afternoon's work on a single endpoint: adding data to it
 exposed a labelling defect that had been inflating every endpoint, fixing
 that exposed an estimator that had been throwing away half its training

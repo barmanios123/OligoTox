@@ -25,10 +25,10 @@
     {
       "endpoint": "hepatocellular_injury",
       "tier": "weak",
-      "positive_sequences": 103,
+      "positive_sequences": 169,
       "blocking_constraint": "estimate too noisy to clear a baseline",
       "needs": [
-        "Roughly 167 positive sequences, against 103 now, for the CI lower bound (0.34) to clear the best simple baseline (0.44). An order-of-magnitude estimate assuming the point estimate holds, which more data may disprove."
+        "Roughly 192 positive sequences, against 169 now, for the CI lower bound (0.38) to clear the best simple baseline (0.41). An order-of-magnitude estimate assuming the point estimate holds, which more data may disprove."
       ],
       "estimate": true
     },

@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -167,8 +168,12 @@ def main(argv: list[str] | None = None) -> int:
                         errors="ignore")
 
     n_splits = min(5, len(set(groups[y == 1])))
-    rng = np.random.default_rng(42)
     base_rate = float(y.mean())
+
+    def _rng(name: str, seed: int) -> np.random.Generator:
+        """Per candidate and fold seed, so a candidate's interval does not
+        depend on its position in the dict above."""
+        return np.random.default_rng([42, zlib.crc32(name.encode()), seed])
 
     gc = _oof(_gc_only(42), X[["gc_content"]], y, groups, n_splits, 42)
     gc_pr = float(average_precision_score(y, gc))
@@ -186,7 +191,7 @@ def main(argv: list[str] | None = None) -> int:
             per_seed.append({
                 "seed": seed,
                 "pr_auc": float(average_precision_score(y, prob)),
-                "ci": list(_bootstrap_ci(y, prob, groups, rng)),
+                "ci": list(_bootstrap_ci(y, prob, groups, _rng(name, seed))),
             })
         scores = [s["pr_auc"] for s in per_seed]
         worst_ci_low = min(s["ci"][0] for s in per_seed)

@@ -61,6 +61,15 @@ OLIGO = re.compile(r"^[ACGT]{15,25}$")
 # mapping error, and dropping the column is what makes them look identical.
 MOTIF = re.compile(r"^\d{1,2}-\d{1,2}-\d{1,2}$")
 ISIS_SEQID = re.compile(r"ISIS\s+(\d{5,7})\s*\(\s*SEQ\s+ID\s+NO:?\s*(\d+)\s*\)", re.I)
+# Several patents put the sequence itself in the parentheses and the SEQ ID
+# after it: "ISIS 141923 (CCTTCCCTGAAGGTTCCTCC, designated herein as SEQ ID
+# NO: 165)". The strict pattern above matches none of those, which is why
+# US9399774B2 resolved nothing through the prose at all.
+ISIS_SEQUENCE = re.compile(r"ISIS\s+(\d{5,7})\s*\(\s*([ACGTUacgtu]{15,25})\s*[,)]", re.I)
+# And some name the SEQ ID a few words later rather than immediately.
+# Bounded to one clause so it cannot reach across into the next compound.
+ISIS_SEQID_LOOSE = re.compile(
+    r"ISIS\s+(\d{5,7})[^.()]{0,80}?SEQ\s+ID\s+NO:?\s*(\d+)", re.I)
 ISIS_LABEL = re.compile(r"ISIS\s+(\d{5,7})", re.I)
 DOSE = re.compile(r"(\d+(?:\.\d+)?)\s*mg/kg", re.I)
 CONTROL = re.compile(r"\b(saline|pbs|untreated|control|vehicle)\b", re.I)
@@ -354,7 +363,13 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
     tables = [rows for rows, _ in spans]
     seqs = sequence_map(tables)
     details = compound_details(tables)
-    isis_to_seq = {int(a): int(b) for a, b in ISIS_SEQID.findall(text)}
+    # Strict first, then the looser form, so an unambiguous statement always
+    # wins over one that had to be inferred from a longer clause.
+    isis_to_seq = {int(a): int(b) for a, b in ISIS_SEQID_LOOSE.findall(text)}
+    isis_to_seq.update({int(a): int(b) for a, b in ISIS_SEQID.findall(text)})
+    # A sequence written out next to the compound needs no lookup at all.
+    from_prose = {int(a): b.upper().replace("U", "T")
+                  for a, b in ISIS_SEQUENCE.findall(text)}
 
     rejected = {"no_compound": 0, "no_seq_id": 0, "no_sequence": 0,
                 "no_alt_value": 0, "no_control": 0}
@@ -387,6 +402,9 @@ def extract(pub: str, html: str) -> tuple[list[dict], dict[str, int]]:
             if detail:
                 seq_id = isis_to_seq.get(isis)
                 sequence, motif = detail["sequence"], detail["motif"]
+            elif isis in from_prose:
+                seq_id = isis_to_seq.get(isis)
+                sequence, motif = from_prose[isis], None
             else:
                 if isis not in isis_to_seq:
                     rejected["no_seq_id"] += 1

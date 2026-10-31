@@ -2,23 +2,23 @@
   "source": "ionis_patents",
   "label_rule": "ALT >= 3.0x the study's own control, at the worst dose that study tested",
   "grouping": "one row per (publication, table, sequence)",
-  "rows_added": 444,
-  "positive_rows_added": 110,
+  "rows_added": 1008,
+  "positive_rows_added": 293,
   "sequences": {
     "before": 40,
-    "after": 296
+    "after": 409
   },
   "positive_sequences": {
     "before": 19,
-    "after": 103
+    "after": 169
   },
   "base_rate": {
     "before": 0.3344,
-    "after": 0.2978
+    "after": 0.3071
   },
   "modality": {
-    "ASO_gapmer": 383,
-    "LNA_gapmer": 61
+    "ASO_gapmer": 805,
+    "LNA_gapmer": 203
   },
   "assumed": {
     "ps_fraction": "set to 1.0 for every patent row",
