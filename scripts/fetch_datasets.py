@@ -70,7 +70,12 @@ def main(argv: list[str] | None = None) -> int:
         usable = status in USABLE_FOR_TRAINING and on_disk
 
         blocked = None
-        if source.get("role") == "external_check":
+        if status == "assessed_unusable":
+            # Looked at and rejected for a stated reason. Reporting this as
+            # "no label threshold declared" blames the registry entry for
+            # the absence of data that was never published.
+            blocked = "assessed and unusable; see its registry note"
+        elif source.get("role") == "external_check":
             # A held-out screen is what the endpoint is tested against.
             # Counting it as training data would both overstate the corpus
             # and describe the one honest check as if it were fitted on.

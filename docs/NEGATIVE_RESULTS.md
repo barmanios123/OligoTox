@@ -950,6 +950,106 @@ Pinned by `tests/test_chemistry_is_expressible.py`.
 
 ---
 
+## 24. There is no public LNA gapmer liver dataset to train on
+
+Entry 23 established that the one external check is 149 LNA gapmers while
+the training corpus is almost entirely MOE: 12 LNA sequences against 396
+others. The obvious next move is to find LNA training data. It does not
+appear to exist in usable form.
+
+What was looked at, all open access, all supplementary files fetched from
+Europe PMC rather than guessed at:
+
+| Source | What it promised | What it has |
+|---|---|---|
+| Dieckmann 2017, [10.1016/j.omtn.2017.11.004](https://doi.org/10.1016/j.omtn.2017.11.004) | 236 LNA-ASOs over 13 genes, each with in-vivo ALT fold change against saline | Sequences and ALT values **not published**. Table S1 is 20 Gapdh gapmers with Tm and no toxicity readout |
+| Burel 2015, [10.1093/nar/gkv1210](https://doi.org/10.1093/nar/gkv1210) | "a panel of hepatotoxic and non-hepatotoxic LNA ASOs" | **No sequences at all** in the supplement |
+| Kamola 2017, [10.1016/j.omtn.2017.07.003](https://doi.org/10.1016/j.omtn.2017.07.003) | an in-vivo hepatotoxicity ranking screen | 5 LNA-PS gapmers with ALT |
+| Kasuya 2016, [10.1038/srep30377](https://doi.org/10.1038/srep30377) | LNA gapmer hepatotoxicity mechanism | 153 sequences, but primers and gapmers mixed, one ALT mention, no per-sequence readout |
+
+Dieckmann is the painful one. Its 236 compounds already carry exactly the
+label this project uses, a mean ALT fold change against saline with a
+5-fold cut, and the paper's whole argument rests on them. None of it is in
+the supplement.
+
+**Patents do not fill the gap either.** A patent search aimed at LNA
+returned 12 publications whose compounds are, on inspection, entirely MOE
+and cEt: Ionis builds with cEt, its own bicyclic, not LNA. 313 rows over 89
+sequences do state a bicyclic modification, which is the same high-affinity
+class as LNA and is treated as one mechanism in the literature above, so a
+"carries a high-affinity bicyclic" flag looked worth adding. It is not:
+
+| | rows | sequences | toxic rate | mean worst fold change |
+|---|---|---|---|---|
+| bicyclic stated | 313 | 89 | 0.224 | 3.82 |
+| MOE only | 268 | 42 | 0.216 | 3.82 |
+
+No separation at all, so the flag was not added. Only 4 of those 89
+sequences have a resolvable wing composition anyway; the rest say "Deoxy,
+MOE and cEt", a mixed wing whose proportions the patent never gives.
+
+**The screen's own paper cannot be mined either.** Table S4 of the NAR
+supplement does carry ALT fold changes, but for nucleobase-modified
+variants, 2-thio-thymine and similar, which share a sequence with their
+parent and differ only in a chemistry these features cannot represent.
+Ingesting them would create rows identical in every feature and different
+in label. The parents number about ten.
+
+So the corpus stays MOE-dominated, and that is a standing limit on what can
+be claimed about LNA rather than something to work around. The four sources
+are in the registry with status `assessed_unusable` and the reason each
+failed, so the next person does not repeat the search.
+
+What the search did produce: the patent cache went from 59 publications to
+89, and the corpus from 369 to 396 sequences. Real data, just not the
+chemistry that was wanted.
+
+---
+
+## 25. Two tiers were decided inside the bootstrap's own noise
+
+`hepatocellular_injury` was demoted from `validated` to `weak` after 27
+sequences were added to a corpus of 409. The paired difference against GC
+content was +0.107 with a 95% interval of **[-0.001, +0.204]**. It failed
+by one thousandth.
+
+Before accepting that, the obvious question: is a lower bound of -0.001
+reproducible? Twelve bootstrap seeds, at the 1,500 draws the script used:
+
+| draws | lower bound across 12 seeds | SD | gate passes |
+|---|---|---|---|
+| 1,500 | -0.0023 to +0.0110 | 0.0032 | **11 of 12** |
+| 6,000 | +0.0028 to +0.0077 | 0.0014 | 12 of 12 |
+
+The Monte Carlo standard deviation on the percentile was 0.0032, three
+times the margin being decided. The endpoint clears zero; the shipped run
+had drawn the one seed in twelve where resampling noise pushed it under.
+Raising the draws to 6,000 changes no other endpoint's verdict.
+
+This is the second time. `offtarget_gene_silencing` flipped on 0.004 in
+entry 21, where the cause was a shared generator rather than too few
+draws. Between them, two of the three endpoints that have ever been
+presented have had their tier decided by bootstrap noise.
+
+Precision is not certainty, so the fix is not only more draws. A bound
+within two Monte Carlo standard deviations of zero is now flagged
+`knife_edge`, and the endpoint's evidence entry says in its own words that
+the verdict is not stable across resampling seeds and should not be read
+as settled. `hepatocellular_injury` is `validated` and carries that
+sentence.
+
+The general point is about thresholds rather than bootstraps. A gate that
+turns a continuous quantity into a tier will sometimes decide on a margin
+smaller than its own measurement error, and it will do so silently,
+because a confidence interval reports uncertainty about the data and says
+nothing about uncertainty in the interval. The only way to notice is to
+run the estimator more than once, which costs seconds and is not standard
+practice.
+
+Pinned by `tests/test_knife_edge.py`.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
@@ -966,7 +1066,7 @@ long-standing bug move, and it announced itself as two promotions rather
 than as a failure.
 
 Two of the 13 are presented as predictions, and one of those two is
-contradicted by the only external dataset it has been tested against. The last seven entries above all
+contradicted by the only external dataset it has been tested against. The last nine entries above all
 came out of one stretch of work on a single endpoint: adding data to it
 exposed a labelling defect that had been inflating every endpoint, fixing
 that exposed an estimator that had been throwing away half its training

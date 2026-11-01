@@ -31,14 +31,14 @@
     },
     "hepatocellular_injury": {
       "tier": "validated",
-      "reason": "PR-AUC 0.53 [0.38-0.67] against a 0.307 base rate, beating the best simple baseline of 0.41 on a paired test (the paired difference over resampled sequences is +0.119 [+0.036, +0.194], P(better) 0.996), clearing the source baseline and holding up within a single source On an independent screen of 149 3-8-3 LNA gapmers it ranks the 5 hepatotoxic ones above chance, though its interval still spans it (ROC-AUC 0.54, CI 0.35-0.71, where 0.50 is chance). 5 positives cannot settle it in either direction, and the training corpus holds few gapmers of this chemistry, so treat it as directional.",
-      "pr_auc": 0.5344,
-      "ci_low": 0.3838,
-      "ci_high": 0.667,
-      "base_rate": 0.3071,
-      "positive_sequences": 169,
-      "source_only_pr_auc": 0.2633,
-      "best_simple_baseline_pr_auc": 0.4082,
+      "reason": "PR-AUC 0.49 [0.36-0.63] against a 0.305 base rate, beating the best simple baseline of 0.38 on a paired test (the paired difference over resampled sequences is +0.108 [+0.003, +0.205], P(better) 0.979. The bound sits within the bootstrap's own Monte Carlo error of zero, so this verdict is not stable across resampling seeds and should not be read as settled.), clearing the source baseline and holding up within a single source On an independent screen of 149 3-8-3 LNA gapmers it ranks the 5 hepatotoxic ones above chance, though its interval still spans it (ROC-AUC 0.56, CI 0.37-0.73, where 0.50 is chance). 5 positives cannot settle it in either direction, and the training corpus holds few gapmers of this chemistry, so treat it as directional.",
+      "pr_auc": 0.4929,
+      "ci_low": 0.3615,
+      "ci_high": 0.6284,
+      "base_rate": 0.305,
+      "positive_sequences": 184,
+      "source_only_pr_auc": 0.237,
+      "best_simple_baseline_pr_auc": 0.3764,
       "checks": {
         "has_enough_sequences": true,
         "beats_source_baseline": true,
@@ -46,24 +46,24 @@
         "beats_simple_baseline_paired": true,
         "beats_base_rate_within_source": true
       },
-      "brier_skill": 0.0941,
-      "calibration_mae": 0.0651,
+      "brier_skill": 0.0866,
+      "calibration_mae": 0.0482,
       "probabilities_calibrated": true,
       "external_check": {
         "source": "NAR 2022;50(13):7224 doi:10.1093/nar/gkac562 Supplementary Table S1",
         "sequences": 149,
         "positives": 5,
-        "roc_auc": 0.538888888888889,
+        "roc_auc": 0.5583333333333333,
         "roc_ci": [
-          0.35374149659863946,
-          0.7074829931972789
+          0.3654511100614076,
+          0.7251056338028169
         ],
         "status": "directional only"
       }
     },
     "offtarget_gene_silencing": {
       "tier": "weak",
-      "reason": "against the best simple baseline (0.19) the paired difference over resampled sequences is +0.355 [-0.075, +0.688], P(better) 0.917, which does not exclude zero, so it is not distinguishable from one crude sequence number",
+      "reason": "against the best simple baseline (0.19) the paired difference over resampled sequences is +0.356 [-0.075, +0.687], P(better) 0.915., which does not exclude zero, so it is not distinguishable from one crude sequence number",
       "pr_auc": 0.6407,
       "ci_low": 0.2065,
       "ci_high": 0.8481,

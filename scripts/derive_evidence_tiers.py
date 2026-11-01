@@ -84,9 +84,15 @@ def _paired_sentence(spec: dict | None, best_simple: float,
                 "computed for this endpoint, so the check cannot pass")
     lo, hi = spec["ci"]
     against = f"against the best simple baseline ({best_simple:.2f}) " if named else ""
+    # A bound this close to zero is not reproducible across bootstrap
+    # seeds, and a tier that turns on it is a coin toss worth naming.
+    edge = (" The bound sits within the bootstrap's own Monte Carlo error "
+            "of zero, so this verdict is not stable across resampling "
+            "seeds and should not be read as settled."
+            if spec.get("knife_edge") else "")
     return (f"{against}the paired difference over resampled sequences is "
             f"{spec['difference']:+.3f} [{lo:+.3f}, {hi:+.3f}], "
-            f"P(better) {spec['p_better']:.3f}")
+            f"P(better) {spec['p_better']:.3f}.{edge}")
 
 
 def _model_label(df) -> str:

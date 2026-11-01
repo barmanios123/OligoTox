@@ -4,148 +4,172 @@
   "status": "this is the gate's simple-baseline check; derive_evidence_tiers.py reads it, and an endpoint missing from here fails that check.",
   "endpoints": {
     "hepatocellular_injury": {
-      "model_pr_auc": 0.534362731445721,
+      "model_pr_auc": 0.4928748137114104,
       "best_simple": "GC content only",
-      "simple_pr_auc": 0.4081912513061443,
-      "difference": 0.11919983286824727,
+      "simple_pr_auc": 0.3764380088508219,
+      "difference": 0.10770691685352153,
       "ci": [
-        0.036022269854273904,
-        0.19380568834402132
+        0.0030654650725792723,
+        0.20463866488978366
       ],
-      "p_better": 0.996,
-      "clears_paired": true
+      "p_better": 0.979,
+      "clears_paired": true,
+      "ci_low_monte_carlo_sd": 0.0015974259412998943,
+      "knife_edge": true
     },
     "hepatic_vacuolation": {
       "model_pr_auc": 0.11383121451619518,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.031205465954881474,
-      "difference": 0.06872744559332865,
+      "difference": 0.0677753952276377,
       "ci": [
-        -0.04969822146332895,
-        0.1861032011116951
+        -0.05409462816176484,
+        0.19041315699202588
       ],
-      "p_better": 0.8925233644859814,
-      "clears_paired": false
+      "p_better": 0.8889445557782231,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.001982264227504735,
+      "knife_edge": false
     },
     "renal_tubular_injury": {
       "model_pr_auc": 0.4884920634920635,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.2985807670590279,
-      "difference": 0.1948149218699743,
+      "difference": 0.20267759598837928,
       "ci": [
-        -0.11998606075652112,
-        0.5646334787288732
+        -0.13459574047010112,
+        0.5786332972582969
       ],
-      "p_better": 0.8805870580386924,
-      "clears_paired": false
+      "p_better": 0.8836278759586529,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.01001274815232208,
+      "knife_edge": false
     },
     "renal_accumulation": {
       "model_pr_auc": 0.8441043083900227,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.2765460729746444,
-      "difference": 0.5302644113292795,
+      "difference": 0.532481804711077,
       "ci": [
-        0.21522817460317467,
-        0.7835754281949934
+        0.2287033279220779,
+        0.7838026749185215
       ],
-      "p_better": 0.998,
-      "clears_paired": true
+      "p_better": 0.999,
+      "clears_paired": true,
+      "ci_low_monte_carlo_sd": 0.006171630880924121,
+      "knife_edge": false
     },
     "thrombocytopenia": {
       "model_pr_auc": 0.5,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.2732843137254902,
-      "difference": 0.23928184120824383,
+      "difference": 0.2362670950750422,
       "ci": [
-        -0.1333333333333333,
-        0.6044523809523809
+        -0.13450558213716104,
+        0.6018452380952377
       ],
-      "p_better": 0.9101351351351351,
-      "clears_paired": false
+      "p_better": 0.9105965861078249,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.010337774044387066,
+      "knife_edge": false
     },
     "coagulation_effect": {
       "model_pr_auc": 0.49783549783549785,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.3476190476190476,
-      "difference": 0.1014792904965337,
+      "difference": 0.1086501938591176,
       "ci": [
-        -0.2888888888888889,
-        0.4574675324675323
+        -0.2859649122807017,
+        0.4587121212121212
       ],
-      "p_better": 0.7235609103078983,
-      "clears_paired": false
+      "p_better": 0.7344717897204085,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.00980961530164611,
+      "knife_edge": false
     },
     "complement_activation": {
       "model_pr_auc": 0.17633477633477634,
       "best_simple": "length only",
       "simple_pr_auc": 0.34542908072319833,
-      "difference": -0.16110303647754884,
+      "difference": -0.1587924486801087,
       "ci": [
-        -0.4725002687529862,
-        0.04504329092577004
+        -0.45525321717755923,
+        0.04768917321666683
       ],
-      "p_better": 0.11741160773849232,
-      "clears_paired": false
+      "p_better": 0.12585544984142882,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.007078291739964938,
+      "knife_edge": false
     },
     "innate_immune_activation": {
       "model_pr_auc": 0.21175687666370896,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.3376700680272109,
-      "difference": -0.14284585654595902,
+      "difference": -0.1431920681581873,
       "ci": [
-        -0.36530146972910127,
-        0.001109143049932476
+        -0.3566269538669725,
+        -0.0008602323644865637
       ],
-      "p_better": 0.02666666666666667,
-      "clears_paired": false
+      "p_better": 0.024341447149049684,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.00526873176538499,
+      "knife_edge": false
     },
     "cytokine_release": {
       "model_pr_auc": 0.21175687666370896,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.3376700680272109,
-      "difference": -0.14172321576950447,
+      "difference": -0.14188150519091733,
       "ci": [
-        -0.3566937845651081,
-        0.001380598568098487
+        -0.3548825408659968,
+        0.004323083720284209
       ],
-      "p_better": 0.02601734489659773,
-      "clears_paired": false
+      "p_better": 0.027675891963987995,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.005079531540198775,
+      "knife_edge": false
     },
     "kupffer_cell_activation": {
       "model_pr_auc": 0.6011175913533402,
       "best_simple": "length only",
       "simple_pr_auc": 0.16774303691470124,
-      "difference": 0.41744585319349614,
+      "difference": 0.41767529029587724,
       "ci": [
-        0.23031193374606213,
-        0.5871119537414415
+        0.22809422950165467,
+        0.5939907574146129
       ],
       "p_better": 1.0,
-      "clears_paired": true
+      "clears_paired": true,
+      "ci_low_monte_carlo_sd": 0.0029947290872720947,
+      "knife_edge": false
     },
     "offtarget_gene_silencing": {
       "model_pr_auc": 0.6406510621954689,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.19255182727433223,
-      "difference": 0.35470423492070313,
+      "difference": 0.35630221475104745,
       "ci": [
-        -0.0748854435867982,
-        0.6876766277851041
+        -0.07450933437094706,
+        0.687376664663992
       ],
-      "p_better": 0.9173333333333333,
-      "clears_paired": false
+      "p_better": 0.9146666666666666,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.0052390950458135995,
+      "knife_edge": false
     },
     "injection_site_reaction": {
       "model_pr_auc": 0.4136549495682623,
       "best_simple": "length only",
       "simple_pr_auc": 0.4547619047619048,
-      "difference": -0.021695950503104855,
+      "difference": -0.022169812863153435,
       "ci": [
-        -0.17318511714893298,
-        0.13384799723377347
+        -0.1705965024645013,
+        0.13589837031303764
       ],
-      "p_better": 0.3586666666666667,
-      "clears_paired": false
+      "p_better": 0.3555,
+      "clears_paired": false,
+      "ci_low_monte_carlo_sd": 0.0031740190463910786,
+      "knife_edge": false
     }
   }
 }

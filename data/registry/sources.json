@@ -167,11 +167,63 @@
       "threshold": 3.0,
       "url": "https://patents.google.com/?q=antisense+oligonucleotide+hepatotoxicity+ALT+gapmer",
       "licence": "patent text is public; extracted factual measurements, cite each publication number",
-      "notes": "Ingested 2026-10-30 by scripts/ingest_patent_hepatotox.py. 30 US publications, 527 extracted rows collapsed to 444 study-by-sequence observations over 256 sequences, labelled toxic at ALT >= 3x that study's own control at its worst dose. Fold change rather than an absolute ALT because control ALT runs 9 to 57 U/l across these patents and an absolute cut would label whole studies by their baseline. What it did: hepatocellular_injury went from 40 unique sequences (19 positive) to 296 (103 positive), and the source confounding that blocked it is gone, the model now scoring 0.37 against a source-only baseline of 0.23. What it did not do: the model still does not clear the best simple sequence baseline (CI low 0.29 against 0.43) and still does not transfer to the NAR 2022 screen (ROC-AUC 0.31 [0.12-0.47]). The endpoint went validated -> weak and is no longer presented. More data fixed the confounding and revealed that there was no signal underneath it. Assumed, not measured: ps_fraction 1.0 for every row; lna_fraction left empty except where a patent states cEt or LNA wings. Remove with --remove and re-run the pipeline.",
+      "notes": "Ingested 2026-10-30 by scripts/ingest_patent_hepatotox.py. 89 US publications cached, 1,736 extracted rows collapsed to 1,521 study-by-sequence observations over 396 sequences, labelled toxic at ALT >= 3x that study's own control at its worst dose. Fold change rather than an absolute ALT because control ALT runs 9 to 57 U/l across these patents and an absolute cut would label whole studies by their baseline. What it did: hepatocellular_injury went from 40 unique sequences (19 positive) to 296 (103 positive), and the source confounding that blocked it is gone, the model now scoring 0.37 against a source-only baseline of 0.23. What it did not do: the model still does not clear the best simple sequence baseline (CI low 0.29 against 0.43) and still does not transfer to the NAR 2022 screen (ROC-AUC 0.31 [0.12-0.47]). The endpoint went validated -> weak and is no longer presented. More data fixed the confounding and revealed that there was no signal underneath it. Assumed, not measured: ps_fraction 1.0 for every row; lna_fraction left empty except where a patent states cEt or LNA wings. Remove with --remove and re-run the pipeline.",
       "role": "training",
-      "sequences": 256,
+      "sequences": 396,
       "local_path": "data/external/patent_hepatotox.csv",
       "positives": 84
+    },
+    {
+      "name": "dieckmann_2017_lna_invitro",
+      "status": "assessed_unusable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "role": "candidate",
+      "readout": "mean ALT fold change vs saline, >5x called hepatotoxic",
+      "direction": "higher_is_toxic",
+      "threshold": 5.0,
+      "url": "https://doi.org/10.1016/j.omtn.2017.11.004",
+      "licence": "open access (PMC5725219)",
+      "notes": "Looked at 2026-11-01 while searching for LNA gapmer liver data. 236 LNA-ASOs across 13 target genes, each with in-vivo hepatotoxicity already determined as mean ALT fold change against saline, which is the same label shape this project uses. Supplementary files fetched from Europe PMC: the sequences and ALT values of those 236 are NOT published. Table S1 carries 20 mouse Gapdh gapmers with sequence and calculated Tm and no toxicity readout at all; the rest of the supplement is gene lists. Unusable without the authors' data."
+    },
+    {
+      "name": "kamola_2017_gsk_lna_screen",
+      "status": "assessed_unusable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "role": "candidate",
+      "readout": "group mean ALT change vs PBS",
+      "direction": "higher_is_toxic",
+      "threshold": null,
+      "url": "https://doi.org/10.1016/j.omtn.2017.07.003",
+      "licence": "open access (PMC5537172)",
+      "notes": "GSK in-vivo hepatotoxicity ranking screen. Supplementary Table S4 gives sequence, LNA content and group mean ALT for five LNA-PS gapmers in rat. Five sequences is below the ten positive sequences this project needs for a PR-AUC to mean anything, and too few to move an endpoint of 396."
+    },
+    {
+      "name": "burel_2015_lna_panel",
+      "status": "assessed_unusable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "role": "candidate",
+      "readout": "ALT",
+      "direction": "higher_is_toxic",
+      "threshold": null,
+      "url": "https://doi.org/10.1093/nar/gkv1210",
+      "licence": "open access (PMC4797265)",
+      "notes": "Describes a panel of hepatotoxic and non-hepatotoxic LNA ASOs. The supplementary file contains no oligonucleotide sequences at all, only transcript analyses."
+    },
+    {
+      "name": "kasuya_2016_lna_rnaseh1",
+      "status": "assessed_unusable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "role": "candidate",
+      "readout": "ALT",
+      "direction": "higher_is_toxic",
+      "threshold": null,
+      "url": "https://doi.org/10.1038/srep30377",
+      "licence": "open access (PMC4961955)",
+      "notes": "Supplement holds 153 candidate sequences, but they are qPCR primers and gapmers mixed together with a single ALT mention and no per-sequence liver readout."
     }
   ]
 }

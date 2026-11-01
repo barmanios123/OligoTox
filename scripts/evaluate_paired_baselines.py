@@ -48,7 +48,18 @@ from oligotox.training.train import _make_model, _prepare_training_matrix  # noq
 PROCESSED = ROOT / "data" / "processed"
 RESULTS = ROOT / "reports" / "results"
 OUT = RESULTS / "paired_baselines.json"
-N_BOOT = 1500
+# 1,500 draws put a standard deviation of 0.0032 on the 2.5th percentile,
+# which is larger than the margins this gate decides on. hepatocellular
+# injury was demoted on a lower bound of -0.001; across twelve bootstrap
+# seeds at 1,500 draws that bound ran -0.0023 to +0.0110 and the gate
+# passed on eleven of twelve, so the shipped run had drawn the twelfth.
+# At 6,000 it runs +0.0028 to +0.0077 and passes on all twelve. The
+# criterion is unchanged; this is the precision needed to apply it
+# repeatably.
+N_BOOT = 6000
+# Within this many Monte Carlo standard deviations of zero, the verdict is
+# not reproducible and the evidence entry says so rather than pretending.
+KNIFE_EDGE_SDS = 2.0
 SIMPLE = {"GC content only": ["gc_content"], "length only": ["seq_length"]}
 
 
@@ -103,6 +114,10 @@ def main() -> int:
                          - average_precision_score(y[idx], baseline[idx]))
         diffs = np.array(diffs)
         lo, hi = (float(v) for v in np.percentile(diffs, [2.5, 97.5]))
+        # Monte Carlo error on a percentile, from the bootstrap itself.
+        boot_sd = float(np.std([
+            np.percentile(rng.choice(diffs, size=len(diffs), replace=True), 2.5)
+            for _ in range(200)]))
         report[endpoint] = {
             "model_pr_auc": float(average_precision_score(y, model)),
             "best_simple": best,
@@ -111,11 +126,14 @@ def main() -> int:
             "ci": [lo, hi],
             "p_better": float((diffs > 0).mean()),
             "clears_paired": bool(lo > 0),
+            "ci_low_monte_carlo_sd": boot_sd,
+            "knife_edge": bool(abs(lo) < KNIFE_EDGE_SDS * boot_sd),
         }
         r = report[endpoint]
         print(f"{endpoint:26s} {r['model_pr_auc']:7.3f} {r['simple_pr_auc']:7.3f}"
               f"  {r['difference']:+.3f} [{lo:+.3f},{hi:+.3f}] {r['p_better']:6.3f}"
-              + ("  PASS" if r["clears_paired"] else ""))
+              + ("  PASS" if r["clears_paired"] else "")
+              + ("  (knife edge)" if r["knife_edge"] else ""))
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({

@@ -15,7 +15,7 @@
     {
       "endpoint": "hepatocellular_injury",
       "tier": "validated",
-      "positive_sequences": 169,
+      "positive_sequences": 184,
       "blocking_constraint": "none",
       "needs": [
         "Nothing. It is presented as a prediction."

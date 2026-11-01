@@ -121,6 +121,46 @@
       "usable_for_training": true,
       "blocked_by": null,
       "sequences": 256
+    },
+    {
+      "name": "dieckmann_2017_lna_invitro",
+      "status": "assessed_unusable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "assessed and unusable; see its registry note",
+      "sequences": null
+    },
+    {
+      "name": "kamola_2017_gsk_lna_screen",
+      "status": "assessed_unusable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "assessed and unusable; see its registry note",
+      "sequences": null
+    },
+    {
+      "name": "burel_2015_lna_panel",
+      "status": "assessed_unusable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "assessed and unusable; see its registry note",
+      "sequences": null
+    },
+    {
+      "name": "kasuya_2016_lna_rnaseh1",
+      "status": "assessed_unusable",
+      "kind": "toxicity",
+      "endpoint": "hepatocellular_injury",
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "assessed and unusable; see its registry note",
+      "sequences": null
     }
   ]
 }

@@ -1,24 +1,79 @@
 {
   "query": "antisense ALT AST hepatotoxicity gapmer",
-  "publications_read": 59,
-  "rows": 1161,
-  "unique_sequences": 369,
+  "publications_read": 89,
+  "rows": 1736,
+  "unique_sequences": 396,
   "dose_source": {
-    "unknown": 442,
-    "prose": 472,
-    "table": 233,
-    "label": 14
+    "unknown": 672,
+    "table": 330,
+    "prose": 712,
+    "label": 22
   },
   "dose_rule": "A dose is taken from the table's own dose column, else from the treatment label, else from the Example prose and only where that passage states exactly one dose. Otherwise it is left empty, because a liver readout without a dose cannot be compared with another study.",
   "rejected": {
-    "no_compound": 10,
-    "no_seq_id": 136,
+    "no_compound": 16,
+    "no_seq_id": 145,
     "no_sequence": 2,
-    "no_alt_value": 14,
-    "no_control": 89
+    "no_alt_value": 16,
+    "no_control": 128
   },
   "rule": "A row is emitted only when the compound resolves to a real sequence and its own table carries a control group. A patent that reports toxicity qualitatively yields nothing.",
   "per_patent": [
+    {
+      "publication": "US10000752B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10184125B2",
+      "rows": 14,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10287589B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10358643B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10385342B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
     {
       "publication": "US10434117B2",
       "rows": 0,
@@ -53,10 +108,32 @@
       }
     },
     {
+      "publication": "US10538768B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US10548876B2",
       "rows": 0,
       "rejected": {
         "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US10745756B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 4,
         "no_seq_id": 0,
         "no_sequence": 0,
         "no_alt_value": 0,
@@ -130,8 +207,30 @@
       }
     },
     {
+      "publication": "US11135201B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US11225664B2",
       "rows": 14,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US11248019B2",
+      "rows": 0,
       "rejected": {
         "no_compound": 0,
         "no_seq_id": 0,
@@ -181,6 +280,17 @@
         "no_seq_id": 0,
         "no_sequence": 0,
         "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US11732265B2",
+      "rows": 182,
+      "rejected": {
+        "no_compound": 2,
+        "no_seq_id": 5,
+        "no_sequence": 0,
+        "no_alt_value": 2,
         "no_control": 0
       }
     },
@@ -240,11 +350,55 @@
       }
     },
     {
+      "publication": "US12565651B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20090304704A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20110172292A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US20110172296A1",
       "rows": 0,
       "rejected": {
         "no_compound": 0,
         "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20120083522A1",
+      "rows": 77,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 4,
         "no_sequence": 0,
         "no_alt_value": 0,
         "no_control": 0
@@ -273,7 +427,29 @@
       }
     },
     {
+      "publication": "US20140303235A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US20150291958A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20150368642A1",
       "rows": 0,
       "rejected": {
         "no_compound": 0,
@@ -339,7 +515,51 @@
       }
     },
     {
+      "publication": "US20220135972A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US20220228140A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20230118138A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20230183692A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20230201290A1",
       "rows": 0,
       "rejected": {
         "no_compound": 0,
@@ -361,6 +581,17 @@
       }
     },
     {
+      "publication": "US20240058370A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US20240247268A1",
       "rows": 173,
       "rejected": {
@@ -372,7 +603,29 @@
       }
     },
     {
+      "publication": "US20240287520A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US20250354135A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US20260002161A1",
       "rows": 0,
       "rejected": {
         "no_compound": 0,
@@ -394,7 +647,29 @@
       }
     },
     {
+      "publication": "US20260024621A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US20260151421A1",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US8022193B2",
       "rows": 0,
       "rejected": {
         "no_compound": 0,
@@ -461,6 +736,17 @@
     },
     {
       "publication": "US8440637B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US8598334B2",
       "rows": 0,
       "rejected": {
         "no_compound": 0,
@@ -548,6 +834,17 @@
       }
     },
     {
+      "publication": "US9220722B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US9290534B2",
       "rows": 0,
       "rejected": {
@@ -570,7 +867,29 @@
       }
     },
     {
+      "publication": "US9404114B2",
+      "rows": 81,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
       "publication": "US9428750B2",
+      "rows": 0,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 0
+      }
+    },
+    {
+      "publication": "US9566293B2",
       "rows": 0,
       "rejected": {
         "no_compound": 0,
@@ -655,6 +974,17 @@
         "no_sequence": 0,
         "no_alt_value": 0,
         "no_control": 0
+      }
+    },
+    {
+      "publication": "US9957292B2",
+      "rows": 221,
+      "rejected": {
+        "no_compound": 0,
+        "no_seq_id": 0,
+        "no_sequence": 0,
+        "no_alt_value": 0,
+        "no_control": 39
       }
     },
     {
