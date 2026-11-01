@@ -31,7 +31,7 @@
     },
     "hepatocellular_injury": {
       "tier": "validated",
-      "reason": "PR-AUC 0.53 [0.38-0.67] against a 0.307 base rate, beating the best simple baseline of 0.41 on a paired test (the paired difference over resampled sequences is +0.119 [+0.036, +0.194], P(better) 0.996), clearing the source baseline and holding up within a single source On an independent screen of 149 LNA gapmers it ranks the 5 hepatotoxic ones no better than chance (ROC-AUC 0.46, CI 0.33-0.59). Too few positives to be conclusive, but there is no evidence this endpoint transfers off its own source.",
+      "reason": "PR-AUC 0.53 [0.38-0.67] against a 0.307 base rate, beating the best simple baseline of 0.41 on a paired test (the paired difference over resampled sequences is +0.119 [+0.036, +0.194], P(better) 0.996), clearing the source baseline and holding up within a single source On an independent screen of 149 3-8-3 LNA gapmers it ranks the 5 hepatotoxic ones above chance, though its interval still spans it (ROC-AUC 0.54, CI 0.35-0.71, where 0.50 is chance). 5 positives cannot settle it in either direction, and the training corpus holds few gapmers of this chemistry, so treat it as directional.",
       "pr_auc": 0.5344,
       "ci_low": 0.3838,
       "ci_high": 0.667,
@@ -53,10 +53,10 @@
         "source": "NAR 2022;50(13):7224 doi:10.1093/nar/gkac562 Supplementary Table S1",
         "sequences": 149,
         "positives": 5,
-        "roc_auc": 0.45694444444444443,
+        "roc_auc": 0.538888888888889,
         "roc_ci": [
-          0.32996550732969243,
-          0.5915165376495425
+          0.35374149659863946,
+          0.7074829931972789
         ],
         "status": "directional only"
       }

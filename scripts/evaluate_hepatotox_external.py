@@ -58,6 +58,60 @@ SEED = 42
 # ID, sequence, two motif counts, AST, ALT, Tm
 ROW = re.compile(r"^(\S+)\s+([ACGT]{12,25})\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s*$")
 
+# Table S1 marks the LNA positions by font colour, green against black for
+# the DNA gap, and says so in its own caption. Text extraction throws that
+# away, so the screen was scored for months as though these were
+# unmodified ASOs with no LNA at all. Recovering the colour gives every
+# sequence a real lna_fraction instead of a guess.
+LNA_GREEN = (0.0, 1.0, 0.6)
+
+
+def lna_counts(pdf_path: Path) -> dict[str, int]:
+    """sequence -> how many of its bases are LNA, from the font colour.
+
+    Verified rather than assumed: all 149 sequences come back as
+    `LLL........LLL`, a uniform 3-8-3 gapmer, which is what the paper
+    describes and what the 73 C melting temperature of a 14-mer implies.
+    """
+    from pypdf import PdfReader
+
+    reader = PdfReader(str(pdf_path))
+    runs: list[tuple[str, bool]] = []
+    state = {"colour": (0.0, 0.0, 0.0)}
+
+    def before(op, args, cm, tm):
+        if op in (b"sc", b"rg", b"scn"):
+            vals = [float(a) for a in args if hasattr(a, "__float__")]
+            if len(vals) == 3:
+                state["colour"] = tuple(round(v, 3) for v in vals)
+
+    def visit(text, cm, tm, font_dict, font_size):
+        if text and text.strip():
+            runs.append((text, state["colour"] == LNA_GREEN))
+
+    for page in reader.pages:
+        if "Table S2" in (page.extract_text() or ""):
+            break
+        page.extract_text(visitor_operand_before=before, visitor_text=visit)
+
+    cells, current = [], []
+    for text, green in runs:
+        for char in text:
+            if char.upper() in "ACGT" and char.isalpha():
+                current.append((char.upper(), green))
+            else:
+                if len(current) >= 12:
+                    cells.append(current)
+                current = []
+    if len(current) >= 12:
+        cells.append(current)
+
+    out: dict[str, int] = {}
+    for cell in cells:
+        out.setdefault("".join(c for c, _ in cell),
+                       sum(1 for _, g in cell if g))
+    return out
+
 
 def extract(pdf_path: Path) -> pd.DataFrame:
     try:
@@ -85,6 +139,16 @@ def extract(pdf_path: Path) -> pd.DataFrame:
             })
     df = pd.DataFrame(rows).drop_duplicates("id")
     df["hepatotoxic"] = (df["ALT_U_per_L"] > ALT_TOXIC_ABOVE).astype(int)
+
+    counts = lna_counts(pdf_path)
+    missing = [s for s in df["sequence"] if s not in counts]
+    if missing:
+        raise SystemExit(
+            f"{len(missing)} sequence(s) have no LNA pattern recovered from "
+            "the table's font colour, so their chemistry is unknown and "
+            "scoring them would invent one. First: " + missing[0])
+    df["lna_count"] = df["sequence"].map(counts)
+    df["lna_fraction"] = df["lna_count"] / df["sequence"].str.len()
     return df
 
 
@@ -125,10 +189,20 @@ def main() -> None:
             "https://academic.oup.com/nar/article/50/13/7224/6633893"
         )
 
+    if "lna_fraction" not in df.columns:
+        raise SystemExit(
+            "the cached parse predates LNA recovery and would score these "
+            "gapmers as unmodified ASOs. Re-run with the supplementary PDF.")
+
     probs = []
-    for seq in df["sequence"]:
+    for seq, lna in zip(df["sequence"], df["lna_fraction"]):
+        # These are LNA gapmers, fully phosphorothioate, as the table's own
+        # caption states. Scoring them as "ASO" with lna_fraction 0 told the
+        # model they carried no LNA and were not gapmers, which is a
+        # chemistry that does not exist in the training data either.
         out = score_candidate(
-            candidate_features=candidate_features(seq, "ASO", "PS", ps_fraction=1.0),
+            candidate_features=candidate_features(
+                seq, "LNA_gapmer", "PS", ps_fraction=1.0, lna_fraction=float(lna)),
             processed_dir=ROOT / "data" / "processed",
             model_dir=ROOT / "artifacts" / "models",
             config_dir=ROOT / "artifacts" / "config",
@@ -151,6 +225,10 @@ def main() -> None:
     summary = {
         "source": "NAR 2022;50(13):7224 doi:10.1093/nar/gkac562 Supplementary Table S1",
         "assay": "C57BL/6 mice, 20 mg/kg IV, AST/ALT at 96 h",
+        "chemistry": "3-8-3 LNA gapmers, fully phosphorothioate, recovered "
+                     "from the font colour of Table S1 and uniform across "
+                     "all 149",
+        "lna_fraction": float(df["lna_fraction"].iloc[0]),
         "label": f"hepatotoxic if ALT > {ALT_TOXIC_ABOVE} U/L",
         "sequences": int(len(df)),
         "positives": int(y.sum()),
@@ -162,8 +240,9 @@ def main() -> None:
         "caveat": (
             f"{int(y.sum())} positive sequences. Too few to validate the endpoint; the "
             "confidence interval spans most of the range. Reported so the endpoint has "
-            "some external signal, not as evidence of performance. These are 14-mer LNA "
-            "gapmers, a chemistry and length the model was not trained on."
+            "some external signal, not as evidence of performance. These are 14-mer "
+            "3-8-3 LNA gapmers; the training corpus holds 12 LNA gapmer sequences "
+            "and 369 MOE gapmers, so this is a chemistry it has barely seen."
         ),
     }
     RESULTS.mkdir(parents=True, exist_ok=True)

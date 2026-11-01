@@ -896,6 +896,60 @@ Pinned by `tests/test_paired_gate.py`, including the fail-closed case.
 
 ---
 
+## 23. The external check was scoring the compounds as the wrong molecule
+
+`hepatocellular_injury` had failed its only independent test all along. The
+NAR 2022 screen of 149 gapmers gave ROC-AUC 0.286 at first and 0.457 after
+a session of improvements, and every write-up of this project said there
+was no evidence the endpoint transfers off its own source.
+
+The harness scored each sequence like this:
+
+```python
+candidate_features(seq, "ASO", "PS", ps_fraction=1.0)
+```
+
+`lna_fraction` defaults to 0.0, and the modality "ASO" sets none of the
+gapmer flags. These are LNA gapmers. The model was being handed 149
+compounds described as carrying no LNA and not being gapmers, which is a
+chemistry that does not occur anywhere in the training data: the patent
+rows are MOE gapmers and the Papargyri rows run 0.125 to 0.625 LNA.
+
+Table S1's caption says "Gap DNA and LNA are indicated in black and green
+font". Text extraction discards colour, so the design had been invisible.
+Reading the PDF's colour operators recovers it: all 149 sequences come back
+as `LLL........LLL`, a uniform 3-8-3 gapmer, 6 of 14 bases LNA. That is
+consistent with a 73 degree melting temperature on a 14-mer, which no
+unmodified oligo reaches.
+
+Scored as what they are:
+
+| Scored as | ROC-AUC |
+|---|---|
+| ASO, lna 0.0 (what the harness did) | 0.457 |
+| ASO_gapmer, lna 0.0 | 0.465 |
+| LNA_gapmer, lna 0.43 (the real design) | **0.539 [0.354, 0.707]** |
+
+The model did not improve. It stopped being lied to about what the
+compounds were. The interval still spans chance and there are still 5
+positives, so this is "no longer evidence against transfer" rather than
+evidence of it.
+
+**The same defect was in the product.** The app's Modality dropdown offered
+siRNA and ASO, and nothing anywhere set `lna_fraction`, so every candidate
+a user scored reached the models as a non-gapmer with no LNA. It now offers
+ASO_gapmer and LNA_gapmer, and takes a gapmer motif from which the LNA
+fraction is computed: 3-8-3 on a 14-mer gives 0.43, matching the screen.
+
+The lesson is not about PDFs. An external validation set is a claim that
+two things are comparable, and the chemistry is part of what has to match.
+Nobody checked that the thing being scored was the thing that was measured,
+and the check quietly argued against the endpoint for as long as it ran.
+
+Pinned by `tests/test_chemistry_is_expressible.py`.
+
+---
+
 ## What these add up to
 
 Of 13 toxicity endpoints, 3 are presented as predictions and only 1 has
@@ -912,7 +966,7 @@ long-standing bug move, and it announced itself as two promotions rather
 than as a failure.
 
 Two of the 13 are presented as predictions, and one of those two is
-contradicted by the only external dataset it has been tested against. The last six entries above all
+contradicted by the only external dataset it has been tested against. The last seven entries above all
 came out of one stretch of work on a single endpoint: adding data to it
 exposed a labelling defect that had been inflating every endpoint, fixing
 that exposed an estimator that had been throwing away half its training

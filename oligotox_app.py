@@ -2,6 +2,7 @@
 import os
 import sys
 import json
+import re
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -120,13 +121,40 @@ def _ps_fraction(chemistry: str) -> float:
     return 0.9 if "PS" in chemistry.upper() else 0.0
 
 
-def _sequence_features(seq: str, chemistry: str, dose_mg_kg: float, modality: str = "siRNA"):
+MOTIF = re.compile(r"^\s*(\d{1,2})\s*-\s*(\d{1,2})\s*-\s*(\d{1,2})\s*$")
+
+
+def _lna_fraction(modality: str, motif: str, length: int) -> float:
+    """How much of the oligo is LNA, from the gapmer design.
+
+    The app had no way to say "this is an LNA gapmer", so every candidate
+    was scored with lna_fraction 0 and none of the modality flags set. The
+    hepatocellular model consumes both, and its training data ranges from
+    0.125 to 0.625 LNA, so an LNA gapmer was being scored as a chemistry
+    that does not appear in the corpus at all. The external screen was
+    being scored the same way, which is most of why it looked like chance.
+
+    Only an LNA gapmer gets a fraction. MOE wings are not LNA, so an
+    ASO gapmer stays at zero, which is what the patent rows carry.
+    """
+    if modality != "LNA_gapmer":
+        return 0.0
+    match = MOTIF.match(motif or "")
+    if not match or not length:
+        return 0.0
+    wing_a, _gap, wing_b = (int(g) for g in match.groups())
+    return min(1.0, (wing_a + wing_b) / length)
+
+
+def _sequence_features(seq: str, chemistry: str, dose_mg_kg: float,
+                       modality: str = "siRNA", motif: str = ""):
     ps_fraction = _ps_fraction(chemistry)
     return build_candidate_features(
         seq,
         modality=modality,
         chemistry=chemistry,
         ps_fraction=ps_fraction,
+        lna_fraction=_lna_fraction(modality, motif, len(seq)),
         dose_mg_kg=dose_mg_kg,
     )
 
@@ -332,7 +360,22 @@ with st.sidebar:
         help="Enter RNA/DNA oligo sequence using A/C/G/T/U."
     )
     chemistry = st.selectbox("Chemistry", ["PS", "PO", "mixed_PS_PO"], index=0)
-    modality = st.selectbox("Modality", ["siRNA", "ASO"], index=0)
+    modality = st.selectbox(
+        "Modality", ["siRNA", "ASO", "ASO_gapmer", "LNA_gapmer"], index=0,
+        help="A gapmer is scored differently from a plain ASO: the models "
+             "see the modality and, for LNA, how much of the oligo is "
+             "modified.",
+    )
+    motif = ""
+    if modality == "LNA_gapmer":
+        motif = st.text_input(
+            "Gapmer motif", value="3-8-3",
+            help="Wing, deoxy gap, wing. The LNA fraction is the two wings "
+                 "over the length, so 3-8-3 on a 14-mer is 0.43.",
+        )
+        shown = _lna_fraction(modality, motif, len(sequence.strip()) or 0)
+        st.caption(f"LNA fraction {shown:.2f} of the sequence as entered."
+                   if shown else "Enter a motif such as 3-8-3.")
     dose_mg_kg = st.number_input("Dose (mg/kg)", min_value=0.0, max_value=100.0, value=3.0, step=0.5)
     target_gene = st.text_input(
         "Target gene (optional)",
@@ -377,7 +420,8 @@ if run_btn:
         st.error(seq_or_msg)
     else:
         normalized_seq = seq_or_msg
-        candidate_features = _sequence_features(normalized_seq, chemistry, dose_mg_kg, modality)
+        candidate_features = _sequence_features(
+            normalized_seq, chemistry, dose_mg_kg, modality, motif)
 
         with st.spinner("Running OligoTox analysis..."):
             toxicity_result = _run_toxicity(candidate_features)
@@ -391,6 +435,9 @@ if run_btn:
                 "modality": modality,
                 "dose_mg_kg": dose_mg_kg,
                 "ps_fraction": _ps_fraction(chemistry),
+                "motif": motif,
+                "lna_fraction": _lna_fraction(modality, motif,
+                                              len(normalized_seq)),
                 "target_gene": target_gene,
                 "analyst_note": analyst_note,
                 "candidate_features": candidate_features,
@@ -420,7 +467,8 @@ with tab["Summary"]:
                        "inputs, not results.")
             st.json({k: (round(v, 4) if isinstance(v, (int, float)) else v)
                      for k, v in _sequence_features(
-                         normalized_seq, chemistry, dose_mg_kg, modality).items()})
+                         normalized_seq, chemistry, dose_mg_kg, modality,
+                         motif).items()})
     else:
         st.subheader("Summary")
         with st.spinner("Summarising"):

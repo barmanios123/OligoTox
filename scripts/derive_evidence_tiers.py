@@ -293,14 +293,28 @@ def main() -> None:
                 "positives": ext["positives"], "roc_auc": ext["roc_auc"],
                 "roc_ci": ext["roc_ci"], "status": ext["status"],
             }
-            if ext["roc_auc"] < 0.5:
-                entry["reason"] += (
-                    f" On an independent screen of {ext['sequences']} LNA gapmers it ranks "
-                    f"the {ext['positives']} hepatotoxic ones no better than chance "
-                    f"(ROC-AUC {ext['roc_auc']:.2f}, CI {ext['roc_ci'][0]:.2f}-"
-                    f"{ext['roc_ci'][1]:.2f}). Too few positives to be conclusive, but "
-                    "there is no evidence this endpoint transfers off its own source."
-                )
+            # Always reported, whichever side of chance it falls. This used
+            # to be appended only when the result was below 0.5, so the
+            # moment it rose above, the one external check this endpoint
+            # has disappeared from its evidence entry. Silence there reads
+            # as "it transfers", which 5 positives cannot support either
+            # way.
+            lo, hi = ext["roc_ci"]
+            verdict = (
+                "ranks the {n} hepatotoxic ones no better than chance"
+                if ext["roc_auc"] < 0.5 else
+                "ranks the {n} hepatotoxic ones above chance, though its "
+                "interval still spans it" if lo < 0.5 else
+                "ranks the {n} hepatotoxic ones above chance"
+            ).format(n=ext["positives"])
+            entry["reason"] += (
+                f" On an independent screen of {ext['sequences']} 3-8-3 LNA "
+                f"gapmers it {verdict} (ROC-AUC {ext['roc_auc']:.2f}, CI "
+                f"{lo:.2f}-{hi:.2f}, where 0.50 is chance). "
+                f"{ext['positives']} positives cannot settle it in either "
+                "direction, and the training corpus holds few gapmers of "
+                "this chemistry, so treat it as directional."
+            )
 
     validated = sorted(e for e, v in endpoints.items() if v["tier"] == "validated")
     payload = {

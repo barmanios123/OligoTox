@@ -73,8 +73,9 @@
       "licence": "Open access article; the extracted table is a small factual dataset redistributed with citation",
       "sequences": 149,
       "positives": 5,
-      "notes": "External check only, restored 2026-10-30 after the earlier copy was lost with the checkout. 5 positives by the paper's own ALT > 100 U/l criterion cannot validate an endpoint, and the pipeline treats it as directional. Parse verified against the sequences themselves: both motif columns, TGC and TCC, are recomputable from the sequence and match 149 of 149, so the columns are aligned. The second was read as CCC for a while, which is a different motif matching only 44%. What it says: hepatocellular_injury ranks the 5 hepatotoxic gapmers at positions 50, 104, 111, 123 and 141 of 149, ROC-AUC 0.29 [0.10-0.53]. No evidence the endpoint transfers off its own source.",
-      "role": "external_check"
+      "notes": "External check only, restored 2026-10-30 after the earlier copy was lost with the checkout. 5 positives by the paper's own ALT > 100 U/l criterion cannot validate an endpoint, and the pipeline treats it as directional. Parse verified against the sequences themselves: both motif columns, TGC and TCC, are recomputable from the sequence and match 149 of 149, so the columns are aligned. The second was read as CCC for a while, which is a different motif matching only 44%. Chemistry recovered 2026-11-01 from the font colour of Table S1, which marks LNA green against a black DNA gap: all 149 are LLL........LLL, a uniform 3-8-3 gapmer, 6 of 14 bases LNA. Until then the harness scored them as plain ASOs with lna_fraction 0 and no gapmer flag, a chemistry absent from the training corpus, and that alone accounted for most of the apparent failure to transfer: ROC-AUC 0.46 told that way, 0.54 [0.35-0.71] told correctly. Still directional, since the interval spans chance on 5 positives.",
+      "role": "external_check",
+      "chemistry": "3-8-3 LNA gapmer, fully phosphorothioate"
     },
     {
       "name": "asoptimizer_rodent_alt_ast",
