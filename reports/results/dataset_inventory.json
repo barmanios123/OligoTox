@@ -1,6 +1,6 @@
 {
-  "usable_sources": 5,
-  "usable_sequences": 9893,
+  "usable_sources": 4,
+  "usable_sequences": 9637,
   "sources": [
     {
       "name": "oligogym_cns_moe_neurotox",
@@ -60,7 +60,8 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "no label threshold declared",
-      "sequences": 6000
+      "sequences": 6000,
+      "remote": "HTTP 403"
     },
     {
       "name": "aso_atlas_patent_gapmers",
@@ -80,7 +81,8 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "status deferred",
-      "sequences": null
+      "sequences": null,
+      "remote": "unreachable (URLError)"
     },
     {
       "name": "safesense_human_adverse_events",
@@ -90,7 +92,8 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "status not_applicable",
-      "sequences": null
+      "sequences": null,
+      "remote": "reachable (200)"
     },
     {
       "name": "gallo_sarscov2_shape_gapmers",
@@ -117,10 +120,11 @@
       "status": "present",
       "kind": "toxicity",
       "endpoint": "hepatocellular_injury",
-      "on_disk": true,
-      "usable_for_training": true,
-      "blocked_by": null,
-      "sequences": 256
+      "on_disk": false,
+      "usable_for_training": false,
+      "blocked_by": "declared present but missing at data/external/patent_hepatotox.csv",
+      "sequences": 396,
+      "remote": "reachable (200)"
     },
     {
       "name": "dieckmann_2017_lna_invitro",
@@ -130,7 +134,8 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "assessed and unusable; see its registry note",
-      "sequences": null
+      "sequences": null,
+      "remote": "reachable (200)"
     },
     {
       "name": "kamola_2017_gsk_lna_screen",
@@ -140,7 +145,8 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "assessed and unusable; see its registry note",
-      "sequences": null
+      "sequences": null,
+      "remote": "reachable (200)"
     },
     {
       "name": "burel_2015_lna_panel",
@@ -150,7 +156,8 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "assessed and unusable; see its registry note",
-      "sequences": null
+      "sequences": null,
+      "remote": "HTTP 403"
     },
     {
       "name": "kasuya_2016_lna_rnaseh1",
@@ -160,7 +167,8 @@
       "on_disk": false,
       "usable_for_training": false,
       "blocked_by": "assessed and unusable; see its registry note",
-      "sequences": null
+      "sequences": null,
+      "remote": "reachable (200)"
     }
   ]
 }

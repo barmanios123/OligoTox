@@ -1,24 +1,26 @@
 {
-  "checked_at": "2026-11-01T22:29:06.550495Z",
-  "healthy": true,
-  "failed": [],
+  "checked_at": "2026-11-02T14:51:14.814698Z",
+  "healthy": false,
+  "failed": [
+    "sources_on_disk"
+  ],
   "note": "A loop that has quietly stopped learning commits exactly like a healthy one, because the history log gains a line every run. These are the signs that distinguish them.",
   "checks": {
     "history_fresh": {
       "ok": true,
-      "detail": "last run 0d 0h ago (14 runs logged)"
+      "detail": "last run 0d 0h ago (15 runs logged)"
     },
     "sources_on_disk": {
-      "ok": true,
-      "detail": "all 6 present source(s) on disk"
+      "ok": false,
+      "detail": "declared present but not on disk: ['ionis_patent_hepatotox']. Either the data was lost or the registry is out of date."
     },
     "training_ran": {
       "ok": true,
-      "detail": "5 usable source(s), 9,893 sequences"
+      "detail": "4 usable source(s), 9,637 sequences"
     },
     "triage_clear": {
       "ok": true,
-      "detail": "all 36 monitored paper(s) assessed"
+      "detail": "all 41 monitored paper(s) assessed; 1 await a human read"
     },
     "evidence_consistent": {
       "ok": true,

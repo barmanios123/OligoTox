@@ -37,7 +37,7 @@
       "ci_high": 0.6284,
       "base_rate": 0.305,
       "positive_sequences": 184,
-      "source_only_pr_auc": 0.237,
+      "source_only_pr_auc": 0.2374,
       "best_simple_baseline_pr_auc": 0.3764,
       "checks": {
         "has_enough_sequences": true,
@@ -190,9 +190,9 @@
     "hepatic_vacuolation": {
       "tier": "insufficient_data",
       "reason": "6 positive sequences; PR-AUC is not a usable estimate below 10 Its probabilities are not calibrated: Brier skill -1.8694 against the base rate, below the 0.02 needed to be worth reading as a percentage, so treat the score as a ranking.",
-      "pr_auc": 0.1138,
+      "pr_auc": 0.1039,
       "ci_low": 0.019,
-      "ci_high": 0.2811,
+      "ci_high": 0.249,
       "base_rate": 0.0074,
       "positive_sequences": 6,
       "source_only_pr_auc": 0.1984,

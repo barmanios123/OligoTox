@@ -4,31 +4,31 @@
   "status": "this is the gate's simple-baseline check; derive_evidence_tiers.py reads it, and an endpoint missing from here fails that check.",
   "endpoints": {
     "hepatocellular_injury": {
-      "model_pr_auc": 0.4928748137114104,
+      "model_pr_auc": 0.4928764582203353,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.3764380088508219,
-      "difference": 0.10770691685352153,
+      "difference": 0.10771294648041442,
       "ci": [
-        0.0030654650725792723,
-        0.20463866488978366
+        0.0030680347504222494,
+        0.2046185219962695
       ],
       "p_better": 0.979,
       "clears_paired": true,
-      "ci_low_monte_carlo_sd": 0.0015974259412998943,
+      "ci_low_monte_carlo_sd": 0.0015911652449878406,
       "knife_edge": true
     },
     "hepatic_vacuolation": {
-      "model_pr_auc": 0.11383121451619518,
+      "model_pr_auc": 0.10386093362270464,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.031205465954881474,
-      "difference": 0.0677753952276377,
+      "difference": 0.05604342784903861,
       "ci": [
-        -0.05409462816176484,
-        0.19041315699202588
+        -0.06915992014735785,
+        0.15907207840937485
       ],
-      "p_better": 0.8889445557782231,
+      "p_better": 0.8789245156980628,
       "clears_paired": false,
-      "ci_low_monte_carlo_sd": 0.001982264227504735,
+      "ci_low_monte_carlo_sd": 0.0030378712648575306,
       "knife_edge": false
     },
     "renal_tubular_injury": {
@@ -130,17 +130,17 @@
       "knife_edge": false
     },
     "kupffer_cell_activation": {
-      "model_pr_auc": 0.6011175913533402,
+      "model_pr_auc": 0.60111759135334,
       "best_simple": "length only",
       "simple_pr_auc": 0.16774303691470124,
       "difference": 0.41767529029587724,
       "ci": [
-        0.22809422950165467,
+        0.22809422950165478,
         0.5939907574146129
       ],
       "p_better": 1.0,
       "clears_paired": true,
-      "ci_low_monte_carlo_sd": 0.0029947290872720947,
+      "ci_low_monte_carlo_sd": 0.002994729087272104,
       "knife_edge": false
     },
     "offtarget_gene_silencing": {
@@ -150,11 +150,11 @@
       "difference": 0.35630221475104745,
       "ci": [
         -0.07450933437094706,
-        0.687376664663992
+        0.6873766646639922
       ],
       "p_better": 0.9146666666666666,
       "clears_paired": false,
-      "ci_low_monte_carlo_sd": 0.0052390950458135995,
+      "ci_low_monte_carlo_sd": 0.005239095045813597,
       "knife_edge": false
     },
     "injection_site_reaction": {

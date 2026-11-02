@@ -3,19 +3,19 @@
     "samples": 2128,
     "positive_rate": 0.3049812030075188,
     "status": "ok",
-    "pr_auc": 0.4928748137114104,
-    "brier": 0.19528056570427252,
+    "pr_auc": 0.4928764582203353,
+    "brier": 0.19528063217451974,
     "positives": 649,
     "negatives": 1479,
     "positive_sequences": 184,
     "cv": "sequence_grouped",
-    "random_split_pr_auc": 0.5906021177712052,
+    "random_split_pr_auc": 0.5906012375979977,
     "n_splits": 5,
     "datasail_eval": {
       "endpoint": "hepatocellular_injury",
-      "pr_auc": 0.4928748137114104,
-      "roc_auc": 0.6743411354234059,
-      "brier": 0.19528056570427252,
+      "pr_auc": 0.4928764582203353,
+      "roc_auc": 0.6743385309067573,
+      "brier": 0.19528063217451974,
       "n_pos": 649,
       "n_total": 2128
     }
@@ -24,8 +24,8 @@
     "samples": 1614,
     "positive_rate": 0.007434944237918215,
     "status": "ok",
-    "pr_auc": 0.11383121451619518,
-    "brier": 0.021167730549942077,
+    "pr_auc": 0.10386093362270464,
+    "brier": 0.02116773102552631,
     "positives": 12,
     "negatives": 1602,
     "positive_sequences": 6,
@@ -34,9 +34,9 @@
     "n_splits": 5,
     "datasail_eval": {
       "endpoint": "hepatic_vacuolation",
-      "pr_auc": 0.11383121451619518,
+      "pr_auc": 0.10386093362270464,
       "roc_auc": 0.9227007906783187,
-      "brier": 0.021167730549942077,
+      "brier": 0.02116773102552631,
       "n_pos": 12,
       "n_total": 1614
     }
@@ -46,7 +46,7 @@
     "positive_rate": 0.25,
     "status": "ok",
     "pr_auc": 0.4884920634920635,
-    "brier": 0.16592590212183894,
+    "brier": 0.16592590212183897,
     "positives": 7,
     "negatives": 21,
     "positive_sequences": 7,
@@ -57,7 +57,7 @@
       "endpoint": "renal_tubular_injury",
       "pr_auc": 0.4884920634920635,
       "roc_auc": 0.7755102040816326,
-      "brier": 0.16592590212183894,
+      "brier": 0.16592590212183897,
       "n_pos": 7,
       "n_total": 28
     }
@@ -67,7 +67,7 @@
     "positive_rate": 0.2916666666666667,
     "status": "ok",
     "pr_auc": 0.8441043083900227,
-    "brier": 0.1381870784413598,
+    "brier": 0.13818707844135983,
     "positives": 7,
     "negatives": 17,
     "positive_sequences": 7,
@@ -78,7 +78,7 @@
       "endpoint": "renal_accumulation",
       "pr_auc": 0.8441043083900227,
       "roc_auc": 0.9327731092436975,
-      "brier": 0.1381870784413598,
+      "brier": 0.13818707844135983,
       "n_pos": 7,
       "n_total": 24
     }
@@ -88,7 +88,7 @@
     "positive_rate": 0.14285714285714285,
     "status": "ok",
     "pr_auc": 0.5,
-    "brier": 0.11943651680501068,
+    "brier": 0.11943651680501066,
     "positives": 4,
     "negatives": 24,
     "positive_sequences": 4,
@@ -99,7 +99,7 @@
       "endpoint": "thrombocytopenia",
       "pr_auc": 0.5,
       "roc_auc": 0.8958333333333334,
-      "brier": 0.11943651680501068,
+      "brier": 0.11943651680501066,
       "n_pos": 4,
       "n_total": 28
     }
@@ -130,7 +130,7 @@
     "positive_rate": 0.21428571428571427,
     "status": "ok",
     "pr_auc": 0.17633477633477634,
-    "brier": 0.20372838344544017,
+    "brier": 0.20372838344544014,
     "positives": 6,
     "negatives": 22,
     "positive_sequences": 6,
@@ -141,7 +141,7 @@
       "endpoint": "complement_activation",
       "pr_auc": 0.17633477633477634,
       "roc_auc": 0.3106060606060606,
-      "brier": 0.20372838344544017,
+      "brier": 0.20372838344544014,
       "n_pos": 6,
       "n_total": 28
     }
@@ -151,7 +151,7 @@
     "positive_rate": 0.25,
     "status": "ok",
     "pr_auc": 0.21175687666370896,
-    "brier": 0.21709343187156385,
+    "brier": 0.21709343187156382,
     "positives": 7,
     "negatives": 21,
     "positive_sequences": 7,
@@ -162,7 +162,7 @@
       "endpoint": "innate_immune_activation",
       "pr_auc": 0.21175687666370896,
       "roc_auc": 0.3469387755102041,
-      "brier": 0.21709343187156385,
+      "brier": 0.21709343187156382,
       "n_pos": 7,
       "n_total": 28
     }
@@ -172,7 +172,7 @@
     "positive_rate": 0.25,
     "status": "ok",
     "pr_auc": 0.21175687666370896,
-    "brier": 0.21709343187156385,
+    "brier": 0.21709343187156382,
     "positives": 7,
     "negatives": 21,
     "positive_sequences": 7,
@@ -183,7 +183,7 @@
       "endpoint": "cytokine_release",
       "pr_auc": 0.21175687666370896,
       "roc_auc": 0.3469387755102041,
-      "brier": 0.21709343187156385,
+      "brier": 0.21709343187156382,
       "n_pos": 7,
       "n_total": 28
     }
@@ -192,19 +192,19 @@
     "samples": 1614,
     "positive_rate": 0.021065675340768277,
     "status": "ok",
-    "pr_auc": 0.6011175913533402,
-    "brier": 0.010362108663552635,
+    "pr_auc": 0.60111759135334,
+    "brier": 0.010362105677206345,
     "positives": 34,
     "negatives": 1580,
     "positive_sequences": 27,
     "cv": "sequence_grouped",
-    "random_split_pr_auc": 0.8966146763067615,
+    "random_split_pr_auc": 0.8966146763067614,
     "n_splits": 5,
     "datasail_eval": {
       "endpoint": "kupffer_cell_activation",
-      "pr_auc": 0.6011175913533402,
+      "pr_auc": 0.60111759135334,
       "roc_auc": 0.9927959791511541,
-      "brier": 0.010362108663552635,
+      "brier": 0.010362105677206345,
       "n_pos": 34,
       "n_total": 1614
     }
@@ -214,7 +214,7 @@
     "positive_rate": 0.125,
     "status": "ok",
     "pr_auc": 0.6406510621954689,
-    "brier": 0.07084247262079513,
+    "brier": 0.07084247254025273,
     "positives": 68,
     "negatives": 476,
     "positive_sequences": 12,
@@ -225,7 +225,7 @@
       "endpoint": "offtarget_gene_silencing",
       "pr_auc": 0.6406510621954689,
       "roc_auc": 0.8982173751853683,
-      "brier": 0.07084247262079513,
+      "brier": 0.07084247254025273,
       "n_pos": 68,
       "n_total": 544
     }

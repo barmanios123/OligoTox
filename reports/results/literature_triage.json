@@ -2,10 +2,11 @@
   "note": "`dataset` and `unknown` stay open for a human to read. The classifier errs toward dataset, because a false positive costs five minutes and a false negative loses a dataset.",
   "counts": {
     "decided": 2,
-    "method": 12,
-    "reference": 1,
-    "review": 2,
-    "single_study": 19
+    "method": 13,
+    "reference": 2,
+    "review": 3,
+    "single_study": 20,
+    "unknown": 1
   },
   "assessed": {
     "42633286": {
@@ -294,6 +295,46 @@
       "url": "https://europepmc.org/article/MED/PMC12048806",
       "verdict": "single_study",
       "reason": "read by hand: title only; dissects one lncRNA locus. 'Integrating datasets' refers to public transcriptomics, not oligonucleotide measurements.",
+      "read_from": "title only"
+    },
+    "42772282": {
+      "title": "Therapeutic oligonucleotides as genetic medicines: The current state and future perspective.",
+      "year": "2026",
+      "url": "https://europepmc.org/article/MED/42772282",
+      "verdict": "review",
+      "reason": "a review of other people's work; it has no rows of its own",
+      "read_from": "abstract"
+    },
+    "42959597": {
+      "title": "Phase 1 evaluation of APN401, an autologous CBL-B-silenced PBMC therapy, in advanced solid tumors.",
+      "year": "2026",
+      "url": "https://europepmc.org/article/MED/42959597",
+      "verdict": "method",
+      "reason": "a platform, chemistry or delivery paper rather than a dataset",
+      "read_from": "abstract"
+    },
+    "42952712": {
+      "title": "Biophysics-informed computational framework for predicting antisense oligonucleotide knockdown efficacy under small-data constraints.",
+      "year": "2026",
+      "url": "https://europepmc.org/article/MED/42952712",
+      "verdict": "single_study",
+      "reason": "no panel or screen language; most likely one compound",
+      "read_from": "abstract"
+    },
+    "42961436": {
+      "title": "N-Acetylgalactosamine-Conjugated Small Interfering RNA Targeting Hepatic Angiotensinogen in Hypertension: A Phase I Clinical Trial With Randomized Part A and Open-Label Part B.",
+      "year": "2026",
+      "url": "https://europepmc.org/article/MED/42961436",
+      "verdict": "reference",
+      "reason": "a database or atlas; records events per drug, not outcomes per sequence",
+      "read_from": "abstract"
+    },
+    "PMC13721939": {
+      "title": "LIPUS promotes calcium oscillations to improve lymphatic drainage and alleviates cold-stimulated pain and effusion in osteoarthritis joints",
+      "year": "2026",
+      "url": "https://europepmc.org/article/MED/PMC13721939",
+      "verdict": "unknown",
+      "reason": "only a title was retrieved and it shows no panel or screen language; too little to dismiss it on",
       "read_from": "title only"
     }
   }
