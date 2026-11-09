@@ -1,5 +1,5 @@
 endpoint,model,pr_auc,ci_low,ci_high,base_rate,positive_sequences
-hepatocellular_injury,Logistic (39 features),0.4929,0.3615,0.6284,0.3050,184
+hepatocellular_injury,Logistic (39 features),0.4929,0.3616,0.6284,0.3050,184
 hepatocellular_injury,Gradient boosting (39 features),0.5191,0.3650,0.6553,0.3050,184
 hepatocellular_injury,GC content only,0.3764,0.2936,0.4703,0.3050,184
 hepatocellular_injury,Length only,0.3042,0.2537,0.3801,0.3050,184

@@ -4,17 +4,17 @@
   "status": "this is the gate's simple-baseline check; derive_evidence_tiers.py reads it, and an endpoint missing from here fails that check.",
   "endpoints": {
     "hepatocellular_injury": {
-      "model_pr_auc": 0.4928764582203353,
+      "model_pr_auc": 0.4928813567798262,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.3764380088508219,
-      "difference": 0.10771294648041442,
+      "difference": 0.10772425644344118,
       "ci": [
-        0.0030680347504222494,
-        0.2046185219962695
+        0.003098900206146425,
+        0.20462831804924494
       ],
-      "p_better": 0.979,
+      "p_better": 0.9791666666666666,
       "clears_paired": true,
-      "ci_low_monte_carlo_sd": 0.0015911652449878406,
+      "ci_low_monte_carlo_sd": 0.00159359869981341,
       "knife_edge": true
     },
     "hepatic_vacuolation": {
@@ -24,7 +24,7 @@
       "difference": 0.05604342784903861,
       "ci": [
         -0.06915992014735785,
-        0.15907207840937485
+        0.15907207840937482
       ],
       "p_better": 0.8789245156980628,
       "clears_paired": false,
@@ -144,7 +144,7 @@
       "knife_edge": false
     },
     "offtarget_gene_silencing": {
-      "model_pr_auc": 0.6406510621954689,
+      "model_pr_auc": 0.6406510621954687,
       "best_simple": "GC content only",
       "simple_pr_auc": 0.19255182727433223,
       "difference": 0.35630221475104745,
@@ -154,7 +154,7 @@
       ],
       "p_better": 0.9146666666666666,
       "clears_paired": false,
-      "ci_low_monte_carlo_sd": 0.005239095045813597,
+      "ci_low_monte_carlo_sd": 0.005239095045813589,
       "knife_edge": false
     },
     "injection_site_reaction": {

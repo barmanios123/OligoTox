@@ -1,11 +1,12 @@
 {
   "note": "`dataset` and `unknown` stay open for a human to read. The classifier errs toward dataset, because a false positive costs five minutes and a false negative loses a dataset.",
   "counts": {
+    "dataset": 1,
     "decided": 2,
     "method": 13,
     "reference": 2,
     "review": 3,
-    "single_study": 20,
+    "single_study": 22,
     "unknown": 1
   },
   "assessed": {
@@ -336,6 +337,30 @@
       "verdict": "unknown",
       "reason": "only a title was retrieved and it shows no panel or screen language; too little to dismiss it on",
       "read_from": "title only"
+    },
+    "42457920": {
+      "title": "Microglia integrated neural spheroids enable neuroinflammatory responses and correct network dysfunction induced by alpha-synuclein mutation.",
+      "year": "2026",
+      "url": "https://europepmc.org/article/MED/42457920",
+      "verdict": "dataset",
+      "reason": "panel language without a clear readout; kept open to be safe",
+      "read_from": "abstract"
+    },
+    "42965114": {
+      "title": "LIPUS promotes calcium oscillations to improve lymphatic drainage and alleviates cold-stimulated pain and effusion in osteoarthritis joints.",
+      "year": "2026",
+      "url": "https://europepmc.org/article/MED/42965114",
+      "verdict": "single_study",
+      "reason": "no panel or screen language; most likely one compound",
+      "read_from": "abstract"
+    },
+    "40322504": {
+      "title": "Integrating datasets to dissect &lt;i&gt;NFYC-AS1&lt;/i&gt; RNA- and transcription-dependent functions: comparative transcriptome profiling of knockdown strategies.",
+      "year": "2025",
+      "url": "https://europepmc.org/article/MED/40322504",
+      "verdict": "single_study",
+      "reason": "no panel or screen language; most likely one compound",
+      "read_from": "abstract"
     }
   }
 }

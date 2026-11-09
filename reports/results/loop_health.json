@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-02T14:51:14.814698Z",
+  "checked_at": "2026-11-09T15:12:04.705322Z",
   "healthy": false,
   "failed": [
     "sources_on_disk"
@@ -8,7 +8,7 @@
   "checks": {
     "history_fresh": {
       "ok": true,
-      "detail": "last run 0d 0h ago (15 runs logged)"
+      "detail": "last run 0d 0h ago (16 runs logged)"
     },
     "sources_on_disk": {
       "ok": false,
@@ -20,7 +20,7 @@
     },
     "triage_clear": {
       "ok": true,
-      "detail": "all 41 monitored paper(s) assessed; 1 await a human read"
+      "detail": "all 44 monitored paper(s) assessed; 2 await a human read"
     },
     "evidence_consistent": {
       "ok": true,
