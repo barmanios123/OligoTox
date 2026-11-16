@@ -6,7 +6,7 @@
     "method": 13,
     "reference": 2,
     "review": 3,
-    "single_study": 22,
+    "single_study": 23,
     "unknown": 1
   },
   "assessed": {
@@ -358,6 +358,14 @@
       "title": "Integrating datasets to dissect &lt;i&gt;NFYC-AS1&lt;/i&gt; RNA- and transcription-dependent functions: comparative transcriptome profiling of knockdown strategies.",
       "year": "2025",
       "url": "https://europepmc.org/article/MED/40322504",
+      "verdict": "single_study",
+      "reason": "no panel or screen language; most likely one compound",
+      "read_from": "abstract"
+    },
+    "43006237": {
+      "title": "Allele-selective targeting of uromodulin by antisense oligonucleotides reduces aggregates and kidney damage in a mouse model of autosomal dominant tubulointerstitial kidney disease.",
+      "year": "2026",
+      "url": "https://europepmc.org/article/MED/43006237",
       "verdict": "single_study",
       "reason": "no panel or screen language; most likely one compound",
       "read_from": "abstract"
