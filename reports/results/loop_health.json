@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-16T14:51:58.181765Z",
+  "checked_at": "2026-11-23T17:27:59.366847Z",
   "healthy": false,
   "failed": [
     "sources_on_disk"
@@ -8,7 +8,7 @@
   "checks": {
     "history_fresh": {
       "ok": true,
-      "detail": "last run 0d 0h ago (17 runs logged)"
+      "detail": "last run 0d 0h ago (18 runs logged)"
     },
     "sources_on_disk": {
       "ok": false,

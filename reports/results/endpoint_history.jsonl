@@ -15,3 +15,4 @@
 {"timestamp": "2026-11-02T14:49:43.168943+00:00", "trigger": "scheduled weekly run", "presented": ["cns_toxicity", "hepatocellular_injury"], "promoted": [], "demoted": [], "transitions": []}
 {"timestamp": "2026-11-09T15:11:25.902768+00:00", "trigger": "scheduled weekly run", "presented": ["cns_toxicity", "hepatocellular_injury"], "promoted": [], "demoted": [], "transitions": []}
 {"timestamp": "2026-11-16T14:50:39.997328+00:00", "trigger": "scheduled weekly run", "presented": ["cns_toxicity", "hepatocellular_injury"], "promoted": [], "demoted": [], "transitions": []}
+{"timestamp": "2026-11-23T17:26:49.745436+00:00", "trigger": "scheduled weekly run", "presented": ["cns_toxicity", "hepatocellular_injury"], "promoted": [], "demoted": [], "transitions": []}
